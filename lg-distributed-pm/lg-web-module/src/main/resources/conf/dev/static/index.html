@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>收购谷歌项目组!</h1>
+	<form action="websocket" method=get>
+
+		请输入昵称： <input type="text" id="paramKey" name="paramKey"
+			style="border: 5px dotted blue; color: red"
+			onfocus="borderColor(this);" onblur="clearTimeout(oTime);"> <input
+			type="submit" value="开始" />
+
+	</form>
+</body>
+
+<script type="text/javascript">
+	function borderColor() {
+		if (self['text'].style.borderColor == 'pink') {
+			self['text'].style.borderColor = 'yellow';
+		} else {
+			self['text'].style.borderColor = 'pink';
+		}
+		oTime = setTimeout('borderColor()', 400);
+	}
+</script>
+</html>

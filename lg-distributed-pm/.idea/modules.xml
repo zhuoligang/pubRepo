@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/lg-distributed-pm.iml" filepath="$PROJECT_DIR$/lg-distributed-pm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lg-pay-module/lg-pay-module.iml" filepath="$PROJECT_DIR$/lg-pay-module/lg-pay-module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lg-web-module/lg-web-module.iml" filepath="$PROJECT_DIR$/lg-web-module/lg-web-module.iml" />
+    </modules>
+  </component>
+</project>

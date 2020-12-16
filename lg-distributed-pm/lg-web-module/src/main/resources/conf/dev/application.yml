@@ -1,0 +1,110 @@
+server:
+  port: 8066
+
+spring:
+  application:
+    name: module
+  task:
+    pool:
+      corePoolSize: 50
+      maxPoolSize: 100
+      keepAliveSeconds: 600
+      queueCapacity: 200
+  redis:
+    database0: 0
+    database1: 1
+    host: 39.96.33.132
+    port: 6379
+    password: mcredis
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 5
+        min-idle: 0
+    timeout: 10000
+  datasource:
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql://39.96.33.132:3306/zlg_test?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+      username: root
+      password: 123456
+      initial-size: 5
+      min-idle: 1
+      max-active: 20
+      max-wait: 60000
+      min-evictable-idle-time-millis: 300000
+      time-between-eviction-runs-millis: 60000
+      validation-query: SELECT 1 FROM DUAL
+      test-on-borrow: true
+      pool-prepared-statements: true
+      use-global-data-source-stat: true
+      max-open-prepared-statements: 20
+      max-pool-prepared-statement-per-connection-size: 20
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      filters: stat,wall
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/test
+  output:
+    ansi:
+      enabled: detect
+  mvc:
+    view:
+      suffix: .jsp
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+
+pagehelper:
+  reasonable: true
+  supportMethodsArguments: true
+  pageSizeZero: true
+  params: count=countSql
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org:
+      bibr:
+        distributed:
+          user:
+            dao: debug
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+swagger2:
+  enable: true
+
+url:
+  qiniu:
+    qiniuAccessKey: GJ2Ynz4124H3uDY12Xi1gzZzZY-lNkSabnQFzYIi
+    qiniuSecretKey: 0-u2of5q0MDnU9CHJi0i-YCIBP9WRcLwCxFPCZ-X
+    qiniuDomain: file.mixcdn.co
+    qiniuBucketName: file_mixcdn
+    qiniuPrefix: dev/idcardimages
+
+rsa:
+  privateKey: MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAOf9CdR+QqRCkb77pgNRijypzSatxFtGyaiSncQlkmvAhuWV2/pbb7IAhaSR6XgbOwv6iSVlF6plwbgX66Dei1zohlrd8Uxe5oPOgPOJx04AF7azyKAuMxx+G6Mj0ypi+RVVLIVZ1U4s0CfNAmCSKyccpkY9BlzGdAAfFM5Ryj4vAgMBAAECgYBPBc63Z1rkARkMaUQflUL1bxHGvyJHxVEj7u12xyWdNrO8uNN58HOXur3LVTimBQCUD/9vkYQCMy9Nujg1UBlAIokG9zdhNkK/5x2y1yVOAL+SDQolnumZyTYncWTnNOZtgCdCnqBmuHpw6LfF5nHm7/iCeThdUY2MJ+u9y9wAIQJBAPuCuokJ/lZY0GI5hzxkeK9TlNYn6+rJpkAehkNz4Aaa6tjXaGcrKsLgHrYXupYKLNXABhELY70nJaahltUgF3UCQQDsIRp6/poRIbLCZ4JyoXp4Mjvd8lJ03mBUdzYEsn3aH9jafqOxLHB3FseYz/fKl3Gb5xgbhsFUCQm+3I9slu6TAkBEaSCX2dIGZo33ybIRKTryZYecYKt453SDCEp42nHbGhQ6+wx403MEIrX3zaiA2y+qzFpaFIECmD1Tf6xpOBtpAkEAwi/XHx8ShNQ5tjZ5yNuTZBWrtjL6LLJUdiIzgllntmJKbCWJaMMrGkTZkIo3NZymCZha8wg3JWzpXtTz/lGBkQJAb3kjcBZHRg53s6/CLi5eVEGVW0RjXWo47SpwYUuu1b5miG9oXlmZxyG9nS8ZFWcBKh0IZMlhcGCqvq2qNoC6qw==
+des:
+  timeLimit: 300000
+
+netty-websocket:
+  #host: localhost
+  port: 7088
+  path: /connect
+
+rocketmq:
+  producer:
+    groupName: lgWebGroup
+    namesrvAddr: 39.96.33.132:9876
+    instanceName: lgWebProducer
+    topic: lgTest
+    maxMessageSize: 131072 # 1024*128
+    sendMsgTimeout: 10000
+  consumer:
+    groupName: lgWebGroup
+    namesrvAddr: 39.96.33.132:9876
+    instanceName: lgWebCustomer
+    topic: lgTest
+    tag: TEST

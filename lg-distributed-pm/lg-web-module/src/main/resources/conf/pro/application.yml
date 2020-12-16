@@ -1,0 +1,88 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: robot
+  task:
+    pool:
+      corePoolSize: 50
+      maxPoolSize: 100
+      keepAliveSeconds: 600
+      queueCapacity: 200
+  redis:
+    database: 0
+    host: 192.168.31.201
+    port: 6379
+    password: fW3o5pF6G78oJ8oOdP9bgaBh0rBjied
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 5
+        min-idle: 0
+    timeout: 10000
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://192.168.31.202/bibr_robot?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: qu@Rong
+    initialSize: 5
+    minIdle: 1
+    maxActive: 20
+    maxWait: 60000
+    minEvictableIdleTimeMillis: 300000
+    timeBetweenEvictionRunsMillis: 60000
+    validationQuery: SELECT 1 FROM DUAL
+    testOnBorrow: true
+    poolPreparedStatements: true
+    useGlobalDataSourceStat: true
+    maxOpenPreparedStatements: 20
+    maxPoolPreparedStatementPerConnectionSize: 20
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    filters: stat,wall
+  output:
+    ansi:
+      enabled: detect
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+
+pagehelper:
+  reasonable: true
+  supportMethodsArguments: true
+  pageSizeZero: true
+  params: count=countSql
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org:
+      bibr:
+        distributed:
+          user:
+            dao: debug
+
+swagger2:
+  enable: true
+
+url:
+  datacenter:
+    getprice: http://192.168.31.127:8084/robot/market/ticker?market={market}
+  home:
+    getsize: http://192.168.31.247:8980/mgr/foreign/findCoinNumberDecimalByTpVcEnUnit
+  order:
+    robotwrite: http://192.168.31.244:8086/order/robotWriteOrder
+  entrust:
+    createEntrust: http://192.168.31.202:8085/api/entrust/createEntrust?accesskey={accesskey}&reqTime={reqTime}&sign={sign}&currency={currency}&price={price}&amount={amount}&tradeType={tradeType}
+    batchCancel: http://192.168.31.202:8085/api/entrust/batchCancelEntrust
+    queryCount: http://192.168.31.202:8085/api/entrust/queryUserEntrustCount?memberId={memberId}
+    
+netty-websocket:
+  #host: localhost
+  port: 7088
+  path: /oprobot
+
+route:
+  ips: 192.168.31.28,192.168.31.115

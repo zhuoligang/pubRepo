@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lg.web.module.dao.SpecialCertificationInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.lg.web.module.bean.po.SpecialCertificationInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="member_id" property="memberId" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="idcard" property="idcard" jdbcType="VARCHAR" />
+    <result column="idcard_pic_front" property="idcardPicFront" jdbcType="VARCHAR" />
+    <result column="idcard_pic_back" property="idcardPicBack" jdbcType="VARCHAR" />
+    <result column="idcard_pic_onhand" property="idcardPicOnhand" jdbcType="VARCHAR" />
+    <result column="req_time" property="reqTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, member_id, mobile, name, idcard, idcard_pic_front, idcard_pic_back, idcard_pic_onhand, 
+    req_time, status, content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from special_certification_info
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from special_certification_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.lg.web.module.bean.po.SpecialCertificationInfo" >
+    insert into special_certification_info (id, member_id, mobile, 
+      name, idcard, idcard_pic_front, 
+      idcard_pic_back, idcard_pic_onhand, req_time, 
+      status, content)
+    values (#{id,jdbcType=VARCHAR}, #{memberId,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{idcard,jdbcType=VARCHAR}, #{idcardPicFront,jdbcType=VARCHAR}, 
+      #{idcardPicBack,jdbcType=VARCHAR}, #{idcardPicOnhand,jdbcType=VARCHAR}, #{reqTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lg.web.module.bean.po.SpecialCertificationInfo" >
+    insert into special_certification_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="idcard != null" >
+        idcard,
+      </if>
+      <if test="idcardPicFront != null" >
+        idcard_pic_front,
+      </if>
+      <if test="idcardPicBack != null" >
+        idcard_pic_back,
+      </if>
+      <if test="idcardPicOnhand != null" >
+        idcard_pic_onhand,
+      </if>
+      <if test="reqTime != null" >
+        req_time,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null" >
+        #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardPicFront != null" >
+        #{idcardPicFront,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardPicBack != null" >
+        #{idcardPicBack,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardPicOnhand != null" >
+        #{idcardPicOnhand,jdbcType=VARCHAR},
+      </if>
+      <if test="reqTime != null" >
+        #{reqTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lg.web.module.bean.po.SpecialCertificationInfo" >
+    update special_certification_info
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null" >
+        idcard = #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardPicFront != null" >
+        idcard_pic_front = #{idcardPicFront,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardPicBack != null" >
+        idcard_pic_back = #{idcardPicBack,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardPicOnhand != null" >
+        idcard_pic_onhand = #{idcardPicOnhand,jdbcType=VARCHAR},
+      </if>
+      <if test="reqTime != null" >
+        req_time = #{reqTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lg.web.module.bean.po.SpecialCertificationInfo" >
+    update special_certification_info
+    set member_id = #{memberId,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      idcard = #{idcard,jdbcType=VARCHAR},
+      idcard_pic_front = #{idcardPicFront,jdbcType=VARCHAR},
+      idcard_pic_back = #{idcardPicBack,jdbcType=VARCHAR},
+      idcard_pic_onhand = #{idcardPicOnhand,jdbcType=VARCHAR},
+      req_time = #{reqTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+<!-- 以下为新增2019年6月6日 15:02:23 -->
+  <select id="selectByMap" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from special_certification_info
+    where 1=1
+      <if test="memberId != null" >
+        and member_id = #{memberId,jdbcType=VARCHAR}
+      </if>
+      <if test="mobile != null" >
+        and mobile = #{mobile,jdbcType=VARCHAR}
+      </if>
+      <if test="idcard != null" >
+        and idcard = #{idcard,jdbcType=VARCHAR}
+      </if>
+      <if test="status != null" >
+        and status = #{status,jdbcType=INTEGER}
+      </if>
+    order by status asc,req_time asc
+  </select>
+</mapper>

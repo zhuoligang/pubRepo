@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lg.web.module.dao.CenterUserMainMapper">
+	<resultMap id="BaseResultMap" type="com.lg.web.module.bean.po.CenterUserMain">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="trade_password" property="tradePassword"
+			jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="idcard" property="idcard" jdbcType="VARCHAR" />
+		<result column="idcard_pic_front" property="idcardPicFront"
+			jdbcType="VARCHAR" />
+		<result column="idcard_pic_back" property="idcardPicBack"
+			jdbcType="VARCHAR" />
+		<result column="idcard_pic_onhand" property="idcardPicOnhand"
+			jdbcType="VARCHAR" />
+		<result column="idcard_pic_check_id" property="idcardPicCheckId"
+			jdbcType="INTEGER" />
+		<result column="idcard_pic_check_type" property="idcardPicCheckType"
+			jdbcType="INTEGER" />
+		<result column="reg_time" property="regTime" jdbcType="TIMESTAMP" />
+		<result column="user_enabled" property="userEnabled" jdbcType="INTEGER" />
+		<result column="trade_password_type" property="tradePasswordType"
+			jdbcType="INTEGER" />
+		<result column="change_password_type" property="changePasswordType"
+			jdbcType="INTEGER" />
+		<result column="fee_deduction_type" property="feeDeductionType"
+			jdbcType="INTEGER" />
+		<result column="ip" property="ip" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, member_id, parent_id, mobile, email, trade_password,
+		name, idcard,
+		idcard_pic_front,
+		idcard_pic_back, idcard_pic_onhand,
+		idcard_pic_check_id, idcard_pic_check_type,
+		reg_time,
+		user_enabled,
+		trade_password_type, change_password_type,fee_deduction_type, ip
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from center_user_main
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		center_user_main
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.lg.web.module.bean.po.CenterUserMain">
+		insert into center_user_main
+		(id, member_id, parent_id,
+		mobile, email, trade_password,
+		name, idcard,
+		idcard_pic_front,
+		idcard_pic_back, idcard_pic_onhand,
+		idcard_pic_check_id,
+		idcard_pic_check_type, reg_time, user_enabled,
+		trade_password_type, change_password_type,fee_deduction_type, ip)
+		values (#{id,jdbcType=VARCHAR}, #{memberId,jdbcType=VARCHAR},
+		#{parentId,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR}, #{tradePassword,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR}, #{idcard,jdbcType=VARCHAR},
+		#{idcardPicFront,jdbcType=VARCHAR},
+		#{idcardPicBack,jdbcType=VARCHAR},
+		#{idcardPicOnhand,jdbcType=VARCHAR},
+		#{idcardPicCheckId,jdbcType=INTEGER},
+		#{idcardPicCheckType,jdbcType=INTEGER}, #{regTime,jdbcType=TIMESTAMP},
+		#{userEnabled,jdbcType=INTEGER},
+		#{tradePasswordType,jdbcType=INTEGER},
+		#{changePasswordType,jdbcType=INTEGER},#{feeDeductionType,jdbcType=INTEGER},
+		#{ip,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.lg.web.module.bean.po.CenterUserMain">
+		insert into center_user_main
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="memberId != null">
+				member_id,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="mobile != null">
+				mobile,
+			</if>
+			<if test="email != null">
+				email,
+			</if>
+			<if test="tradePassword != null">
+				trade_password,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="idcard != null">
+				idcard,
+			</if>
+			<if test="idcardPicFront != null">
+				idcard_pic_front,
+			</if>
+			<if test="idcardPicBack != null">
+				idcard_pic_back,
+			</if>
+			<if test="idcardPicOnhand != null">
+				idcard_pic_onhand,
+			</if>
+			<if test="idcardPicCheckId != null">
+				idcard_pic_check_id,
+			</if>
+			<if test="idcardPicCheckType != null">
+				idcard_pic_check_type,
+			</if>
+			<if test="regTime != null">
+				reg_time,
+			</if>
+			<if test="userEnabled != null">
+				user_enabled,
+			</if>
+			<if test="tradePasswordType != null">
+				trade_password_type,
+			</if>
+			<if test="feeDeductionType != null">
+				fee_deduction_type,
+			</if>
+			<if test="changePasswordType != null">
+				change_password_type,
+			</if>
+			<if test="ip != null">
+				ip,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=VARCHAR},
+			</if>
+			<if test="mobile != null">
+				#{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="tradePassword != null">
+				#{tradePassword,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="idcard != null">
+				#{idcard,jdbcType=VARCHAR},
+			</if>
+			<if test="idcardPicFront != null">
+				#{idcardPicFront,jdbcType=VARCHAR},
+			</if>
+			<if test="idcardPicBack != null">
+				#{idcardPicBack,jdbcType=VARCHAR},
+			</if>
+			<if test="idcardPicOnhand != null">
+				#{idcardPicOnhand,jdbcType=VARCHAR},
+			</if>
+			<if test="idcardPicCheckId != null">
+				#{idcardPicCheckId,jdbcType=INTEGER},
+			</if>
+			<if test="idcardPicCheckType != null">
+				#{idcardPicCheckType,jdbcType=INTEGER},
+			</if>
+			<if test="regTime != null">
+				#{regTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userEnabled != null">
+				#{userEnabled,jdbcType=INTEGER},
+			</if>
+			<if test="tradePasswordType != null">
+				#{tradePasswordType,jdbcType=INTEGER},
+			</if>
+			<if test="changePasswordType != null">
+				#{changePasswordType,jdbcType=INTEGER},
+			</if>
+			<if test="feeDeductionType != null">
+				#{feeDeductionType,jdbcType=INTEGER},
+			</if>
+			<if test="ip != null">
+				#{ip,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.lg.web.module.bean.po.CenterUserMain">
+		update center_user_main
+		<set>
+			<if test="memberId != null">
+				member_id = #{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=VARCHAR},
+			</if>
+			<if test="mobile != null">
+				mobile = #{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="tradePassword != null">
+				trade_password = #{tradePassword,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="idcard != null">
+				idcard = #{idcard,jdbcType=VARCHAR},
+			</if>
+			<if test="idcardPicFront != null">
+				idcard_pic_front = #{idcardPicFront,jdbcType=VARCHAR},
+			</if>
+			<if test="idcardPicBack != null">
+				idcard_pic_back = #{idcardPicBack,jdbcType=VARCHAR},
+			</if>
+			<if test="idcardPicOnhand != null">
+				idcard_pic_onhand = #{idcardPicOnhand,jdbcType=VARCHAR},
+			</if>
+			<if test="idcardPicCheckId != null">
+				idcard_pic_check_id =
+				#{idcardPicCheckId,jdbcType=INTEGER},
+			</if>
+			<if test="idcardPicCheckType != null">
+				idcard_pic_check_type =
+				#{idcardPicCheckType,jdbcType=INTEGER},
+			</if>
+			<if test="regTime != null">
+				reg_time = #{regTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userEnabled != null">
+				user_enabled = #{userEnabled,jdbcType=INTEGER},
+			</if>
+			<if test="tradePasswordType != null">
+				trade_password_type =
+				#{tradePasswordType,jdbcType=INTEGER},
+			</if>
+			<if test="changePasswordType != null">
+				change_password_type =
+				#{changePasswordType,jdbcType=INTEGER},
+			</if>
+			<if test="feeDeductionType != null">
+				fee_deduction_type =
+				#{feeDeductionType,jdbcType=INTEGER},
+			</if>
+			<if test="ip != null">
+				ip = #{ip,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.lg.web.module.bean.po.CenterUserMain">
+		update
+		center_user_main
+		set member_id = #{memberId,jdbcType=VARCHAR},
+		parent_id = #{parentId,jdbcType=VARCHAR},
+		mobile =
+		#{mobile,jdbcType=VARCHAR},
+		email = #{email,jdbcType=VARCHAR},
+		trade_password = #{tradePassword,jdbcType=VARCHAR},
+		name =
+		#{name,jdbcType=VARCHAR},
+		idcard = #{idcard,jdbcType=VARCHAR},
+		idcard_pic_front = #{idcardPicFront,jdbcType=VARCHAR},
+		idcard_pic_back
+		= #{idcardPicBack,jdbcType=VARCHAR},
+		idcard_pic_onhand =
+		#{idcardPicOnhand,jdbcType=VARCHAR},
+		idcard_pic_check_id =
+		#{idcardPicCheckId,jdbcType=INTEGER},
+		idcard_pic_check_type =
+		#{idcardPicCheckType,jdbcType=INTEGER},
+		reg_time =
+		#{regTime,jdbcType=TIMESTAMP},
+		user_enabled =
+		#{userEnabled,jdbcType=INTEGER},
+		trade_password_type =
+		#{tradePasswordType,jdbcType=INTEGER},
+		change_password_type =
+		#{changePasswordType,jdbcType=INTEGER},
+		fee_deduction_type =
+		#{feeDeductionType,jdbcType=INTEGER},
+		ip = #{ip,jdbcType=VARCHAR}
+		where
+		id = #{id,jdbcType=VARCHAR}
+	</update>
+
+
+	<!-- ```````````````````````````````````````````````````````以下为新增````````````````````````````````````````````````````````````` -->
+	<select id="selectByMemberId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from center_user_main
+		where member_id = #{memberId,jdbcType=VARCHAR}
+	</select>
+</mapper>
