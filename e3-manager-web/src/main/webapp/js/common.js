@@ -111,11 +111,13 @@ var E3 = {
     		}else{
     			_ele.after("<span style='margin-left:10px;'></span>");
     		}
+    		// 如果有绑定，先解绑，保证只绑定一次
     		_ele.unbind('click').click(function(){
     			$("<div>").css({padding:"5px"}).html("<ul>")
     			.window({
     				width:'500',
     			    height:"450",
+    			    //模态：后面页面变灰了不能点击
     			    modal:true,
     			    closed:true,
     			    iconCls:'icon-save',
@@ -129,7 +131,7 @@ var E3 = {
     			    			if($(this).tree("isLeaf",node.target)){
     			    				// 填写到cid中
     			    				_ele.parent().find("[name=cid]").val(node.id);
-    			    				_ele.next().text(node.text).attr("cid",node.id);
+    			    				_ele.next().text(node.text);
     			    				$(_win).window('close');
     			    				if(data && data.fun){
     			    					data.fun.call(this,node);

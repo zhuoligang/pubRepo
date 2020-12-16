@@ -2,20 +2,20 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.ejie</groupId>
+		<groupId>cn.e3mall</groupId>
 		<artifactId>e3-manager</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>e3-manager-service</artifactId>
 	<packaging>war</packaging>
+	<artifactId>e3-manager-service</artifactId>
 	<dependencies>
 		<dependency>
-			<groupId>com.ejie</groupId>
+			<groupId>cn.e3mall</groupId>
 			<artifactId>e3-manager-dao</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.ejie</groupId>
+			<groupId>cn.e3mall</groupId>
 			<artifactId>e3-manager-interface</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -48,7 +48,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
-		
 		<!-- dubbo相关 -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -72,6 +71,5 @@
 			<groupId>com.github.sgroschupf</groupId>
 			<artifactId>zkclient</artifactId>
 		</dependency>
-
 	</dependencies>
 </project>
