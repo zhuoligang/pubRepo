@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;public_key.txt&apos; to &apos;pro&apos;&#x0D;&#x0A;- Original project: &apos;bibr-user-module&apos;&#x0D;&#x0A;- Destination element: &apos;pro&apos;&#x0D;&#x0A;- Original element: &apos;public_key.txt&apos;" description="Copy file" element1="src/main/resources/conf/test/public_key.txt" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1551940498838" target="/bibr-user-module/src/main/resources/conf/pro" units="0" version="1.0"/>
+</session>

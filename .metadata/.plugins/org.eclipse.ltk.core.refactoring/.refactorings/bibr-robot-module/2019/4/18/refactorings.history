@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract local variable &apos;jsonArray&apos; from expression &apos;JSON.parseObject(result).getJSONObject(&quot;data&quot;).getJSONArray(&quot;allowRetryCancelLists&quot;)&apos;&#x0D;&#x0A;- Original project: &apos;bibr-robot-module&apos;&#x0D;&#x0A;- Variable name: &apos;jsonArray&apos;&#x0D;&#x0A;- Destination method: &apos;org.bibr.robot.module.pool.RevokesPool.executeAsync()&apos;&#x0D;&#x0A;- Variable expression: &apos;JSON.parseObject(result).getJSONObject(&quot;data&quot;).getJSONArray(&quot;allowRetryCancelLists&quot;)&apos;&#x0D;&#x0A;- Replace occurrences of expression with variable" description="Extract local variable &apos;jsonArray&apos;" final="false" id="org.eclipse.jdt.ui.extract.temp" input="/src\/main\/java&lt;org.bibr.robot.module.pool{RevokesPool.java" name="jsonArray" replace="true" selection="3218 85" stamp="1556438401730" version="1.0"/>
+</session>

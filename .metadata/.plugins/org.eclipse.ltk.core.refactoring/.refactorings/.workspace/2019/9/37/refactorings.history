@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename Java project &apos;cloudpower&apos; to &apos;bibr-cloudpower-module&apos;&#x0D;&#x0A;- Original element: &apos;cloudpower&apos;&#x0D;&#x0A;- Renamed element: &apos;cloudpower&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename Java project &apos;cloudpower&apos;" flags="7" id="org.eclipse.jdt.ui.rename.java.project" input="=cloudpower" name="bibr-cloudpower-module" references="true" stamp="1568098460126" version="1.0"/>
+</session>

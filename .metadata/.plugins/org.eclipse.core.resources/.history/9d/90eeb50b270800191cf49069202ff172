@@ -1,0 +1,279 @@
+package org.bibr.robot.module.service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+
+import org.bibr.robot.module.bean.bo.RobotConf;
+import org.bibr.robot.module.config.RedisCache;
+import org.bibr.robot.module.constant.RobotConstant;
+import org.bibr.robot.module.dao.RobotConfMapper;
+import org.bibr.robot.module.exception.BusinessException;
+import org.bibr.robot.module.thread.RobotThread;
+import org.bibr.robot.module.util.RobotUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class RobotService {
+	private final static Logger logger = LoggerFactory.getLogger(RobotService.class);
+	@Autowired
+	private ServletContext application;
+	@Autowired
+	private RedisCache cache;
+	@Autowired
+	private RobotConfMapper robotConfMapper;
+	/**
+	 * 
+	* @Title: addTask
+	* @Description: TODO(新建机器人任务)
+	* @param @param map
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String addTask(Map<String, String> map) {
+		if(map == null || map.get("robotId") == null 
+				||map.get("platId") == null ||map.get("coinId") == null
+				||map.get("frequency") == null 
+				||map.get("timeMin") == null || map.get("timeMax") == null 
+				||map.get("limitMin") == null || map.get("limitMax") == null ){
+			throw new BusinessException(RobotConstant.CODE_500, RobotConstant.FILL_IN_REQUIRED);
+		}
+		try {
+			RobotConf RobotConf = new RobotConf(RobotUtil.createUUId(), Integer.parseInt(map.get("robotId")),
+					map.get("platId"), map.get("coinId"), Integer.parseInt(map.get("frequency")),
+					Integer.parseInt(map.get("timeMin")), Integer.parseInt(map.get("timeMax")),
+					Integer.parseInt(map.get("limitMin")), Integer.parseInt(map.get("limitMax")), new Date());
+			this.robotConfMapper.insertSelective(RobotConf);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BusinessException(RobotConstant.CODE_500, "新建任务系统错误，请联系管理员");
+		}
+		return "新建任务成功";
+	}
+	
+	/**
+	 * 
+	* @Title: updateTask
+	* @Description: TODO(修改机器人任务)
+	* @param @param map
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String updateTask(Map<String, String> map) {
+		if(map == null || map.get("uuid") == null ){
+			throw new BusinessException(RobotConstant.CODE_500, RobotConstant.FILL_IN_REQUIRED);
+		}
+		RobotConf robotConf = this.robotConfMapper.selectByUUID(map.get("uuid"));
+		if(robotConf == null){
+			throw new BusinessException(RobotConstant.CODE_500, "没有这个任务");
+		}
+		if(robotConf.getStatus() != 0){
+			throw new BusinessException(RobotConstant.CODE_500, "请先关闭任务再进行修改操作");
+		}
+		try {
+			RobotConf rc = new RobotConf();
+			rc.setId(robotConf.getId());
+			if(map.get("platId") != null){
+				rc.setPlatId(map.get("platId"));
+			}
+			if(map.get("coinId") != null){
+				rc.setCoinId(map.get("coinId"));
+			}
+			if(map.get("frequency") != null){
+				rc.setFrequency(Integer.parseInt(map.get("frequency")));
+			}
+			if(map.get("timeMin") != null){
+				rc.setTimeMin(Integer.parseInt(map.get("timeMin")));
+			}
+			if(map.get("timeMax") != null){
+				rc.setTimeMax(Integer.parseInt(map.get("timeMax")));
+			}
+			if(map.get("limitMin") != null){
+				rc.setLimitMin(Integer.parseInt(map.get("limitMin")));
+			}
+			if(map.get("limitMax") != null){
+				rc.setLimitMax(Integer.parseInt(map.get("limitMax")));
+			}
+			if(map.get("dealFlag") != null){
+				rc.setDealFlag(Integer.parseInt(map.get("dealFlag")));
+			}
+			this.robotConfMapper.updateByPrimaryKeySelective(rc);
+		} catch (Exception e) {
+			throw new BusinessException(RobotConstant.CODE_500, "修改任务系统错误，请联系管理员");
+		}
+		return "修改任务成功";
+	}
+	
+	/**
+	 * 
+	* @Title: showTasks
+	* @Description: TODO(查询所有机器人任务)
+	* @param @param map
+	* @param @return    设定文件
+	* @return List<RobotConf>    返回类型
+	* @throws
+	 */
+	public List<RobotConf> showTasks(Map<String, String> map) {
+		
+		return this.robotConfMapper.showTasks(map);
+	}
+	
+	/**
+	 * 
+	* @Title: taskOn
+	* @Description: TODO(开启机器人任务)
+	* @param @param map
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String taskOn(Map<String, String> map) {
+		if(map == null || map.get("uuid") == null ){
+			throw new BusinessException(RobotConstant.CODE_500, RobotConstant.FILL_IN_REQUIRED);
+		}
+		RobotConf robotConf = this.robotConfMapper.selectByUUID(map.get("uuid"));
+		if(robotConf == null){
+			throw new BusinessException(RobotConstant.CODE_500, "没有这个任务");
+		}
+		if(robotConf.getStatus() == 1){
+			throw new BusinessException(RobotConstant.CODE_500, "不能重复开启任务。");
+		}
+		try {
+			RobotConf rc = new RobotConf();
+			rc.setId(robotConf.getId());
+			rc.setStatus(1);
+			this.robotConfMapper.updateByPrimaryKeySelective(rc);
+			// 刷单线程启动
+            RobotThread robotThread = new RobotThread(robotConf);
+            Thread rt = new Thread(robotThread);
+            rt.start();
+            application.setAttribute(robotConf.getId().toString(), rt);
+            logger.info("开启 " + robotConf.getId() + " 号任务 ");
+		} catch (Exception e) {
+			throw new BusinessException(RobotConstant.CODE_500, "任务开启系统错误，请联系管理员。");
+		}
+
+		return "开启成功";
+	}
+
+	/**
+	 * 
+	* @Title: taskOff
+	* @Description: TODO(关闭机器人任务)
+	* @param @param map
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String taskOff(Map<String, String> map) {
+		if(map == null || map.get("uuid") == null ){
+			throw new BusinessException(RobotConstant.CODE_500, RobotConstant.FILL_IN_REQUIRED);
+		}
+		RobotConf robotConf = this.robotConfMapper.selectByUUID(map.get("uuid"));
+		if(robotConf == null){
+			throw new BusinessException(RobotConstant.CODE_500, "没有这个任务");
+		}
+		if(robotConf.getStatus() == 0){
+			throw new BusinessException(RobotConstant.CODE_500, "不能重复关闭任务。");
+		}
+		try {
+			RobotConf rc = new RobotConf();
+			rc.setId(robotConf.getId());
+			rc.setStatus(0);
+			this.robotConfMapper.updateByPrimaryKeySelective(rc);
+			// 刷单线程关闭
+            Thread rt = (Thread) application.getAttribute(robotConf.getId().toString());
+            if(rt != null){
+                rt.stop();
+                application.removeAttribute(robotConf.getId().toString());
+                logger.info("停止 " + robotConf.getId() + " 号任务 ");
+            }
+		} catch (Exception e) {
+			throw new BusinessException(RobotConstant.CODE_500, "任务关闭系统错误，请联系管理员。");
+		}
+		return "关闭成功";
+	}
+
+	/**
+	 * 
+	* @Title: putRobotCache
+	* @Description: TODO(放入redis缓存)
+	* @param @param map
+	* @param @return    设定文件
+	* @return Boolean    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean putRobotCache(Map<String, String> map) {
+		try {
+			String keyStr = RobotConstant.ROBOT_CACHENAME + map.get("robotId");
+			cache.putCacheWithExpireTime(keyStr, map.get("robotId"),RobotConstant.ROBOT_CACHETIME);
+			logger.info("put cache :" + keyStr + "value :" + map.get("robotId"));
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	/**
+	 * 
+	* @Title: getRobotCache
+	* @Description: TODO(获取redis缓存)
+	* @param @param map
+	* @param @return    设定文件
+	* @return CenterUserMain    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public String getRobotCache(Map<String, String> map) {
+		try {
+			String keyStr = RobotConstant.ROBOT_CACHENAME + map.get("robotId");
+			String str = cache.getCache(keyStr);
+			logger.info("get cache :" + keyStr + "value :" + str);
+			return str;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	/**
+	 * 
+	* @Title: deleteRobotCache
+	* @Description: TODO(删除redis缓存)
+	* @param @param map
+	* @param @return    设定文件
+	* @return Boolean    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean deleteRobotCache(Map<String, String> map) {
+		try {
+			String keyStr = RobotConstant.ROBOT_CACHENAME + map.get("robotId");
+			cache.deleteCache(keyStr);
+			logger.info("delete cache :" + keyStr );
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+
+	public String taskOffAll(Map<String, String> map) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

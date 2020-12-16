@@ -1,0 +1,24 @@
+package org.bibr.accountcheck.center.thread;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 
+* @ClassName: ThresholdThread
+* @Description: TODO(阈值控制校验)
+* @author Administrator
+* @date 2018年12月18日下午5:26:21
+*
+ */
+public class ThresholdThread implements Runnable{
+	
+	private final static Logger logger = LoggerFactory.getLogger(ThresholdThread.class);
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

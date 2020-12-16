@@ -1,0 +1,21 @@
+package org.bibr.accountcheck.center.controller.api;
+
+import org.bibr.accountcheck.center.controller.TsetController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * 
+* @ClassName: AccountCheckApiController
+* @Description: TODO(这里用一句话描述这个类的作用)
+* @author Administrator
+* @date 2018年12月18日下午5:23:03
+*
+ */
+@Controller
+@RequestMapping("/api")
+public class AccountCheckApiController {
+	private final static Logger logger = LoggerFactory.getLogger(TsetController.class);
+}

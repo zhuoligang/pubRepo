@@ -1,0 +1,39 @@
+package org.bibr.distributed.octopus.bean.po;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel("文章类型信息")
+public class OctopusArticleType {
+    private String id;
+    @ApiModelProperty("属于哪个平台（1：承兑，2：币币）")
+    private Integer platform;
+    @ApiModelProperty("类型标识")
+    private Integer typeId;
+    @ApiModelProperty("类型解释")
+    private String name;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id == null ? null : id.trim();
+    }
+
+    public Integer getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
+}

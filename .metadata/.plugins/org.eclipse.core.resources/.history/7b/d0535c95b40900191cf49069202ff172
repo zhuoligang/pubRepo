@@ -1,0 +1,20 @@
+package org.bibr.distributed.octopus.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import io.swagger.annotations.Api;
+/**
+ * 
+* @ClassName: OctopusColumnController
+* @Description: TODO(按照栏目等级的文档支撑控制台)
+* @author Administrator
+* @date 2018年12月27日下午4:47:07
+*
+ */
+@Controller
+@RequestMapping("/octopusColumn")
+@Api(value = "文章管理相关的api")
+public class OctopusColumnController {
+
+}

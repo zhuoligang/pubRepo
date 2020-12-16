@@ -1,0 +1,131 @@
+package org.bibr.accountcheck.center.util;
+
+import java.util.Map;
+
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+
+public class RestTemplateUtil {
+
+	public static String postForEntity(String url, MultiValueMap<String, String> map) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+		return response.getBody();
+	}
+
+	public static String postForEntity(String url, String json) {
+		HttpHeaders headers = new HttpHeaders();
+		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+		headers.setContentType(type);
+		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		HttpEntity<String> entity = new HttpEntity<String>(json, headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+		return response.getBody();
+	}
+	
+	public static String postForEntity(String url, String json,Map<String,String> headerMap) {
+		HttpHeaders headers = new HttpHeaders();
+		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+		headers.setContentType(type);
+		if(headerMap != null) {
+			for (String key : headerMap.keySet()) {
+				headers.add(key, headerMap.get(key));
+			}
+		}
+//		headers.add("Authorization",headerParm);
+		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		HttpEntity<String> entity = new HttpEntity<String>(json, headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+		return response.getBody();
+	}
+	
+	public static String postForProtobuf(String url, byte[] bytes) {
+		HttpHeaders headers = new HttpHeaders();
+		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+		headers.setContentType(type);
+		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		HttpEntity<byte[]> entity = new HttpEntity<byte[]>(bytes, headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+		return response.getBody();
+	}
+	
+	public static String getForEntity(String url, Map<String, Object> map,Map<String,String> headerMap) {
+		HttpHeaders headers = new HttpHeaders();
+		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+		headers.setContentType(type);
+		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		if(headerMap != null) {
+			for (String key : headerMap.keySet()) {
+				headers.add(key, headerMap.get(key));
+			}
+		}
+		HttpEntity<Map<String, Object>> entity = new HttpEntity<Map<String, Object>>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class,map);
+		return response.getBody();
+	}
+	
+	
+	public static String getForEntityTest(String url, Map<String, Object> map,Map<String,String> headerMap) {
+		HttpHeaders headers = new HttpHeaders();
+		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+		headers.setContentType(type);
+		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		if(headerMap != null) {
+			for (String key : headerMap.keySet()) {
+				headers.add(key, headerMap.get(key));
+			}
+		}
+		HttpEntity<Map<String, Object>> entity = new HttpEntity<Map<String, Object>>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response =null;
+		try {
+			response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class,map);
+			
+			} catch (HttpClientErrorException e) {
+					//捕捉HTTP异常		
+					return e.getResponseBodyAsString();
+			} catch (Exception e) {
+					//捕捉所有异常
+					e.printStackTrace();
+			}
+		return response.getBody();
+	}
+	
+	public static String postForEntityFormData(String url, MultiValueMap<String, Object> map) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<MultiValueMap<String, Object>>(map, headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+		return response.getBody();
+	}
+	
+	public static String getForEntityFormData(String url, MultiValueMap<String, Object> map,Map<String,String> headerMap) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		if(headerMap != null) {
+			for (String key : headerMap.keySet()) {
+				headers.add(key, headerMap.get(key));
+			}
+		}
+		HttpEntity<Map<String, Object>> entity = new HttpEntity<Map<String, Object>>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class,map);
+		return response.getBody();
+	}
+	
+}

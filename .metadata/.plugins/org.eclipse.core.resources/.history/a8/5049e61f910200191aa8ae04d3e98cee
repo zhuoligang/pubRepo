@@ -1,0 +1,24 @@
+package org.bibr.user.center.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.user.center.bean.bo.CenterSuperInvites;
+
+public interface CenterSuperInvitesMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(CenterSuperInvites record);
+
+    int insertSelective(CenterSuperInvites record);
+
+    CenterSuperInvites selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(CenterSuperInvites record);
+
+    int updateByPrimaryKey(CenterSuperInvites record);
+    
+    List<CenterSuperInvites> findCenterSuperInvites(Map<String, String> map);
+    
+    List<CenterSuperInvites> showSuperiors(Map<String, String> map);
+}

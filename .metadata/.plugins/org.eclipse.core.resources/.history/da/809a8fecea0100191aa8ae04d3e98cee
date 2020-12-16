@@ -1,0 +1,65 @@
+package org.bibr.user.center.bean.bo;
+
+import java.util.Date;
+
+public class CenterSuperInvites {
+    private String id;
+
+    private String superId;
+
+    private String memberId;
+
+    private String mobile;
+
+    private Integer relationLevel;
+
+    private Date relationTime;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id == null ? null : id.trim();
+    }
+
+    public String getSuperId() {
+        return superId;
+    }
+
+    public void setSuperId(String superId) {
+        this.superId = superId == null ? null : superId.trim();
+    }
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId == null ? null : memberId.trim();
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile == null ? null : mobile.trim();
+    }
+
+    public Integer getRelationLevel() {
+        return relationLevel;
+    }
+
+    public void setRelationLevel(Integer relationLevel) {
+        this.relationLevel = relationLevel;
+    }
+
+    public Date getRelationTime() {
+        return relationTime;
+    }
+
+    public void setRelationTime(Date relationTime) {
+        this.relationTime = relationTime;
+    }
+}

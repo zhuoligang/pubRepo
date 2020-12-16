@@ -1,0 +1,61 @@
+package org.bibr.accountcheck.center.thread;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bibr.accountcheck.center.bean.bo.AssetAccount;
+import org.bibr.accountcheck.center.constant.AccountCheckConstant;
+import org.bibr.accountcheck.center.exception.BusinessException;
+import org.bibr.accountcheck.center.service.AccountCheckService;
+import org.bibr.accountcheck.center.util.RestTemplateUtil;
+import org.bibr.accountcheck.center.util.SpringContextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+public class AccountCheckThread implements Runnable{
+	
+	private final static Logger logger = LoggerFactory.getLogger(CoreCheckThread.class);
+	
+	private AccountCheckService accountCheckService = (AccountCheckService) SpringContextUtil.getBean(AccountCheckService.class);
+	
+	private AssetAccount assetAccount;
+	
+	public AccountCheckThread(AssetAccount assetAccount) {
+		super();
+		this.assetAccount = assetAccount;
+	}
+
+	@Override
+	public void run() {
+		//a 查询用户持有币种，分别校验【分别做业务】
+		String coinCode = assetAccount.getCoinCode();
+		//资产币种冻结数量
+		BigDecimal coldMoney = assetAccount.getColdMoney();
+		//资产币种可用数量
+		BigDecimal hotMoney = assetAccount.getHotMoney();
+		//资产总额
+		BigDecimal sumMoney = hotMoney.add(coldMoney);
+		//币流水记录总额
+		BigDecimal sumSerialMoney = this.accountCheckService.sumSerialMoney(assetAccount.getUserId(), coinCode);
+		if(!sumMoney.equals(sumSerialMoney)){
+			try {//账务有误，通知用户中心冻结用户
+				String url = "http://192.168.31.28:8088/center/api/freezeUserForAccountCheck";
+				Map<String,String> sendMap = new HashMap<>();
+				sendMap.put("userId", assetAccount.getUserId());
+				String result = RestTemplateUtil.postForEntity(url, JSONObject.toJSONString(sendMap));
+				Map<String,Object> map_ = (Map<String, Object>) JSON.parse(result);
+				if(map_.get("code") == null || Integer.parseInt(map_.get("code").toString()) != 200){
+					throw new BusinessException(AccountCheckConstant.CODE_500, "用户中心系统错误，请联系管理员");
+				}
+			} catch (Exception e) {
+				throw new BusinessException(AccountCheckConstant.CODE_500, "调用用户中心错误");
+			}
+		}
+		
+	}
+
+}

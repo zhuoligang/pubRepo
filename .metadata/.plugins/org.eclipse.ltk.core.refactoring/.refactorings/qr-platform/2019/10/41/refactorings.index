@@ -1,0 +1,4 @@
+1570499782774	Extract local variable 'body'
+1570499889659	Extract local variable 'sendRegSms'
+1570590940446	Extract local variable 'setScale'
+1570610814020	Extract local variable 'divide'

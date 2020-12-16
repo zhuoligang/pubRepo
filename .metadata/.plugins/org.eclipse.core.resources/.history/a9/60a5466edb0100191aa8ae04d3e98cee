@@ -1,0 +1,17 @@
+package org.bibr.user.center.dao;
+
+import org.bibr.user.center.bean.bo.CenterSuperMember;
+
+public interface CenterSuperMemberMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(CenterSuperMember record);
+
+    int insertSelective(CenterSuperMember record);
+
+    CenterSuperMember selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(CenterSuperMember record);
+
+    int updateByPrimaryKey(CenterSuperMember record);
+}

@@ -1,0 +1,29 @@
+package org.bibr.distributed.octopus.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.distributed.octopus.bean.vo.OctopusArticleVO;
+import org.bibr.distributed.octopus.constant.OctopusConstant;
+import org.bibr.distributed.octopus.dao.OctopusColumnTailMapper;
+import org.bibr.distributed.octopus.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OctopusColumnService {
+	private final static Logger logger = LoggerFactory.getLogger(OctopusColumnService.class);
+	@Autowired
+	private OctopusColumnTailMapper octopusColumnTailMapper;
+
+	public List<OctopusArticleVO> addColumn(Map<String, Object> map) {
+		if(map == null || map.get("columnLevel") == null || map.get("name") == null){
+			throw new BusinessException(OctopusConstant.CODE_500, OctopusConstant.FILL_IN_REQUIRED);
+		}
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+}

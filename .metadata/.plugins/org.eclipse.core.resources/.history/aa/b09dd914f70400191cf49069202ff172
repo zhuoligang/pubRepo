@@ -1,0 +1,37 @@
+package org.bibr.robot.module.constant;
+/**
+ * 
+* @ClassName: RobotConstant
+* @Description: TODO(机器人常量类)
+* @author Administrator
+* @date 2018年12月7日下午4:14:23
+*
+ */
+public class RobotConstant {
+	// 通讯成功
+	public static final int CODE_200 = 200;
+	// 非法，ip非法等
+	public static final int CODE_300 = 300;
+	// 失败
+	public static final int CODE_500 = 500;
+	// 需登录
+	public static final int CODE_600 = 600;
+	
+	public static final String SUCCESS = "success";
+	
+	public static final String FAILURE = "failure";
+	
+	public static final String KEYWORDS_SUCCESS = "成功";
+	
+	public static final String KEYWORDS_FAILURE = "失败";
+	
+	public static final String DESERIALIZATION_ERROR = "反序列化出现错误";
+	
+	public static final String FILL_IN_REQUIRED ="请规范填写必填内容";
+	
+	public static final String ROBOT_CACHENAME = "robot:";
+	// 默认缓存时间 7天
+	public static final int ROBOT_CACHETIME = 604800;
+	//数据中心接口--获取交易对买卖最新行情数据
+	public static final String DATACENTER_GETPRICE_URL = "http://192.168.31.127:8084/api/market/ticker?market={market}";
+}

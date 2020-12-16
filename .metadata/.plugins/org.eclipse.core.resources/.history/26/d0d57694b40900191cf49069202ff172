@@ -1,0 +1,5 @@
+package org.bibr.distributed.octopus.service;
+
+public class OctopusColumnService {
+
+}

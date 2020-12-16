@@ -1,0 +1,22 @@
+package org.bibr.accountcheck.center.dao;
+
+import java.math.BigDecimal;
+import java.util.Map;
+
+import org.bibr.verifysafety.center.bean.bo.AssetHotAccountRecord;
+
+public interface AssetHotAccountRecordMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(AssetHotAccountRecord record);
+
+    int insertSelective(AssetHotAccountRecord record);
+
+    AssetHotAccountRecord selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(AssetHotAccountRecord record);
+
+    int updateByPrimaryKey(AssetHotAccountRecord record);
+    
+    BigDecimal sumHotMoney(Map<String,String> map);
+}

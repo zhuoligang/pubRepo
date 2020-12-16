@@ -1,0 +1,20 @@
+1563852971894	Move compilation units
+1563865345638	Extract local variable 'voidPromise'
+1563865349180	Extract local variable 'newPromise'
+1563866287743	Extract local variable 'writeAndFlush'
+1563866451033	Extract local variable 'write'
+1563866600292	Extract local variable 'writeAndFlush1'
+1563869645036	Extract local variable 'cache'
+1563870498982	Extract local variable 'cache'
+1563871387263	Extract local variable 'j2o'
+1563871568920	Extract local variable 'applicationContext'
+1563871600712	Extract local variable 'servletContext'
+1563936004261	Extract local variable 'unGZip'
+1563941118695	Delete element
+1563941161679	Extract local variable 'gZip'
+1563942494629	Delete element
+1563949115435	Copy compilation unit
+1563950304491	Copy compilation unit
+1563950325275	Copy compilation unit
+1563950351894	Copy file
+1563951099149	Copy compilation unit

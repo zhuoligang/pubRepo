@@ -1,0 +1,214 @@
+package org.bibr.user.center.controller.api;
+
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.user.center.bean.bo.CenterSuperInvites;
+import org.bibr.user.center.bean.bo.CenterSuperMember;
+import org.bibr.user.center.bean.bo.CenterUserMain;
+import org.bibr.user.center.bean.vo.ResultVO;
+import org.bibr.user.center.constant.UserCenterConstant;
+import org.bibr.user.center.exception.BusinessException;
+import org.bibr.user.center.service.UserCenterService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSONObject;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+@Controller
+@RequestMapping("/center/api")
+@Api(value = "用户相关的api")
+public class UserCenterController {
+	private final static Logger logger = LoggerFactory.getLogger(UserCenterController.class);
+	
+	@Autowired
+	private UserCenterService userCenterService;
+	
+	@ApiOperation(value = "查询注册时间内的所有用户信息————zlg",
+			notes = "起始时间		startTime（非必填）<br>结束时间		endTime（非必填）<br>ps:		两个字段必填一个")
+	@RequestMapping(value = "/findCenterUserMains", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<List<CenterUserMain>> findCenterUserMains(@RequestBody @ApiParam(name = "条件map",
+            value = "jeson格式map", required = true) Map<String, String> map) {
+		logger.info("&UserCenterMode&UserCenterController&findCenterUserMains&ApiStatistics");
+		List<CenterUserMain> centerUserMains = null;
+		try {
+			centerUserMains = this.userCenterService.findCenterUserMains(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("findCenterUserMains?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("findCenterUserMains?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<List<CenterUserMain>>(UserCenterConstant.CODE_200,UserCenterConstant.SUCCESS, centerUserMains);
+	}
+	
+	@ApiOperation(value = "精确查询用户信息————zlg",
+			notes = "用户uuid		uuid（非必填）<br> 用户memberId		memberId（非必填）<br>ps:2个字段必须存在一个")
+	@RequestMapping(value = "/findCenterUserMain", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<CenterUserMain> findCenterUserMain(@RequestBody @ApiParam(name = "条件map",
+            value = "jeson格式map", required = true) Map<String, String> map) {
+		logger.info("&UserCenterMode&UserCenterController&findCenterUserMain&ApiStatistics");
+		CenterUserMain centerUserMain = null;
+		try {
+			centerUserMain = this.userCenterService.findCenterUserMain(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("findCenterUserMain?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("findCenterUserMain?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<CenterUserMain>(UserCenterConstant.CODE_200,UserCenterConstant.SUCCESS, centerUserMain);
+	}
+	
+	@ApiOperation(value = "添加一个超级伙伴用户————zlg",
+			notes = "用户uuid		uuid（必填）")
+	@RequestMapping(value = "/findCenterSuperMember", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<String> addCenterSuperMember(@RequestBody @ApiParam(name = "条件map",
+            value = "jeson格式map", required = true) Map<String, String> map) {
+		logger.info("&UserCenterMode&UserCenterController&addCenterSuperMember&ApiStatistics");
+		String str = null;
+		try {
+			str = this.userCenterService.addCenterSuperMember(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("addCenterSuperMember?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("addCenterSuperMember?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<String>(UserCenterConstant.CODE_200,UserCenterConstant.SUCCESS, str);
+	}
+	
+	@ApiOperation(value = "查询指定（所有）超级伙伴用户————zlg",
+			notes = "用户uuid		uuid（非必填）")
+	@RequestMapping(value = "/findCenterSuperMember", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<List<CenterSuperMember>> findCenterSuperMember(@RequestBody @ApiParam(name = "条件map",
+            value = "jeson格式map", required = true) Map<String, String> map) {
+		logger.info("&UserCenterMode&UserCenterController&findCenterSuperMember&ApiStatistics");
+		List<CenterSuperMember> list = null;
+		try {
+			list = this.userCenterService.findCenterSuperMember(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("findCenterSuperMember?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("findCenterSuperMember?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<List<CenterSuperMember>>(UserCenterConstant.CODE_200,UserCenterConstant.SUCCESS, list);
+	}
+	
+	@ApiOperation(value = "查询指定超级伙伴邀请的所有伙伴信息————zlg",
+			notes = "超级伙伴uuid		superId（必填）")
+	@RequestMapping(value = "/findCenterSuperInvites", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<List<CenterSuperInvites>> findCenterSuperInvites(@RequestBody @ApiParam(name = "条件map",
+            value = "jeson格式map", required = true) Map<String, String> map) {
+		logger.info("&UserCenterMode&UserCenterController&findCenterSuperInvites&ApiStatistics");
+		List<CenterSuperInvites> list = null;
+		try {
+			list = this.userCenterService.findCenterSuperInvites(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("findCenterSuperInvites?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("findCenterSuperInvites?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<List<CenterSuperInvites>>(UserCenterConstant.CODE_200,UserCenterConstant.SUCCESS, list);
+	}
+	
+	@ApiOperation(value = "将用户信息存入缓存————zlg",
+			notes = "用户uuid		uuid（必填）")
+	@RequestMapping(value = "/putUserCache", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<Boolean> putUserCache(@RequestBody @ApiParam(name = "条件map",
+            value = "jeson格式map", required = true) Map<String, String> map) {
+		logger.info("&UserCenterMode&UserCenterController&putUserCache&ApiStatistics");
+		Boolean bool = false;
+		try {
+			bool = this.userCenterService.putUserCache(map);
+//			this.userCenterService.sendMsgByMq(map.get("uuid"), "add");
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("putUserCache?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("putUserCache?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<Boolean>(UserCenterConstant.CODE_200,UserCenterConstant.SUCCESS, bool);
+	}
+	
+	@ApiOperation(value = "将用户信息从缓存取出————zlg",
+			notes = "用户uuid		uuid（必填）")
+	@RequestMapping(value = "/getUserCache", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<CenterUserMain> getUserCache(@RequestBody @ApiParam(name = "条件map",
+            value = "jeson格式map", required = true) Map<String, String> map) {
+		logger.info("&UserCenterMode&UserCenterController&getUserCache&ApiStatistics");
+		CenterUserMain userMember = null;
+		try {
+			userMember = this.userCenterService.getUserCache(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("getUserCache?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("getUserCache?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<CenterUserMain>(UserCenterConstant.CODE_200,UserCenterConstant.SUCCESS, userMember);
+	}
+	
+	@ApiOperation(value = "将用户信息从缓存中清除————zlg",
+			notes = "用户uuid		uuid（必填）")
+	@RequestMapping(value = "/deleteUserCache", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<Boolean> deleteUserCache(@RequestBody @ApiParam(name = "条件map",
+            value = "jeson格式map", required = true) Map<String, String> map) {
+		logger.info("&UserCenterMode&UserCenterController&deleteUserCache&ApiStatistics");
+		Boolean bool = false;
+		try {
+			bool = this.userCenterService.deleteUserCache(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("deleteUserCache?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("deleteUserCache?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<Boolean>(UserCenterConstant.CODE_200,UserCenterConstant.SUCCESS, bool);
+	}
+	
+}

@@ -1,0 +1,5 @@
+1583120834811	Encapsulate field 'image'
+1583120929235	Encapsulate field 'image'
+1583120964747	Encapsulate field 'image'
+1583141995897	Extract local variable 'buildPublishPpb'
+1583221939855	Encapsulate field 'enabled'

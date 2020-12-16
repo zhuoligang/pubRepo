@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract local variable &apos;setTransationOrder&apos; from expression &apos;setTransationOrder(redisCache,orderVo)&apos;&#x0D;&#x0A;- Original project: &apos;bibr-robot-module&apos;&#x0D;&#x0A;- Variable name: &apos;setTransationOrder&apos;&#x0D;&#x0A;- Destination method: &apos;org.bibr.robot.module.thread.NewRobotThread.run()&apos;&#x0D;&#x0A;- Variable expression: &apos;setTransationOrder(redisCache,orderVo)&apos;&#x0D;&#x0A;- Replace occurrences of expression with variable" description="Extract local variable &apos;setTransationOrder&apos;" final="false" id="org.eclipse.jdt.ui.extract.temp" input="/src\/main\/java&lt;org.bibr.robot.module.thread{NewRobotThread.java" name="setTransationOrder" replace="true" selection="6524 40" stamp="1562574595696" version="1.0"/>
+</session>

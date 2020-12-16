@@ -1,0 +1,38 @@
+1578276279448	Extract local variable 'contentPane'
+1578280020634	Extract local variable 'builder'
+1578280214938	Extract local variable 'nl'
+1578280242806	Extract local variable 'classNode'
+1578280381869	Extract local variable 'c'
+1578280398726	Extract local variable 'obj'
+1578281366657	Extract local variable 'p'
+1578291618099	Extract local variable 'jLabel'
+1578299411997	Extract local variable 'builder'
+1578299524649	Extract local variable 'nl'
+1578299544912	Extract local variable 'firstChild'
+1578299607460	Extract local variable 'forName'
+1578299627056	Extract local variable 'obj'
+1578299769902	Extract local variable 'object'
+1578300262369	Delete elements
+1578300371466	Delete element
+1578300462311	Delete element
+1578300497016	Delete element
+1578300692686	Delete elements
+1578300771213	Delete elements
+1578300784410	Delete element
+1578301440813	Delete elements
+1578301526337	Delete elements
+1578301565525	Rename type 'AnimalFarmTest'
+1578301711619	Delete elements
+1578301755056	Delete element
+1578301793851	Delete element
+1578301946566	Delete element
+1578364622917	Extract local variable 'abs'
+1578368573778	Extract local variable 'builder'
+1578368650741	Extract local variable 'nl'
+1578368832537	Extract local variable 'forName'
+1578369101590	Extract local variable 'object'
+1578369322190	Extract local variable 'name'
+1578450334039	Rename package 'org.lg.pay.module.controller.designPattern.facade'
+1578453476413	Extract local variable 'object'
+1578465555753	Extract local variable 'flyweight'
+1578640036660	Move compilation unit

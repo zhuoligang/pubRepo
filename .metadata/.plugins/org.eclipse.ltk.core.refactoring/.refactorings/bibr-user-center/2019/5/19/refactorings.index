@@ -1,0 +1,25 @@
+1557219913870	Extract local variable 'ocridcard'
+1557223825794	Move compilation unit
+1557225249753	Extract local variable 'bizToken'
+1557371551610	Extract local variable 'ocridcard'
+1557392391167	Rename package 'org.bibr.user.center.controller.faceid_app'
+1557393409145	Copy package
+1557393428303	Delete element
+1557393437271	Rename package 'org.bibr.user.center.controller.app'
+1557393465979	Move compilation unit
+1557393513294	Move compilation unit
+1557393539615	Copy compilation units
+1557393546616	Delete element
+1557393556278	Delete element
+1557393583752	Move compilation unit
+1557393671882	Move compilation unit
+1557393675991	Move compilation unit
+1557393680942	Move compilation unit
+1557393683918	Delete element
+1557393707047	Delete element
+1557394327100	Extract local variable 'ocridcard'
+1557394575936	Extract local variable 'bizTokenForImageContrast'
+1557394601682	Extract local variable 'bizTokenForImageContrast'
+1557394672308	Extract local variable 'appVerifyImageContrast'
+1557394999606	Extract local variable 'bizTokenForLivingContrast'
+1557398135827	Rename package 'org.bibr.user.center.faceid'

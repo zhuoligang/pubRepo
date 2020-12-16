@@ -1,0 +1,32 @@
+package org.bibr.accountcheck.center.schedule;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+/**
+ * 用户定时任务
+ * 
+ * @author zhuoligang
+ *
+ */
+@Component
+public class AccountCheckSchedule {
+
+	private final static Logger logger = LoggerFactory.getLogger(AccountCheckSchedule.class);
+	
+	/**
+	 * 测试，每分钟执行一次
+	 */
+//	@Scheduled(cron = "0 0/10 * * * ?")
+//	@Scheduled(cron = "0/10 * * * * ?")
+//	@Scheduled(fixedDelay = 1000)
+	@Async("initSchedulingTaskExecutor")
+	public void archiveAccountJob() {
+		logger.info("&UserCenterMode&UserCenterSchedule&archiveAccountJob&ApiStatistics");
+	}
+	
+}

@@ -1,0 +1,86 @@
+package org.bibr.user.center.thread;
+
+import java.util.Date;
+
+import org.bibr.user.center.bean.bo.CenterSuperInvites;
+import org.bibr.user.center.bean.bo.CenterSuperMember;
+import org.bibr.user.center.bean.bo.CenterUserMain;
+import org.bibr.user.center.constant.UserCenterConstant;
+import org.bibr.user.center.dao.CenterSuperInvitesMapper;
+import org.bibr.user.center.dao.CenterSuperMemberMapper;
+import org.bibr.user.center.dao.CenterUserMainMapper;
+import org.bibr.user.center.exception.BusinessException;
+import org.bibr.user.center.util.SpringContextUtil;
+import org.bibr.user.center.util.UserCenterUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+/**
+ * 
+* @ClassName: SuperMemberThread
+* @Description: TODO(超级伙伴异步线程)
+* @author Administrator
+* @date 2018年12月17日下午6:16:30
+*
+ */
+public class SuperMemberThread implements Runnable {
+	private final static Logger logger = LoggerFactory.getLogger(SuperMemberThread.class);
+	//注册人uuid
+	private String userId;
+	//注册人mobile
+	private String mobile;
+	//注册时间
+	private Date regTime;
+	//推荐人id
+	private String parentId;
+	
+	private CenterUserMainMapper centerUserMainMapper = (CenterUserMainMapper) SpringContextUtil.getBean(CenterUserMainMapper.class);
+	
+	private CenterSuperMemberMapper centerSuperMemberMapper = (CenterSuperMemberMapper) SpringContextUtil.getBean(CenterSuperMemberMapper.class);
+	
+	private CenterSuperInvitesMapper centerSuperInvitesMapper = (CenterSuperInvitesMapper) SpringContextUtil.getBean(CenterSuperInvitesMapper.class);
+	
+	public SuperMemberThread(String userId, String mobile, Date regTime, String parentId) {
+		super();
+		this.userId = userId;
+		this.mobile = mobile;
+		this.regTime = regTime;
+		this.parentId = parentId;
+	}
+
+	@Override
+	public void run() {
+		//推荐人是否存在
+		CenterUserMain centerUserMain = this.centerUserMainMapper.selectByMemberId(parentId);
+		try {
+			if(centerUserMain != null){
+				//如果存在，是否是超级伙伴用户
+				CenterSuperMember centerSuperMember = this.centerSuperMemberMapper.selectByPrimaryKey(centerUserMain.getId());
+				if(centerSuperMember != null){//是，则是一级好友关系
+					CenterSuperInvites CenterSuperInvites = new CenterSuperInvites(
+							UserCenterUtil.createUUId(), parentId, userId, mobile, 1, regTime);
+					this.centerSuperInvitesMapper.insert(CenterSuperInvites);
+				}else{//不是，再看邀请人的邀请人是否是超级伙伴用户
+					String superId = this.centerUserMainMapper.selectParentIdByMemberId(parentId);
+					if(superId != null && !"".equals(superId)){
+						//推荐人的推荐人是否存在
+						CenterUserMain cum = this.centerUserMainMapper.selectByMemberId(superId);
+						if(cum != null){//如果存在，是否是超级伙伴用户
+							CenterSuperMember csm = this.centerSuperMemberMapper.selectByPrimaryKey(cum.getId());
+							if(csm != null){//是，则是二级好友关系
+								CenterSuperInvites CenterSuperInvites = new CenterSuperInvites(
+										UserCenterUtil.createUUId(), superId, userId, mobile, 2, regTime);
+								this.centerSuperInvitesMapper.insert(CenterSuperInvites);
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+        	logger.error("超级合伙人程序错误，请联系管理员",e);
+            throw new BusinessException(UserCenterConstant.CODE_500, "超级合伙人程序错误，请联系管理员");
+		}
+	}
+
+}

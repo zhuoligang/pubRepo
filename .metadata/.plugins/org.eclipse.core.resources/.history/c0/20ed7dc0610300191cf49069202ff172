@@ -1,0 +1,17 @@
+package org.bibr.accountcheck.center.dao;
+
+import org.bibr.accountcheck.center.bean.bo.AssetAccount;
+
+public interface AssetAccountMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(AssetAccount record);
+
+    int insertSelective(AssetAccount record);
+
+    AssetAccount selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(AssetAccount record);
+
+    int updateByPrimaryKey(AssetAccount record);
+}

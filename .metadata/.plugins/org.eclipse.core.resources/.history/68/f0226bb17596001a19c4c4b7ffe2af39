@@ -1,0 +1,90 @@
+package com.lg.web.module.schedule;
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import com.lg.web.module.conf.RedisCache;
+import com.lg.web.module.constant.WebConstant;
+import com.lg.web.module.exception.BusinessException;
+import com.lg.web.module.websocket.WebsocketServer;
+
+@Component
+public class LgSchedule {
+	private final static Logger logger = LoggerFactory.getLogger(LgSchedule.class);
+
+	@Autowired
+	private RedisCache redisCache;
+
+	// @Scheduled(cron = "0/10 * * * * ?")
+	// @Scheduled(fixedDelay = 10000)
+	@Async("initSchedulingTaskExecutor")
+	public void robotEntrustJob() {
+		logger.info("定时任务。。。。。。" + new Date().toString());
+	}
+
+	@Scheduled(cron = "0 0/1 * * * ?")
+	@Async("initSchedulingTaskExecutor")
+	public void oneMinutesOptionsJob() {
+		logger.info("一分钟期权定时任务。。。。。。" + new Date().toString());
+		this.redisCache.setCache("minutes_options:one:", "1");
+		this.redisCache.expire("minutes_options:one:", 60, TimeUnit.SECONDS);
+		try {
+			WebsocketServer.sendMsg("50");
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(WebConstant.CODE_500, e.getMessage());
+		}
+
+	}
+	
+	@Scheduled(cron = "0 0/2 * * * ?")
+	@Async("initSchedulingTaskExecutor")
+	public void twoMinutesOptionsJob() {
+		logger.info("二分钟期权定时任务。。。。。。" + new Date().toString());
+		this.redisCache.setCache("minutes_options:one:", "2");
+		this.redisCache.expire("minutes_options:one:", 120, TimeUnit.SECONDS);
+		try {
+			WebsocketServer.sendMsg("110");
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(WebConstant.CODE_500, e.getMessage());
+		}
+	}
+	
+	@Scheduled(cron = "0 0/5 * * * ?")
+	@Async("initSchedulingTaskExecutor")
+	public void fiveMinutesOptionsJob() {
+		logger.info("五分钟期权定时任务。。。。。。" + new Date().toString());
+		this.redisCache.setCache("minutes_options:one:", "5");
+		this.redisCache.expire("minutes_options:one:", 300, TimeUnit.SECONDS);
+		try {
+			WebsocketServer.sendMsg("290");
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(WebConstant.CODE_500, e.getMessage());
+		}
+	}
+
+	@Scheduled(fixedDelay = 1000)
+	@Async("initSchedulingTaskExecutor")
+	public void oneMinutesOptionsNoticeJob() {
+		// logger.info("一分钟期权定时通知任务。。。。。。" + new Date().toString());
+		Long expire = this.redisCache.getExpire("minutes_options:one:", TimeUnit.SECONDS);
+		try {
+			if (expire >= 10) {
+				System.out.println("------" + expire);
+				WebsocketServer.sendInfo(String.valueOf(expire - 10L), "one");
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(WebConstant.CODE_500, e.getMessage());
+		}
+	}
+}

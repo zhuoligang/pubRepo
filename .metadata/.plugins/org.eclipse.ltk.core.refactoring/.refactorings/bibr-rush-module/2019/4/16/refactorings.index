@@ -1,0 +1,64 @@
+1555299273881	Move compilation unit
+1555307653399	Delete element
+1555307760419	Delete element
+1555307762520	Delete element
+1555307984482	Delete element
+1555311232734	Delete elements
+1555311244847	Delete element
+1555313635963	Move compilation unit
+1555313726262	Delete element
+1555313764836	Move files
+1555313808161	Rename package 'asset'
+1555313813027	Rename package 'rush'
+1555313820137	Rename package 'org.bibr.rush.module.dao.rush'
+1555313823692	Rename package 'org.bibr.rush.module.dao.asset'
+1555314251144	Move compilation unit
+1555314494010	Copy compilation unit
+1555314761989	Move compilation unit
+1555315979165	Copy files
+1555316214084	Delete elements
+1555380571498	Extract local variable 'findShoppingChilds'
+1555381038869	Extract local variable 'findShoppingIndex'
+1555400315138	Delete element
+1555404645486	Extract local variable 'cache2'
+1555414858053	Delete element
+1555414873004	Delete element
+1555415000364	Delete element
+1555415371675	Delete element
+1555415396510	Delete element
+1555415426305	Delete element
+1555415955076	Delete element
+1555415960902	Delete element
+1555415967105	Delete element
+1555415986662	Delete element
+1555416006392	Delete element
+1555416116863	Extract local variable 'selectByPrimaryKey'
+1555419596557	Delete element
+1555419601594	Delete element
+1555419610385	Delete element
+1555473617790	Extract local variable 'parse'
+1555479851971	Delete element
+1555479854661	Delete element
+1555479862091	Delete element
+1555479863885	Delete element
+1555480358926	Extract local variable 'cache2'
+1555480947375	Extract local variable 'cacheDim'
+1555482669088	Extract local variable 'cache2'
+1555483960476	Encapsulate field 'shoppingChild'
+1555484180475	Extract local variable 'cache2'
+1555485618270	Extract local variable 'showRecords'
+1555485763510	Extract local variable 'showErchTotal'
+1555493338180	Encapsulate field 'data'
+1555496418158	Extract local variable 'memberId'
+1555498129362	Extract local variable 'byCode'
+1555554501054	Delete element
+1555555866804	Move file
+1555566713325	Delete element
+1555566780421	Delete element
+1555567798514	Extract local variable 'cache2'
+1555568969157	Delete element
+1555568990269	Delete element
+1555570338702	Extract local variable 'oneKeyRuch'
+1555571725806	Copy file
+1555571731242	Move file
+1555571734107	Copy file

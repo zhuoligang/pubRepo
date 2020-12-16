@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CommitComments>	<CommitComment>修改高级认证类型</CommitComment>
+	<CommitComment>1.加入用户操作日志功能模块
+2.新增承兑接口：
+a.获取指定平台币基本信息
+b.修改指定用户基本信息
+c.批量冻结、解冻用户</CommitComment>
+	<CommitComment>1.新增承兑划转功能
+2.新增承兑查询指定用户所有承兑平台对应币种账户信息功能
+3.开放给承兑调用的接口重新定义通行码
+4.新增推送承兑用户数据功能</CommitComment>
+	<CommitComment>1.redis架包下载
+2.redis整合全套配置文件
+3.序列化工具类
+4.redis两套封装</CommitComment>
+	<CommitComment>1.每日用户第一次登陆监控需求
+2.mvc全套代码提交
+3.每日0点定时任务清除表记录</CommitComment>
+	<CommitComment>优化排名接口速度</CommitComment>
+	<CommitComment>优化排名机制</CommitComment>
+	<CommitComment>优化个人排名</CommitComment>
+	<CommitComment>修改个人排名逻辑</CommitComment>
+	<CommitComment>新增如果有效受邀好友人数一致，以获取总奖励数再排名</CommitComment>
+</CommitComments>

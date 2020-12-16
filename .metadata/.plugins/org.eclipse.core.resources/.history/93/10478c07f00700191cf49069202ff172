@@ -1,0 +1,44 @@
+package org.bibr.robot.module.bean.vo;
+
+import java.math.BigDecimal;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel("机器人模拟下单实体类")
+public class OrderVo {
+    @ApiModelProperty("机器人id")
+	private Integer robotId;
+    @ApiModelProperty("价格")
+    private BigDecimal price;
+    @ApiModelProperty("数量")
+    private BigDecimal countCurform;
+    @ApiModelProperty("是否是买单")
+    private boolean isBuy;
+    
+	public Integer getRobotId() {
+		return robotId;
+	}
+	public void setRobotId(Integer robotId) {
+		this.robotId = robotId;
+	}
+	public BigDecimal getPrice() {
+		return price;
+	}
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+	public BigDecimal getCountCurform() {
+		return countCurform;
+	}
+	public void setCountCurform(BigDecimal countCurform) {
+		this.countCurform = countCurform;
+	}
+	public boolean isBuy() {
+		return isBuy;
+	}
+	public void setBuy(boolean isBuy) {
+		this.isBuy = isBuy;
+	}
+    
+}

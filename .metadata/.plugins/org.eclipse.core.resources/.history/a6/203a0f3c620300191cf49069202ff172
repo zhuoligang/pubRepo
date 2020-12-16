@@ -1,0 +1,11 @@
+package org.bibr.accountcheck.center.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AccountCheckService {
+	private final static Logger logger = LoggerFactory.getLogger(AccountCheckService.class);
+
+}

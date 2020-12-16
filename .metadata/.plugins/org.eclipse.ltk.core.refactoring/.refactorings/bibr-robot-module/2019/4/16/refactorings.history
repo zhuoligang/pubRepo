@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;SpringContextUtil.java&apos; to &apos;bibr-rush-module/src/main/java/org.bibr.rush.module.util&apos;&#x0D;&#x0A;- Original project: &apos;bibr-robot-module&apos;&#x0D;&#x0A;- Destination element: &apos;bibr-rush-module/src/main/java/org.bibr.rush.module.util&apos;&#x0D;&#x0A;- Original element: &apos;org.bibr.robot.module.util.SpringContextUtil.java&apos;" description="Copy compilation unit" destination="=bibr-rush-module/src\/main\/java&lt;org.bibr.rush.module.util" element1="/src\/main\/java&lt;org.bibr.robot.module.util{SpringContextUtil.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1555491465520" units="1" version="1.0"/>
+</session>

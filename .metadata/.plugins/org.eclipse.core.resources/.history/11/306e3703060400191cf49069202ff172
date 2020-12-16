@@ -1,0 +1,44 @@
+package org.bibr.accountcheck.center.thread;
+
+import java.math.BigDecimal;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+/**
+ * 
+* @ClassName: ThresholdThread
+* @Description: TODO(阈值控制校验)
+* @author Administrator
+* @date 2018年12月18日下午5:26:21
+*
+ */
+public class ThresholdThread implements Runnable{
+	public static void main(String[] args) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Accept", "application/json");
+		headers.add("X-CMC_PRO_API_KEY", "13f7c0fa-2598-424e-8aa7-40092431662b");
+        RestTemplate template = new RestTemplate();
+        HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> response = template.exchange("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=" + "ETH" + "&convert=" + "CNY", 
+        		HttpMethod.GET, requestEntity, String.class);
+		String str = response.getBody();
+		System.out.println(str);
+	}
+	
+	private final static Logger logger = LoggerFactory.getLogger(ThresholdThread.class);
+	//阈值：参考值1000000
+	private BigDecimal countThreshold;
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

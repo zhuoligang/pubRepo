@@ -1,0 +1,118 @@
+package org.bibr.verifysafety.center.util;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+
+/**
+ * 
+* @ClassName: AccountCheckUtil
+* @Description: TODO(这里用一句话描述这个类的作用)
+* @author Administrator
+* @date 2018年12月18日下午4:53:06
+*
+ */
+public class AccountCheckUtil {
+	public static void main(String[] args) {
+		String price = null;
+		Map<String,String> headerMap = new HashMap<>();
+		headerMap.put("Accept", "application/json");
+		headerMap.put("X-CMC_PRO_API_KEY", "13f7c0fa-2598-424e-8aa7-40092431662b");
+		Map<String, Object> sendMap = new HashMap<String, Object>();
+        sendMap.put("symbol", "ETH");
+        sendMap.put("convert", "CNY");
+		String str = RestTemplateUtil.getForEntity(AccountCheckConstant.GET_COIN_RATE, sendMap, headerMap);
+		try {
+			JSONObject jsonObj = JSON.parseObject(str);
+//			new JSONObject(str);
+			price = jsonObj.getJSONObject("data").getJSONObject("ETH").getJSONObject("quote").getJSONObject("CNY").get("price").toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(price);
+	}
+	
+	/**
+	 * 
+	* @Title: sendSms
+	* @Description: TODO(阿里云短信发送)
+	* @param @param mobile
+	* @param @param contents
+	* @param @return    设定文件
+	* @return boolean    返回类型
+	* @throws
+	 */
+	public static boolean sendSms(String mobile,String memberId, String countThreshold){
+		boolean bool = false;
+		if(countThreshold.isEmpty() || memberId.isEmpty()){
+			return bool;
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("memberId", memberId);
+		map.put("countThreshold", countThreshold);
+		JSONObject jsonParam = new JSONObject(map);
+		SendSmsResponse ssp = null ;
+//		try {
+//			ssp = SmsUtils.sendSms(mobile, jsonParam.toString());
+//		} catch (com.aliyuncs.exceptions.ClientException e) {
+//			e.printStackTrace();
+//			throw new BusinessException(AccountCheckConstant.CODE_500, "阿里云短信接口错误，请联系管理员");
+//		}
+//		if(ssp != null && ssp.getCode().equalsIgnoreCase("ok")){
+//			bool = true;
+//		}
+//		return bool;
+		//测试阶段不发送短信
+		return true;
+	}
+	
+	/**
+	 * 
+	* @Title: getCoinRate
+	* @Description: TODO(查询币与目标币种之间的汇率)
+	* @param @param coinCode
+	* @param @param targetCoinCode
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public static BigDecimal getCoinRate(String coinCode,String targetCoinCode){
+		if(coinCode != null && !"".equals(coinCode)){
+			coinCode = coinCode.toUpperCase();
+		}
+		if(targetCoinCode != null && !"".equals(targetCoinCode)){
+			targetCoinCode = targetCoinCode.toUpperCase();
+		}
+		String price = null;
+		try {
+		Map<String,String> headerMap = new HashMap<>();
+		headerMap.put("Accept", "application/json");
+		headerMap.put("X-CMC_PRO_API_KEY", "13f7c0fa-2598-424e-8aa7-40092431662b");
+		Map<String, Object> sendMap = new HashMap<String, Object>();
+        sendMap.put("symbol", coinCode);
+        sendMap.put("convert", targetCoinCode);
+		String str = RestTemplateUtil.getForEntity(AccountCheckConstant.GET_COIN_RATE, sendMap, headerMap);
+			JSONObject jsonObj = JSON.parseObject(str);
+//					new JSONObject(str);
+			price = jsonObj.getJSONObject("data").getJSONObject(coinCode).getJSONObject("quote").getJSONObject(targetCoinCode).get("price").toString();
+		} catch (JSONException e) {
+			throw new BusinessException(AccountCheckConstant.CODE_500, "获取汇率系统错误，请联系管理员");
+		}
+		return new BigDecimal(price);
+		
+	}
+	/**
+	 * uuid生产
+	 * @return
+	 */
+	public static String createUUId() {
+		return UUID.randomUUID().toString().replace("-", "");
+	}
+}

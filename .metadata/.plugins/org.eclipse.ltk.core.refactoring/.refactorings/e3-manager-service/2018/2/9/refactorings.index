@@ -1,0 +1,7 @@
+1519615898501	Extract local variable 'createCriteria'
+1519615924714	Extract local variable 'createCriteria'
+1519616505716	Extract local variable 'itemCatMapper2'
+1519616536972	Extract local variable 'selectByExample'
+1519616715178	Extract local variable 'arrayList'
+1519616732071	Extract local variable 'arrayList'
+1519616785820	Extract local variable 'resultList'

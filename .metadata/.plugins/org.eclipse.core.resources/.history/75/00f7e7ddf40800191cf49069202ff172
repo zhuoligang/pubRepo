@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.bibr.distributed.octopus.dao.OctopusArticleTypeMapper" >
+  <resultMap id="BaseResultMap" type="org.bibr.distributed.octopus.bean.po.OctopusArticleType" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type_id, name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from octopus_article_type
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from octopus_article_type
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.bibr.distributed.octopus.bean.po.OctopusArticleType" >
+    insert into octopus_article_type (id, type_id, name
+      )
+    values (#{id,jdbcType=VARCHAR}, #{typeId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.bibr.distributed.octopus.bean.po.OctopusArticleType" >
+    insert into octopus_article_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="typeId != null" >
+        type_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.bibr.distributed.octopus.bean.po.OctopusArticleType" >
+    update octopus_article_type
+    <set >
+      <if test="typeId != null" >
+        type_id = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.bibr.distributed.octopus.bean.po.OctopusArticleType" >
+    update octopus_article_type
+    set type_id = #{typeId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectByTypeId" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from octopus_article_type
+    where 1 = 1
+      <if test="typeIds != null" >
+       and type_id in
+       	    <foreach item="item" index="index" collection="typeIds" open="(" separator="," close=")">  
+			    #{item}  
+			</foreach> 
+      </if>
+    <if test="platform != null" >
+        and platform = #{platform,jdbcType=INTEGER}
+    </if>    
+  </select>
+  
+</mapper>

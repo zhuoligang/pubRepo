@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract local variable &apos;selectByMap&apos; from expression &apos;octopusArticleMapper.selectByMap(map)&apos;&#x0D;&#x0A;- Original project: &apos;bibr-octopus-module&apos;&#x0D;&#x0A;- Variable name: &apos;selectByMap&apos;&#x0D;&#x0A;- Destination method: &apos;org.bibr.distributed.octopus.service.OctopusArticleService.addOctopusArticleType()&apos;&#x0D;&#x0A;- Variable expression: &apos;octopusArticleMapper.selectByMap(map)&apos;&#x0D;&#x0A;- Replace occurrences of expression with variable" description="Extract local variable &apos;selectByMap&apos;" final="false" id="org.eclipse.jdt.ui.extract.temp" input="/src\/main\/java&lt;org.bibr.distributed.octopus.service{OctopusArticleService.java" name="selectByMap" replace="true" selection="4503 38" stamp="1550199376976" version="1.0"/>
+</session>

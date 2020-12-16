@@ -1,0 +1,88 @@
+package org.bibr.distributed.octopus.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.distributed.octopus.bean.po.OctopusArticle;
+import org.bibr.distributed.octopus.bean.po.OctopusArticleType;
+import org.bibr.distributed.octopus.bean.vo.OctopusArticleVO;
+import org.bibr.distributed.octopus.constant.OctopusConstant;
+import org.bibr.distributed.octopus.dao.OctopusArticleMapper;
+import org.bibr.distributed.octopus.dao.OctopusArticleTypeMapper;
+import org.bibr.distributed.octopus.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.github.pagehelper.PageHelper;
+
+@Service
+public class OctopusArticleService {
+	private final static Logger logger = LoggerFactory.getLogger(OctopusArticleService.class);
+	
+	@Autowired
+	private OctopusArticleMapper octopusArticleMapper;
+	@Autowired
+	private OctopusArticleTypeMapper octopusArticleTypeMapper;
+	
+	@Transactional(rollbackFor = Exception.class)
+	public List<OctopusArticleVO> getOctopusArticleVOs(Map<String, Object> map){
+		List<OctopusArticleVO> octopusArticleVOs = new ArrayList<>();
+		List<OctopusArticleType> octopusArticleTypes = getOctopusArticleTypes(map);
+		Map<String, String> sendMap = new HashMap<>();
+		List<OctopusArticle> octopusArticles = null;
+		OctopusArticleVO octopusArticleVO = null;
+		for (OctopusArticleType octopusArticleType : octopusArticleTypes) {
+			octopusArticleVO = new OctopusArticleVO(octopusArticleType.getId(),octopusArticleType.getTypeId(),octopusArticleType.getName());
+			
+			sendMap.put("typeId", String.valueOf(octopusArticleType.getTypeId()));
+			octopusArticles = getOctopusArticles(sendMap);
+			octopusArticleVO.setOctopusArticles(octopusArticles);
+			
+			octopusArticleVOs.add(octopusArticleVO);
+		}
+		
+		return octopusArticleVOs;
+		
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public List<OctopusArticleType> getOctopusArticleTypes(Map<String, Object> map) {
+		if(map != null && map.get("typeIds") != null){
+			map.put("typeIds", String.valueOf(map.get("typeIds")).split(","));
+		}
+		return this.octopusArticleTypeMapper.selectByTypeId(map);
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public List<OctopusArticle> getOctopusArticles(Map<String, String> map) {
+		if(map == null || map.get("typeId") == null) {
+			throw new BusinessException(OctopusConstant.CODE_500, OctopusConstant.FILL_IN_REQUIRED);
+		}
+		if(map.get("pageNumber") == null){
+			map.put("pageNumber","1");
+		}
+		if(map.get("pageSize") == null){
+			map.put("pageSize",OctopusConstant.DEFAULT_PAGE_SIZE);
+		}
+		if(map.get("platform") == null){
+			map.put("platform","1");
+		}
+		PageHelper.startPage(Integer.parseInt(map.get("pageNumber")), Integer.parseInt(map.get("pageSize")));
+		List<OctopusArticle> list = this.octopusArticleMapper.selectByTypeId(map);
+		return list;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public OctopusArticle getOctopusArticleTail(Map<String, String> map) {
+		if(map == null || map.get("id") == null) {
+			throw new BusinessException(OctopusConstant.CODE_500, OctopusConstant.FILL_IN_REQUIRED);
+		}
+		return this.octopusArticleMapper.selectByPrimaryKey(map.get("id").toString());
+	}
+
+}

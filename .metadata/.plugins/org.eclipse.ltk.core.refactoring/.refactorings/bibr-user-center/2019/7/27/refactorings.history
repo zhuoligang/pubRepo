@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract local variable &apos;centerUserMain&apos; from expression &apos;UserCenterUtil.getCenterUserMain(request)&apos;&#x0D;&#x0A;- Original project: &apos;bibr-user-center&apos;&#x0D;&#x0A;- Variable name: &apos;centerUserMain&apos;&#x0D;&#x0A;- Destination method: &apos;org.bibr.user.center.controller.front.LoginController.login()&apos;&#x0D;&#x0A;- Variable expression: &apos;UserCenterUtil.getCenterUserMain(request)&apos;&#x0D;&#x0A;- Replace occurrences of expression with variable" description="Extract local variable &apos;centerUserMain&apos;" final="false" id="org.eclipse.jdt.ui.extract.temp" input="/src\/main\/java&lt;org.bibr.user.center.controller.front{LoginController.java" name="centerUserMain" replace="true" selection="1916 42" stamp="1562052784025" version="1.0"/>
+</session>

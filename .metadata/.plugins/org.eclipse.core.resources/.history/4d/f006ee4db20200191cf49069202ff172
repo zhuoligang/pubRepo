@@ -1,0 +1,38 @@
+package org.bibr.accountcheck.center.thread;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 
+* @ClassName: CoreCheckThread
+* @Description: TODO(核心校验)
+* @author Administrator
+* @date 2018年12月18日下午6:05:59
+*
+ */
+public class CoreCheckThread implements Runnable{
+	private final static Logger logger = LoggerFactory.getLogger(CoreCheckThread.class);
+	//用户uuid
+	private String userId;
+	//交易区id
+	private String platId;
+	//币种id
+	private String vcoinId;
+	
+	public CoreCheckThread(String userId, String platId, String vcoinId) {
+		super();
+		this.userId = userId;
+		this.platId = platId;
+		this.vcoinId = vcoinId;
+	}
+
+	@Override
+	public void run() {
+		//调用资产接口，获取用户该币种资产信息
+		
+		// TODO Auto-generated method stub
+		
+	}
+
+}

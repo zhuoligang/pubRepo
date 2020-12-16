@@ -1,0 +1,20 @@
+1577775787527	Delete element
+1577777208442	Extract local variable 'shape'
+1577777239280	Extract local variable 'shape'
+1577779022711	Rename package 'org.lg.pay.module.controller.factoryMethod'
+1577779613863	Extract local variable 'contentPane'
+1577780350865	Extract local variable 'contentPane'
+1577780664858	Extract local variable 'jPanel'
+1577780881373	Extract local variable 'jLabel'
+1577781671272	Extract local variable 'newInstance'
+1577781693645	Extract local variable 'newDocumentBuilder'
+1577781882306	Extract local variable 'elementsByTagName'
+1577781925248	Extract local variable 'firstChild'
+1577781996301	Rename package 'org.lg.pay.module.controller.factorymethod'
+1577782231458	Extract local variable 'forName'
+1577782246899	Extract local variable 'c'
+1577782266624	Extract local variable 'obj'
+1577782857657	Delete elements
+1577782872212	Delete element
+1577783826294	Rename package 'org.lg.pay.module.controller.FactoryMethod'
+1577783846642	Rename package 'org.lg.pay.module.controller.designPattern.FactoryMethod'

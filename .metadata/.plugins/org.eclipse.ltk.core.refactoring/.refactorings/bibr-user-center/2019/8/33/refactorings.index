@@ -1,0 +1,27 @@
+1565594800089	Extract local variable 'decryptpParameter'
+1565595395986	Extract local variable 'decryptpParameter'
+1565596321556	Extract local variable 'parseArray'
+1565596348528	Extract local variable 'parseObject'
+1565596814195	Extract local variable 'bean'
+1565596858792	Extract local variable 'decryptpParameter'
+1565602221821	Extract local variable 'string'
+1565602333766	Extract local variable 'parseObject'
+1565602363437	Extract local variable 'object'
+1565610173439	Extract local variable 'decodeBase64'
+1565681485352	Copy compilation unit
+1565681506906	Copy compilation unit
+1565748120092	Encapsulate field 'oldId'
+1565770146214	Extract local variable 'file2'
+1565771532265	Extract local variable 'move2QiNiu'
+1565838756858	Extract local variable 'updateImageFile'
+1565840406756	Delete element
+1565869427092	Delete element
+1565872399768	Extract local variable 'decryptpParameter'
+1565882796102	Extract local variable 'decryptpParameter'
+1565882924613	Extract local variable 'decryptpParameter'
+1565921395150	Extract local variable 'decryptpParameter'
+1565921473525	Extract local variable 'decryptpParameter'
+1565921933081	Copy compilation unit
+1565921959305	Copy compilation unit
+1565922600133	Extract local variable 'decryptpParameter'
+1565952800209	Extract local variable 'selectExistMobile'

@@ -1,0 +1,45 @@
+package org.bibr.accountcheck.center.constant;
+
+import org.springframework.stereotype.Component;
+
+/**
+ * 
+* @ClassName: AccountCheckConstant
+* @Description: TODO(这里用一句话描述这个类的作用)
+* @author Administrator
+* @date 2018年12月18日下午5:03:34
+*
+ */
+@Component
+public class AccountCheckConstant {
+	// 通讯成功
+	public static final int CODE_200 = 200;
+	// 非法，ip非法等
+	public static final int CODE_300 = 300;
+	// 失败
+	public static final int CODE_500 = 500;
+	// 需登录
+	public static final int CODE_600 = 600;
+	
+	public static final String SUCCESS = "success";
+	
+	public static final String FAILURE = "failure";
+	
+	public static final String KEYWORDS_SUCCESS = "成功";
+	
+	public static final String KEYWORDS_FAILURE = "失败";
+	
+	public static final String DESERIALIZATION_ERROR = "反序列化出现错误";
+	
+	public static final String FILL_IN_REQUIRED ="请规范填写必填内容";
+	//用户中心接口————冻结指定用户
+	public static final String CENTER_USER_fREEZE = "http://192.168.31.28:8088/center/api/freezeUserForAccountCheck";
+	//用户中心————用户中心阈值通知接口地址
+	public static final String CENTER_SEND_NOTE = "http://192.168.31.28:8088/center/api/sendThresholdNote";
+	//第三方接口————获取币种与指定币种汇率
+	public static String GET_COIN_RATE = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol={symbol}&convert={convert}";
+	//后台接口————获取资产校验阈值
+	public static final String HOME_GET_THESHOLD = "http://192.168.31.145:8980/mgr/userassetwarning/findUserAssetWarningLine";
+
+	
+}

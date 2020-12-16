@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bi.activity.dao.VirtualcoinMapper" >
+  <resultMap id="BaseResultMap" type="com.bi.activity.entity.Virtualcoin" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+    <result column="eunit" property="eunit" jdbcType="VARCHAR" />
+    <result column="rpcip" property="rpcip" jdbcType="VARCHAR" />
+    <result column="cnprice" property="cnprice" jdbcType="DECIMAL" />
+    <result column="pricechange" property="pricechange" jdbcType="BIT" />
+    <result column="rpcport" property="rpcport" jdbcType="INTEGER" />
+    <result column="rpcuser" property="rpcuser" jdbcType="VARCHAR" />
+    <result column="rpcpassword" property="rpcpassword" jdbcType="VARCHAR" />
+    <result column="walletaddress" property="walletaddress" jdbcType="VARCHAR" />
+    <result column="addressregexp" property="addressregexp" jdbcType="VARCHAR" />
+    <result column="contractadres" property="contractadres" jdbcType="VARCHAR" />
+    <result column="contractpow" property="contractpow" jdbcType="INTEGER" />
+    <result column="contractbalanceof" property="contractbalanceof" jdbcType="VARCHAR" />
+    <result column="contracttransfermethod" property="contracttransfermethod" jdbcType="VARCHAR" />
+    <result column="contractreceiveadresindex" property="contractreceiveadresindex" jdbcType="INTEGER" />
+    <result column="contractamoutindex" property="contractamoutindex" jdbcType="INTEGER" />
+    <result column="image" property="image" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="priceinputdecimalsize" property="priceinputdecimalsize" jdbcType="INTEGER" />
+    <result column="countinputdecimalsize" property="countinputdecimalsize" jdbcType="INTEGER" />
+    <result column="countfloor" property="countfloor" jdbcType="DECIMAL" />
+    <result column="vcoinrate" property="vcoinrate" jdbcType="DECIMAL" />
+    <result column="moneyrate" property="moneyrate" jdbcType="DECIMAL" />
+    <result column="moneydecimalsize" property="moneydecimalsize" jdbcType="INTEGER" />
+    <result column="putinfloor" property="putinfloor" jdbcType="DECIMAL" />
+    <result column="putinrate" property="putinrate" jdbcType="DECIMAL" />
+    <result column="putinexplain" property="putinexplain" jdbcType="VARCHAR" />
+    <result column="extractupper" property="extractupper" jdbcType="DECIMAL" />
+    <result column="extractfloor" property="extractfloor" jdbcType="DECIMAL" />
+    <result column="extractrate" property="extractrate" jdbcType="DECIMAL" />
+    <result column="extractfeefloor" property="extractfeefloor" jdbcType="DECIMAL" />
+    <result column="extractdecimalsize" property="extractdecimalsize" jdbcType="INTEGER" />
+    <result column="extractexplain" property="extractexplain" jdbcType="VARCHAR" />
+    <result column="txidquerybrowser" property="txidquerybrowser" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="outcount" property="outcount" jdbcType="DECIMAL" />
+    <result column="enabled" property="enabled" jdbcType="BIT" />
+    <result column="trading" property="trading" jdbcType="BIT" />
+    <result column="canputin" property="canputin" jdbcType="BIT" />
+    <result column="canextract" property="canextract" jdbcType="BIT" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.bi.activity.entity.Virtualcoin" extends="BaseResultMap" >
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type_id, cname, eunit, rpcip, cnprice, pricechange, rpcport, rpcuser, rpcpassword, 
+    walletaddress, addressregexp, contractadres, contractpow, contractbalanceof, contracttransfermethod, 
+    contractreceiveadresindex, contractamoutindex, image, price, priceinputdecimalsize, 
+    countinputdecimalsize, countfloor, vcoinrate, moneyrate, moneydecimalsize, putinfloor, 
+    putinrate, putinexplain, extractupper, extractfloor, extractrate, extractfeefloor, 
+    extractdecimalsize, extractexplain, txidquerybrowser, sort, outcount, enabled, trading, 
+    canputin, canextract
+  </sql>
+  <sql id="Blob_Column_List" >
+    description
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from virtualcoin
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from virtualcoin
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.bi.activity.entity.Virtualcoin" >
+    insert into virtualcoin (id, type_id, cname, 
+      eunit, rpcip, cnprice, 
+      pricechange, rpcport, rpcuser, 
+      rpcpassword, walletaddress, addressregexp, 
+      contractadres, contractpow, contractbalanceof, 
+      contracttransfermethod, contractreceiveadresindex, 
+      contractamoutindex, image, price, 
+      priceinputdecimalsize, countinputdecimalsize, 
+      countfloor, vcoinrate, moneyrate, 
+      moneydecimalsize, putinfloor, putinrate, 
+      putinexplain, extractupper, extractfloor, 
+      extractrate, extractfeefloor, extractdecimalsize, 
+      extractexplain, txidquerybrowser, sort, 
+      outcount, enabled, trading, 
+      canputin, canextract, description
+      )
+    values (#{id,jdbcType=INTEGER}, #{typeId,jdbcType=INTEGER}, #{cname,jdbcType=VARCHAR}, 
+      #{eunit,jdbcType=VARCHAR}, #{rpcip,jdbcType=VARCHAR}, #{cnprice,jdbcType=DECIMAL}, 
+      #{pricechange,jdbcType=BIT}, #{rpcport,jdbcType=INTEGER}, #{rpcuser,jdbcType=VARCHAR}, 
+      #{rpcpassword,jdbcType=VARCHAR}, #{walletaddress,jdbcType=VARCHAR}, #{addressregexp,jdbcType=VARCHAR}, 
+      #{contractadres,jdbcType=VARCHAR}, #{contractpow,jdbcType=INTEGER}, #{contractbalanceof,jdbcType=VARCHAR}, 
+      #{contracttransfermethod,jdbcType=VARCHAR}, #{contractreceiveadresindex,jdbcType=INTEGER}, 
+      #{contractamoutindex,jdbcType=INTEGER}, #{image,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, 
+      #{priceinputdecimalsize,jdbcType=INTEGER}, #{countinputdecimalsize,jdbcType=INTEGER}, 
+      #{countfloor,jdbcType=DECIMAL}, #{vcoinrate,jdbcType=DECIMAL}, #{moneyrate,jdbcType=DECIMAL}, 
+      #{moneydecimalsize,jdbcType=INTEGER}, #{putinfloor,jdbcType=DECIMAL}, #{putinrate,jdbcType=DECIMAL}, 
+      #{putinexplain,jdbcType=VARCHAR}, #{extractupper,jdbcType=DECIMAL}, #{extractfloor,jdbcType=DECIMAL}, 
+      #{extractrate,jdbcType=DECIMAL}, #{extractfeefloor,jdbcType=DECIMAL}, #{extractdecimalsize,jdbcType=INTEGER}, 
+      #{extractexplain,jdbcType=VARCHAR}, #{txidquerybrowser,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, 
+      #{outcount,jdbcType=DECIMAL}, #{enabled,jdbcType=BIT}, #{trading,jdbcType=BIT}, 
+      #{canputin,jdbcType=BIT}, #{canextract,jdbcType=BIT}, #{description,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.bi.activity.entity.Virtualcoin" >
+    insert into virtualcoin
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="typeId != null" >
+        type_id,
+      </if>
+      <if test="cname != null" >
+        cname,
+      </if>
+      <if test="eunit != null" >
+        eunit,
+      </if>
+      <if test="rpcip != null" >
+        rpcip,
+      </if>
+      <if test="cnprice != null" >
+        cnprice,
+      </if>
+      <if test="pricechange != null" >
+        pricechange,
+      </if>
+      <if test="rpcport != null" >
+        rpcport,
+      </if>
+      <if test="rpcuser != null" >
+        rpcuser,
+      </if>
+      <if test="rpcpassword != null" >
+        rpcpassword,
+      </if>
+      <if test="walletaddress != null" >
+        walletaddress,
+      </if>
+      <if test="addressregexp != null" >
+        addressregexp,
+      </if>
+      <if test="contractadres != null" >
+        contractadres,
+      </if>
+      <if test="contractpow != null" >
+        contractpow,
+      </if>
+      <if test="contractbalanceof != null" >
+        contractbalanceof,
+      </if>
+      <if test="contracttransfermethod != null" >
+        contracttransfermethod,
+      </if>
+      <if test="contractreceiveadresindex != null" >
+        contractreceiveadresindex,
+      </if>
+      <if test="contractamoutindex != null" >
+        contractamoutindex,
+      </if>
+      <if test="image != null" >
+        image,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="priceinputdecimalsize != null" >
+        priceinputdecimalsize,
+      </if>
+      <if test="countinputdecimalsize != null" >
+        countinputdecimalsize,
+      </if>
+      <if test="countfloor != null" >
+        countfloor,
+      </if>
+      <if test="vcoinrate != null" >
+        vcoinrate,
+      </if>
+      <if test="moneyrate != null" >
+        moneyrate,
+      </if>
+      <if test="moneydecimalsize != null" >
+        moneydecimalsize,
+      </if>
+      <if test="putinfloor != null" >
+        putinfloor,
+      </if>
+      <if test="putinrate != null" >
+        putinrate,
+      </if>
+      <if test="putinexplain != null" >
+        putinexplain,
+      </if>
+      <if test="extractupper != null" >
+        extractupper,
+      </if>
+      <if test="extractfloor != null" >
+        extractfloor,
+      </if>
+      <if test="extractrate != null" >
+        extractrate,
+      </if>
+      <if test="extractfeefloor != null" >
+        extractfeefloor,
+      </if>
+      <if test="extractdecimalsize != null" >
+        extractdecimalsize,
+      </if>
+      <if test="extractexplain != null" >
+        extractexplain,
+      </if>
+      <if test="txidquerybrowser != null" >
+        txidquerybrowser,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="outcount != null" >
+        outcount,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="trading != null" >
+        trading,
+      </if>
+      <if test="canputin != null" >
+        canputin,
+      </if>
+      <if test="canextract != null" >
+        canextract,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="eunit != null" >
+        #{eunit,jdbcType=VARCHAR},
+      </if>
+      <if test="rpcip != null" >
+        #{rpcip,jdbcType=VARCHAR},
+      </if>
+      <if test="cnprice != null" >
+        #{cnprice,jdbcType=DECIMAL},
+      </if>
+      <if test="pricechange != null" >
+        #{pricechange,jdbcType=BIT},
+      </if>
+      <if test="rpcport != null" >
+        #{rpcport,jdbcType=INTEGER},
+      </if>
+      <if test="rpcuser != null" >
+        #{rpcuser,jdbcType=VARCHAR},
+      </if>
+      <if test="rpcpassword != null" >
+        #{rpcpassword,jdbcType=VARCHAR},
+      </if>
+      <if test="walletaddress != null" >
+        #{walletaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="addressregexp != null" >
+        #{addressregexp,jdbcType=VARCHAR},
+      </if>
+      <if test="contractadres != null" >
+        #{contractadres,jdbcType=VARCHAR},
+      </if>
+      <if test="contractpow != null" >
+        #{contractpow,jdbcType=INTEGER},
+      </if>
+      <if test="contractbalanceof != null" >
+        #{contractbalanceof,jdbcType=VARCHAR},
+      </if>
+      <if test="contracttransfermethod != null" >
+        #{contracttransfermethod,jdbcType=VARCHAR},
+      </if>
+      <if test="contractreceiveadresindex != null" >
+        #{contractreceiveadresindex,jdbcType=INTEGER},
+      </if>
+      <if test="contractamoutindex != null" >
+        #{contractamoutindex,jdbcType=INTEGER},
+      </if>
+      <if test="image != null" >
+        #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="priceinputdecimalsize != null" >
+        #{priceinputdecimalsize,jdbcType=INTEGER},
+      </if>
+      <if test="countinputdecimalsize != null" >
+        #{countinputdecimalsize,jdbcType=INTEGER},
+      </if>
+      <if test="countfloor != null" >
+        #{countfloor,jdbcType=DECIMAL},
+      </if>
+      <if test="vcoinrate != null" >
+        #{vcoinrate,jdbcType=DECIMAL},
+      </if>
+      <if test="moneyrate != null" >
+        #{moneyrate,jdbcType=DECIMAL},
+      </if>
+      <if test="moneydecimalsize != null" >
+        #{moneydecimalsize,jdbcType=INTEGER},
+      </if>
+      <if test="putinfloor != null" >
+        #{putinfloor,jdbcType=DECIMAL},
+      </if>
+      <if test="putinrate != null" >
+        #{putinrate,jdbcType=DECIMAL},
+      </if>
+      <if test="putinexplain != null" >
+        #{putinexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="extractupper != null" >
+        #{extractupper,jdbcType=DECIMAL},
+      </if>
+      <if test="extractfloor != null" >
+        #{extractfloor,jdbcType=DECIMAL},
+      </if>
+      <if test="extractrate != null" >
+        #{extractrate,jdbcType=DECIMAL},
+      </if>
+      <if test="extractfeefloor != null" >
+        #{extractfeefloor,jdbcType=DECIMAL},
+      </if>
+      <if test="extractdecimalsize != null" >
+        #{extractdecimalsize,jdbcType=INTEGER},
+      </if>
+      <if test="extractexplain != null" >
+        #{extractexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="txidquerybrowser != null" >
+        #{txidquerybrowser,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="outcount != null" >
+        #{outcount,jdbcType=DECIMAL},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=BIT},
+      </if>
+      <if test="trading != null" >
+        #{trading,jdbcType=BIT},
+      </if>
+      <if test="canputin != null" >
+        #{canputin,jdbcType=BIT},
+      </if>
+      <if test="canextract != null" >
+        #{canextract,jdbcType=BIT},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bi.activity.entity.Virtualcoin" >
+    update virtualcoin
+    <set >
+      <if test="typeId != null" >
+        type_id = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="cname != null" >
+        cname = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="eunit != null" >
+        eunit = #{eunit,jdbcType=VARCHAR},
+      </if>
+      <if test="rpcip != null" >
+        rpcip = #{rpcip,jdbcType=VARCHAR},
+      </if>
+      <if test="cnprice != null" >
+        cnprice = #{cnprice,jdbcType=DECIMAL},
+      </if>
+      <if test="pricechange != null" >
+        pricechange = #{pricechange,jdbcType=BIT},
+      </if>
+      <if test="rpcport != null" >
+        rpcport = #{rpcport,jdbcType=INTEGER},
+      </if>
+      <if test="rpcuser != null" >
+        rpcuser = #{rpcuser,jdbcType=VARCHAR},
+      </if>
+      <if test="rpcpassword != null" >
+        rpcpassword = #{rpcpassword,jdbcType=VARCHAR},
+      </if>
+      <if test="walletaddress != null" >
+        walletaddress = #{walletaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="addressregexp != null" >
+        addressregexp = #{addressregexp,jdbcType=VARCHAR},
+      </if>
+      <if test="contractadres != null" >
+        contractadres = #{contractadres,jdbcType=VARCHAR},
+      </if>
+      <if test="contractpow != null" >
+        contractpow = #{contractpow,jdbcType=INTEGER},
+      </if>
+      <if test="contractbalanceof != null" >
+        contractbalanceof = #{contractbalanceof,jdbcType=VARCHAR},
+      </if>
+      <if test="contracttransfermethod != null" >
+        contracttransfermethod = #{contracttransfermethod,jdbcType=VARCHAR},
+      </if>
+      <if test="contractreceiveadresindex != null" >
+        contractreceiveadresindex = #{contractreceiveadresindex,jdbcType=INTEGER},
+      </if>
+      <if test="contractamoutindex != null" >
+        contractamoutindex = #{contractamoutindex,jdbcType=INTEGER},
+      </if>
+      <if test="image != null" >
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="priceinputdecimalsize != null" >
+        priceinputdecimalsize = #{priceinputdecimalsize,jdbcType=INTEGER},
+      </if>
+      <if test="countinputdecimalsize != null" >
+        countinputdecimalsize = #{countinputdecimalsize,jdbcType=INTEGER},
+      </if>
+      <if test="countfloor != null" >
+        countfloor = #{countfloor,jdbcType=DECIMAL},
+      </if>
+      <if test="vcoinrate != null" >
+        vcoinrate = #{vcoinrate,jdbcType=DECIMAL},
+      </if>
+      <if test="moneyrate != null" >
+        moneyrate = #{moneyrate,jdbcType=DECIMAL},
+      </if>
+      <if test="moneydecimalsize != null" >
+        moneydecimalsize = #{moneydecimalsize,jdbcType=INTEGER},
+      </if>
+      <if test="putinfloor != null" >
+        putinfloor = #{putinfloor,jdbcType=DECIMAL},
+      </if>
+      <if test="putinrate != null" >
+        putinrate = #{putinrate,jdbcType=DECIMAL},
+      </if>
+      <if test="putinexplain != null" >
+        putinexplain = #{putinexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="extractupper != null" >
+        extractupper = #{extractupper,jdbcType=DECIMAL},
+      </if>
+      <if test="extractfloor != null" >
+        extractfloor = #{extractfloor,jdbcType=DECIMAL},
+      </if>
+      <if test="extractrate != null" >
+        extractrate = #{extractrate,jdbcType=DECIMAL},
+      </if>
+      <if test="extractfeefloor != null" >
+        extractfeefloor = #{extractfeefloor,jdbcType=DECIMAL},
+      </if>
+      <if test="extractdecimalsize != null" >
+        extractdecimalsize = #{extractdecimalsize,jdbcType=INTEGER},
+      </if>
+      <if test="extractexplain != null" >
+        extractexplain = #{extractexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="txidquerybrowser != null" >
+        txidquerybrowser = #{txidquerybrowser,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="outcount != null" >
+        outcount = #{outcount,jdbcType=DECIMAL},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=BIT},
+      </if>
+      <if test="trading != null" >
+        trading = #{trading,jdbcType=BIT},
+      </if>
+      <if test="canputin != null" >
+        canputin = #{canputin,jdbcType=BIT},
+      </if>
+      <if test="canextract != null" >
+        canextract = #{canextract,jdbcType=BIT},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.bi.activity.entity.Virtualcoin" >
+    update virtualcoin
+    set type_id = #{typeId,jdbcType=INTEGER},
+      cname = #{cname,jdbcType=VARCHAR},
+      eunit = #{eunit,jdbcType=VARCHAR},
+      rpcip = #{rpcip,jdbcType=VARCHAR},
+      cnprice = #{cnprice,jdbcType=DECIMAL},
+      pricechange = #{pricechange,jdbcType=BIT},
+      rpcport = #{rpcport,jdbcType=INTEGER},
+      rpcuser = #{rpcuser,jdbcType=VARCHAR},
+      rpcpassword = #{rpcpassword,jdbcType=VARCHAR},
+      walletaddress = #{walletaddress,jdbcType=VARCHAR},
+      addressregexp = #{addressregexp,jdbcType=VARCHAR},
+      contractadres = #{contractadres,jdbcType=VARCHAR},
+      contractpow = #{contractpow,jdbcType=INTEGER},
+      contractbalanceof = #{contractbalanceof,jdbcType=VARCHAR},
+      contracttransfermethod = #{contracttransfermethod,jdbcType=VARCHAR},
+      contractreceiveadresindex = #{contractreceiveadresindex,jdbcType=INTEGER},
+      contractamoutindex = #{contractamoutindex,jdbcType=INTEGER},
+      image = #{image,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      priceinputdecimalsize = #{priceinputdecimalsize,jdbcType=INTEGER},
+      countinputdecimalsize = #{countinputdecimalsize,jdbcType=INTEGER},
+      countfloor = #{countfloor,jdbcType=DECIMAL},
+      vcoinrate = #{vcoinrate,jdbcType=DECIMAL},
+      moneyrate = #{moneyrate,jdbcType=DECIMAL},
+      moneydecimalsize = #{moneydecimalsize,jdbcType=INTEGER},
+      putinfloor = #{putinfloor,jdbcType=DECIMAL},
+      putinrate = #{putinrate,jdbcType=DECIMAL},
+      putinexplain = #{putinexplain,jdbcType=VARCHAR},
+      extractupper = #{extractupper,jdbcType=DECIMAL},
+      extractfloor = #{extractfloor,jdbcType=DECIMAL},
+      extractrate = #{extractrate,jdbcType=DECIMAL},
+      extractfeefloor = #{extractfeefloor,jdbcType=DECIMAL},
+      extractdecimalsize = #{extractdecimalsize,jdbcType=INTEGER},
+      extractexplain = #{extractexplain,jdbcType=VARCHAR},
+      txidquerybrowser = #{txidquerybrowser,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      outcount = #{outcount,jdbcType=DECIMAL},
+      enabled = #{enabled,jdbcType=BIT},
+      trading = #{trading,jdbcType=BIT},
+      canputin = #{canputin,jdbcType=BIT},
+      canextract = #{canextract,jdbcType=BIT},
+      description = #{description,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bi.activity.entity.Virtualcoin" >
+    update virtualcoin
+    set type_id = #{typeId,jdbcType=INTEGER},
+      cname = #{cname,jdbcType=VARCHAR},
+      eunit = #{eunit,jdbcType=VARCHAR},
+      rpcip = #{rpcip,jdbcType=VARCHAR},
+      cnprice = #{cnprice,jdbcType=DECIMAL},
+      pricechange = #{pricechange,jdbcType=BIT},
+      rpcport = #{rpcport,jdbcType=INTEGER},
+      rpcuser = #{rpcuser,jdbcType=VARCHAR},
+      rpcpassword = #{rpcpassword,jdbcType=VARCHAR},
+      walletaddress = #{walletaddress,jdbcType=VARCHAR},
+      addressregexp = #{addressregexp,jdbcType=VARCHAR},
+      contractadres = #{contractadres,jdbcType=VARCHAR},
+      contractpow = #{contractpow,jdbcType=INTEGER},
+      contractbalanceof = #{contractbalanceof,jdbcType=VARCHAR},
+      contracttransfermethod = #{contracttransfermethod,jdbcType=VARCHAR},
+      contractreceiveadresindex = #{contractreceiveadresindex,jdbcType=INTEGER},
+      contractamoutindex = #{contractamoutindex,jdbcType=INTEGER},
+      image = #{image,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      priceinputdecimalsize = #{priceinputdecimalsize,jdbcType=INTEGER},
+      countinputdecimalsize = #{countinputdecimalsize,jdbcType=INTEGER},
+      countfloor = #{countfloor,jdbcType=DECIMAL},
+      vcoinrate = #{vcoinrate,jdbcType=DECIMAL},
+      moneyrate = #{moneyrate,jdbcType=DECIMAL},
+      moneydecimalsize = #{moneydecimalsize,jdbcType=INTEGER},
+      putinfloor = #{putinfloor,jdbcType=DECIMAL},
+      putinrate = #{putinrate,jdbcType=DECIMAL},
+      putinexplain = #{putinexplain,jdbcType=VARCHAR},
+      extractupper = #{extractupper,jdbcType=DECIMAL},
+      extractfloor = #{extractfloor,jdbcType=DECIMAL},
+      extractrate = #{extractrate,jdbcType=DECIMAL},
+      extractfeefloor = #{extractfeefloor,jdbcType=DECIMAL},
+      extractdecimalsize = #{extractdecimalsize,jdbcType=INTEGER},
+      extractexplain = #{extractexplain,jdbcType=VARCHAR},
+      txidquerybrowser = #{txidquerybrowser,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      outcount = #{outcount,jdbcType=DECIMAL},
+      enabled = #{enabled,jdbcType=BIT},
+      trading = #{trading,jdbcType=BIT},
+      canputin = #{canputin,jdbcType=BIT},
+      canextract = #{canextract,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

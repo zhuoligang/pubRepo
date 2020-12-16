@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;bibr-distributed-gateway/src/main/java/org/bibr/distributed/gateway/bean/vo/ResultVO.java&apos;" deleteContents="false" description="Delete resource &apos;bibr-distributed-gateway/src/main/java/org/bibr/distributed/gateway/bean/vo/ResultVO.java&apos;" element1="/bibr-distributed-gateway/src/main/java/org/bibr/distributed/gateway/bean/vo/ResultVO.java" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1553148196250"/>
+</session>

@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bi.activity.dao.MemberMapper" >
+  <resultMap id="BaseResultMap" type="com.bi.activity.entity.Member" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="tradepassword" property="tradepassword" jdbcType="VARCHAR" />
+    <result column="face" property="face" jdbcType="VARCHAR" />
+    <result column="open_id" property="openId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="idcard" property="idcard" jdbcType="VARCHAR" />
+    <result column="idcardpicfront" property="idcardpicfront" jdbcType="VARCHAR" />
+    <result column="idcardpicback" property="idcardpicback" jdbcType="VARCHAR" />
+    <result column="idcardpiconhand" property="idcardpiconhand" jdbcType="VARCHAR" />
+    <result column="idcardpiccheck_id" property="idcardpiccheckId" jdbcType="INTEGER" />
+    <result column="idcardpiccheckdtcause" property="idcardpiccheckdtcause" jdbcType="VARCHAR" />
+    <result column="idcardpicchecktype" property="idcardpicchecktype" jdbcType="BIT" />
+    <result column="regtime" property="regtime" jdbcType="TIMESTAMP" />
+    <result column="balanceactive" property="balanceactive" jdbcType="DECIMAL" />
+    <result column="balancedisable" property="balancedisable" jdbcType="DECIMAL" />
+    <result column="enabled" property="enabled" jdbcType="BIT" />
+    <result column="session_id" property="sessionId" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="opt_code" property="optCode" jdbcType="VARCHAR" />
+    <result column="token_login" property="tokenLogin" jdbcType="VARCHAR" />
+    <result column="token_timelimit" property="tokenTimelimit" jdbcType="BIGINT" />
+    <result column="web_token_login" property="webTokenLogin" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, mobile, token, status, email, password, tradepassword, face, open_id, name, idcard, 
+    idcardpicfront, idcardpicback, idcardpiconhand, idcardpiccheck_id, idcardpiccheckdtcause,idcardpicchecktype, 
+    regtime, balanceactive, balancedisable, enabled, session_id, parent_id, opt_code, 
+    token_login, token_timelimit, web_token_login
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from member
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from member
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.bi.activity.entity.Member" >
+    insert into member (id, mobile, token, 
+      status, email, password, 
+      tradepassword, face, open_id, 
+      name, idcard, idcardpicfront, 
+      idcardpicback, idcardpiconhand, idcardpiccheck_id, 
+      idcardpiccheckdtcause,idcardpicchecktype, regtime, balanceactive, 
+      balancedisable, enabled, session_id, 
+      parent_id, opt_code, token_login, 
+      token_timelimit, web_token_login)
+    values (#{id,jdbcType=INTEGER}, #{mobile,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{tradepassword,jdbcType=VARCHAR}, #{face,jdbcType=VARCHAR}, #{openId,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{idcard,jdbcType=VARCHAR}, #{idcardpicfront,jdbcType=VARCHAR}, 
+      #{idcardpicback,jdbcType=VARCHAR}, #{idcardpiconhand,jdbcType=VARCHAR}, #{idcardpiccheckId,jdbcType=INTEGER}, 
+      #{idcardpiccheckdtcause,jdbcType=VARCHAR}, #{idcardpicchecktype,jdbcType=BIT},
+      #{regtime,jdbcType=TIMESTAMP}, #{balanceactive,jdbcType=DECIMAL}, 
+      #{balancedisable,jdbcType=DECIMAL}, #{enabled,jdbcType=BIT}, #{sessionId,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=INTEGER}, #{optCode,jdbcType=VARCHAR}, #{tokenLogin,jdbcType=VARCHAR}, 
+      #{tokenTimelimit,jdbcType=BIGINT}, #{webTokenLogin,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bi.activity.entity.Member" >
+    insert into member
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="token != null" >
+        token,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="tradepassword != null" >
+        tradepassword,
+      </if>
+      <if test="face != null" >
+        face,
+      </if>
+      <if test="openId != null" >
+        open_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="idcard != null" >
+        idcard,
+      </if>
+      <if test="idcardpicfront != null" >
+        idcardpicfront,
+      </if>
+      <if test="idcardpicback != null" >
+        idcardpicback,
+      </if>
+      <if test="idcardpiconhand != null" >
+        idcardpiconhand,
+      </if>
+      <if test="idcardpiccheckId != null" >
+        idcardpiccheck_id,
+      </if>
+      <if test="idcardpiccheckdtcause != null" >
+        idcardpiccheckdtcause,
+      </if>
+      <if test="idcardpicchecktype != null" >
+        idcardpicchecktype,
+      </if>      
+      <if test="regtime != null" >
+        regtime,
+      </if>
+      <if test="balanceactive != null" >
+        balanceactive,
+      </if>
+      <if test="balancedisable != null" >
+        balancedisable,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="sessionId != null" >
+        session_id,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="optCode != null" >
+        opt_code,
+      </if>
+      <if test="tokenLogin != null" >
+        token_login,
+      </if>
+      <if test="tokenTimelimit != null" >
+        token_timelimit,
+      </if>
+      <if test="webTokenLogin != null" >
+        web_token_login,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="tradepassword != null" >
+        #{tradepassword,jdbcType=VARCHAR},
+      </if>
+      <if test="face != null" >
+        #{face,jdbcType=VARCHAR},
+      </if>
+      <if test="openId != null" >
+        #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null" >
+        #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardpicfront != null" >
+        #{idcardpicfront,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardpicback != null" >
+        #{idcardpicback,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardpiconhand != null" >
+        #{idcardpiconhand,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardpiccheckId != null" >
+        #{idcardpiccheckId,jdbcType=INTEGER},
+      </if>
+      <if test="idcardpiccheckdtcause != null" >
+        #{idcardpiccheckdtcause,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardpicchecktype != null" >
+        #{idcardpicchecktype,jdbcType=BIT},
+      </if>      
+      <if test="regtime != null" >
+        #{regtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="balanceactive != null" >
+        #{balanceactive,jdbcType=DECIMAL},
+      </if>
+      <if test="balancedisable != null" >
+        #{balancedisable,jdbcType=DECIMAL},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=BIT},
+      </if>
+      <if test="sessionId != null" >
+        #{sessionId,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="optCode != null" >
+        #{optCode,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenLogin != null" >
+        #{tokenLogin,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenTimelimit != null" >
+        #{tokenTimelimit,jdbcType=BIGINT},
+      </if>
+      <if test="webTokenLogin != null" >
+        #{webTokenLogin,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bi.activity.entity.Member" >
+    update member
+    <set >
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="tradepassword != null" >
+        tradepassword = #{tradepassword,jdbcType=VARCHAR},
+      </if>
+      <if test="face != null" >
+        face = #{face,jdbcType=VARCHAR},
+      </if>
+      <if test="openId != null" >
+        open_id = #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null" >
+        idcard = #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardpicfront != null" >
+        idcardpicfront = #{idcardpicfront,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardpicback != null" >
+        idcardpicback = #{idcardpicback,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardpiconhand != null" >
+        idcardpiconhand = #{idcardpiconhand,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardpiccheckId != null" >
+        idcardpiccheck_id = #{idcardpiccheckId,jdbcType=INTEGER},
+      </if>
+      <if test="idcardpiccheckdtcause != null" >
+        idcardpiccheckdtcause = #{idcardpiccheckdtcause,jdbcType=VARCHAR},
+      </if>
+      <if test="idcardpicchecktype != null" >
+        idcardpicchecktype = #{idcardpicchecktype,jdbcType=BIT},
+      </if>      
+      <if test="regtime != null" >
+        regtime = #{regtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="balanceactive != null" >
+        balanceactive = #{balanceactive,jdbcType=DECIMAL},
+      </if>
+      <if test="balancedisable != null" >
+        balancedisable = #{balancedisable,jdbcType=DECIMAL},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=BIT},
+      </if>
+      <if test="sessionId != null" >
+        session_id = #{sessionId,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="optCode != null" >
+        opt_code = #{optCode,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenLogin != null" >
+        token_login = #{tokenLogin,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenTimelimit != null" >
+        token_timelimit = #{tokenTimelimit,jdbcType=BIGINT},
+      </if>
+      <if test="webTokenLogin != null" >
+        web_token_login = #{webTokenLogin,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bi.activity.entity.Member" >
+    update member
+    set mobile = #{mobile,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      email = #{email,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      tradepassword = #{tradepassword,jdbcType=VARCHAR},
+      face = #{face,jdbcType=VARCHAR},
+      open_id = #{openId,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      idcard = #{idcard,jdbcType=VARCHAR},
+      idcardpicfront = #{idcardpicfront,jdbcType=VARCHAR},
+      idcardpicback = #{idcardpicback,jdbcType=VARCHAR},
+      idcardpiconhand = #{idcardpiconhand,jdbcType=VARCHAR},
+      idcardpiccheck_id = #{idcardpiccheckId,jdbcType=INTEGER},
+      idcardpiccheckdtcause = #{idcardpiccheckdtcause,jdbcType=VARCHAR},
+      idcardpicchecktype = #{idcardpicchecktype,jdbcType=BIT},
+      regtime = #{regtime,jdbcType=TIMESTAMP},
+      balanceactive = #{balanceactive,jdbcType=DECIMAL},
+      balancedisable = #{balancedisable,jdbcType=DECIMAL},
+      enabled = #{enabled,jdbcType=BIT},
+      session_id = #{sessionId,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      opt_code = #{optCode,jdbcType=VARCHAR},
+      token_login = #{tokenLogin,jdbcType=VARCHAR},
+      token_timelimit = #{tokenTimelimit,jdbcType=BIGINT},
+      web_token_login = #{webTokenLogin,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="frozenMembers" parameterType="map" >
+    update member
+    set enabled = #{enabled,jdbcType=BIT}
+    where 1 = 1
+      <if test="memberIds != null" >
+       and id in
+       	    <foreach item="item" index="index" collection="memberIds" open="(" separator="," close=")">  
+			    #{item}  
+			</foreach> 
+      </if>
+  </update>
+</mapper>

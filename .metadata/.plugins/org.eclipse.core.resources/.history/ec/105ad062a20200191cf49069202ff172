@@ -1,0 +1,5 @@
+package org.bibr.accountcheck.center.util;
+
+public class AccountCheckUtil {
+
+}

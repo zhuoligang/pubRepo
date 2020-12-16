@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract local variable &apos;setNx&apos; from expression &apos;this.redisCache.setNx(&quot;test:test:&quot;,String.valueOf(System.currentTimeMillis()),100)&apos;&#x0D;&#x0A;- Original project: &apos;bibr-user-aide&apos;&#x0D;&#x0A;- Variable name: &apos;setNx&apos;&#x0D;&#x0A;- Destination method: &apos;org.bibr.user.aide.controller.TestController.test3()&apos;&#x0D;&#x0A;- Variable expression: &apos;this.redisCache.setNx(&quot;test:test:&quot;,String.valueOf(System.currentTimeMillis()),100)&apos;&#x0D;&#x0A;- Replace occurrences of expression with variable" description="Extract local variable &apos;setNx&apos;" final="false" id="org.eclipse.jdt.ui.extract.temp" input="/src\/main\/java&lt;org.bibr.user.aide.controller{TestController.java" name="setNx" replace="true" selection="1876 0" stamp="1566112038887" version="1.0"/>
+</session>

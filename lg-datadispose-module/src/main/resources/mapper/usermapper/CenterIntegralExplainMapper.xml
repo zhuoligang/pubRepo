@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lg.datadispose.module.dao.userdao.CenterIntegralExplainMapper" >
+  <resultMap id="BaseResultMap" type="com.lg.datadispose.module.bean.po.CenterIntegralExplain" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="score_explain" property="scoreExplain" jdbcType="VARCHAR" />
+    <result column="isincrease" property="isincrease" jdbcType="BIT" />
+    <result column="score" property="score" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, score_explain, isincrease, score
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from center_integral_explain
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from center_integral_explain
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lg.datadispose.module.bean.po.CenterIntegralExplain" >
+    insert into center_integral_explain (id, score_explain, isincrease, 
+      score)
+    values (#{id,jdbcType=INTEGER}, #{scoreExplain,jdbcType=VARCHAR}, #{isincrease,jdbcType=BIT}, 
+      #{score,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lg.datadispose.module.bean.po.CenterIntegralExplain" >
+    insert into center_integral_explain
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="scoreExplain != null" >
+        score_explain,
+      </if>
+      <if test="isincrease != null" >
+        isincrease,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="scoreExplain != null" >
+        #{scoreExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="isincrease != null" >
+        #{isincrease,jdbcType=BIT},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lg.datadispose.module.bean.po.CenterIntegralExplain" >
+    update center_integral_explain
+    <set >
+      <if test="scoreExplain != null" >
+        score_explain = #{scoreExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="isincrease != null" >
+        isincrease = #{isincrease,jdbcType=BIT},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lg.datadispose.module.bean.po.CenterIntegralExplain" >
+    update center_integral_explain
+    set score_explain = #{scoreExplain,jdbcType=VARCHAR},
+      isincrease = #{isincrease,jdbcType=BIT},
+      score = #{score,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+<!-- 以下为新增 -->
+  <select id="queryAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from center_integral_explain
+  </select>
+  
+</mapper>

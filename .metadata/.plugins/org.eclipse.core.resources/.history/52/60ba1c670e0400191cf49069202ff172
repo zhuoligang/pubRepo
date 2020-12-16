@@ -1,0 +1,74 @@
+package org.bibr.accountcheck.center.service;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.accountcheck.center.bean.bo.AssetAccount;
+import org.bibr.accountcheck.center.constant.AccountCheckConstant;
+import org.bibr.accountcheck.center.dao.AssetAccountMapper;
+import org.bibr.accountcheck.center.dao.AssetColdAccountRecordMapper;
+import org.bibr.accountcheck.center.dao.AssetHotAccountRecordMapper;
+import org.bibr.accountcheck.center.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+
+@Service
+public class AccountCheckService {
+	private final static Logger logger = LoggerFactory.getLogger(AccountCheckService.class);
+	
+	@Autowired
+	private AssetAccountMapper assetAccountMapper;
+	@Autowired
+	private AssetColdAccountRecordMapper assetColdAccountRecordMapper;
+	@Autowired
+	private AssetHotAccountRecordMapper assetHotAccountRecordMapper;
+	
+	
+	/**
+	 * 
+	* @Title: selectCoinCodesByUserId
+	* @Description: TODO(查询用户持有所有币种账户信息)
+	* @param @param userId
+	* @param @return    设定文件
+	* @return List<String>    返回类型
+	* @throws
+	 */
+	public List<AssetAccount> selectCoinCodesByUserId(String userId){
+		if(userId == null || "".equals(userId)){
+			logger.error(AccountCheckConstant.FILL_IN_REQUIRED);
+			throw new BusinessException(AccountCheckConstant.CODE_500, AccountCheckConstant.FILL_IN_REQUIRED);
+		}
+		return this.assetAccountMapper.selectCoinCodesByUserId(userId);
+		
+	}
+	
+	/**
+	 * 
+	* @Title: sumHotMoney
+	* @Description: TODO(查询用户指定币种币流水数量总额)
+	* @param @param userId
+	* @param @param coinCode
+	* @param @return    设定文件
+	* @return BigDecimal    返回类型
+	* @throws
+	 */
+	public BigDecimal sumSerialMoney(String userId,String coinCode){
+		if(userId == null || "".equals(userId) || coinCode == null || "".equals(coinCode)){
+			logger.error(AccountCheckConstant.FILL_IN_REQUIRED);
+			throw new BusinessException(AccountCheckConstant.CODE_500, AccountCheckConstant.FILL_IN_REQUIRED);
+		}
+		Map<String, String> sendMap = new HashMap<>();
+		sendMap.put("userId", userId);
+		sendMap.put("coinCode", coinCode);
+		BigDecimal sumHotMoney = this.assetHotAccountRecordMapper.sumHotMoney(sendMap);
+		BigDecimal sumColdMoney = this.assetColdAccountRecordMapper.sumColdMoney(sendMap);
+		
+		return sumHotMoney.subtract(sumColdMoney);
+		
+	}
+}

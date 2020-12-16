@@ -1,0 +1,27 @@
+package org.bibr.verifysafety.center;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+/**
+ * 资源模块启动程序
+ * 
+ * @author zlg
+ *
+ */
+@EnableScheduling
+@EnableAsync
+@SpringBootApplication
+@EnableTransactionManagement
+@MapperScan("org.bibr.verifysafety.center.dao")
+public class AccountCheckApplication {
+	
+	public static void main(String[] args) {
+		SpringApplication.run(VerifySafetyApplication.class, args);
+	}
+	
+}

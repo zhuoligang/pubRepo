@@ -1,0 +1,5 @@
+package org.bibr.accountcheck.center.thread;
+
+public class CoreCheckThread {
+
+}

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bi.activity.dao.VcoinrecordMapper" >
+  <resultMap id="BaseResultMap" type="com.bi.activity.entity.Vcoinrecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="member_id" property="memberId" jdbcType="INTEGER" />
+    <result column="virtualcoin_id" property="virtualcoinId" jdbcType="INTEGER" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="variable" property="variable" jdbcType="DECIMAL" />
+    <result column="fee" property="fee" jdbcType="DECIMAL" />
+    <result column="recordtime" property="recordtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, member_id, virtualcoin_id, type_id, variable, fee, recordtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from vcoinrecord
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from vcoinrecord
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.bi.activity.entity.Vcoinrecord" >
+    insert into vcoinrecord (id, member_id, virtualcoin_id, 
+      type_id, variable, fee, 
+      recordtime)
+    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{virtualcoinId,jdbcType=INTEGER}, 
+      #{typeId,jdbcType=INTEGER}, #{variable,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL}, 
+      #{recordtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bi.activity.entity.Vcoinrecord" >
+    insert into vcoinrecord
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="virtualcoinId != null" >
+        virtualcoin_id,
+      </if>
+      <if test="typeId != null" >
+        type_id,
+      </if>
+      <if test="variable != null" >
+        variable,
+      </if>
+      <if test="fee != null" >
+        fee,
+      </if>
+      <if test="recordtime != null" >
+        recordtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=INTEGER},
+      </if>
+      <if test="virtualcoinId != null" >
+        #{virtualcoinId,jdbcType=INTEGER},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="variable != null" >
+        #{variable,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null" >
+        #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="recordtime != null" >
+        #{recordtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bi.activity.entity.Vcoinrecord" >
+    update vcoinrecord
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=INTEGER},
+      </if>
+      <if test="virtualcoinId != null" >
+        virtualcoin_id = #{virtualcoinId,jdbcType=INTEGER},
+      </if>
+      <if test="typeId != null" >
+        type_id = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="variable != null" >
+        variable = #{variable,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null" >
+        fee = #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="recordtime != null" >
+        recordtime = #{recordtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bi.activity.entity.Vcoinrecord" >
+    update vcoinrecord
+    set member_id = #{memberId,jdbcType=INTEGER},
+      virtualcoin_id = #{virtualcoinId,jdbcType=INTEGER},
+      type_id = #{typeId,jdbcType=INTEGER},
+      variable = #{variable,jdbcType=DECIMAL},
+      fee = #{fee,jdbcType=DECIMAL},
+      recordtime = #{recordtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="newInsert" parameterType="com.bi.activity.entity.Vcoinrecord" >
+    insert into vcoinrecord ( member_id, virtualcoin_id, 
+      type_id, variable, fee, 
+      recordtime)
+    values ( #{memberId,jdbcType=INTEGER}, #{virtualcoinId,jdbcType=INTEGER}, 
+      #{typeId,jdbcType=INTEGER}, #{variable,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL}, 
+      #{recordtime,jdbcType=TIMESTAMP})
+  </insert>
+</mapper>

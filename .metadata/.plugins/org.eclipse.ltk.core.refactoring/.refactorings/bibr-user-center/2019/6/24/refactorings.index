@@ -1,0 +1,11 @@
+1560158994278	Extract local variable 'value'
+1560160921276	Extract local variable 'recastImg'
+1560161688343	Extract local variable 'chooseImage'
+1560246081533	Delete element
+1560248092308	Extract local variable 'uploadSuffix'
+1560248537849	Delete element
+1560248729951	Delete element
+1560251233246	Extract local variable 'create'
+1560252900921	Delete element
+1560397841727	Extract local variable 'decodeBase64'
+1560397962562	Extract local variable 'decodeBase642'

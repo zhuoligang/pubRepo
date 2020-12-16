@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.bibr.distributed.octopus.dao.OctopusArticleMapper" >
+  <resultMap id="BaseResultMap" type="org.bibr.distributed.octopus.bean.po.OctopusArticle" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="publish_time" property="publishTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="org.bibr.distributed.octopus.bean.po.OctopusArticle" extends="BaseResultMap" >
+    <result column="contents" property="contents" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type_id, title, status, publish_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    contents
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from octopus_article
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from octopus_article
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.bibr.distributed.octopus.bean.po.OctopusArticle" >
+    insert into octopus_article (id, type_id, title, 
+      status, publish_time, contents
+      )
+    values (#{id,jdbcType=VARCHAR}, #{typeId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{publishTime,jdbcType=TIMESTAMP}, #{contents,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.bibr.distributed.octopus.bean.po.OctopusArticle" >
+    insert into octopus_article
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="typeId != null" >
+        type_id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="publishTime != null" >
+        publish_time,
+      </if>
+      <if test="contents != null" >
+        contents,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="publishTime != null" >
+        #{publishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contents != null" >
+        #{contents,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.bibr.distributed.octopus.bean.po.OctopusArticle" >
+    update octopus_article
+    <set >
+      <if test="typeId != null" >
+        type_id = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="publishTime != null" >
+        publish_time = #{publishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contents != null" >
+        contents = #{contents,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.bibr.distributed.octopus.bean.po.OctopusArticle" >
+    update octopus_article
+    set type_id = #{typeId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      publish_time = #{publishTime,jdbcType=TIMESTAMP},
+      contents = #{contents,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.bibr.distributed.octopus.bean.po.OctopusArticle" >
+    update octopus_article
+    set type_id = #{typeId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      publish_time = #{publishTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectByTypeId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from octopus_article
+    where type_id = #{typeId,jdbcType=INTEGER}
+  </select>
+</mapper>

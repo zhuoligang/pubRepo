@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lg.datadispose.module.dao.userdao.CenterIntegralBaseMapper">
+	<resultMap id="BaseResultMap"
+		type="com.lg.datadispose.module.bean.po.CenterIntegralBase">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="spare" property="spare" jdbcType="VARCHAR" />
+		<result column="integral" property="integral" jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, member_id, spare, integral
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from center_integral_base
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from center_integral_base
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.lg.datadispose.module.bean.po.CenterIntegralBase">
+		insert into center_integral_base (id, user_id, member_id,
+		spare, integral)
+		values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
+		#{memberId,jdbcType=VARCHAR},
+		#{spare,jdbcType=VARCHAR}, #{integral,jdbcType=DECIMAL})
+	</insert>
+	<insert id="insertSelective" parameterType="com.lg.datadispose.module.bean.po.CenterIntegralBase">
+		insert into center_integral_base
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="memberId != null">
+				member_id,
+			</if>
+			<if test="spare != null">
+				spare,
+			</if>
+			<if test="integral != null">
+				integral,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="spare != null">
+				#{spare,jdbcType=VARCHAR},
+			</if>
+			<if test="integral != null">
+				#{integral,jdbcType=DECIMAL},
+			</if>
+		</trim>
+<!-- 		ON DUPLICATE KEY UPDATE
+		id = values(id), 
+		user_id = values(user_id),
+		member_id = values(member_id),
+		spare = values(spare),
+		integral = values(integral) -->
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.lg.datadispose.module.bean.po.CenterIntegralBase">
+		update center_integral_base
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				member_id = #{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="spare != null">
+				spare = #{spare,jdbcType=VARCHAR},
+			</if>
+			<if test="integral != null">
+				integral = #{integral,jdbcType=DECIMAL},
+			</if>
+		</set>
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.lg.datadispose.module.bean.po.CenterIntegralBase">
+		update center_integral_base
+		set user_id = #{userId,jdbcType=VARCHAR},
+		member_id = #{memberId,jdbcType=VARCHAR},
+		spare = #{spare,jdbcType=VARCHAR},
+		integral = #{integral,jdbcType=DECIMAL}
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 以下为新增 -->
+	<select id="selectByMap" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from center_integral_base
+		where 1 = 1
+		<if test="uuid != null">
+			and user_id = #{uuid,jdbcType=VARCHAR}
+		</if>
+		<if test="memberId != null">
+			and member_id = #{memberId,jdbcType=VARCHAR}
+		</if>
+	</select>
+</mapper>

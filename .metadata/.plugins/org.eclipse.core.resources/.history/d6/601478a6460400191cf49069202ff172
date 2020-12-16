@@ -1,0 +1,21 @@
+package org.bibr.user.center.dao;
+
+import java.util.Map;
+
+import org.bibr.user.center.bean.bo.CenterNoteInform;
+
+public interface CenterNoteInformMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(CenterNoteInform record);
+
+    int insertSelective(CenterNoteInform record);
+
+    CenterNoteInform selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(CenterNoteInform record);
+
+    int updateByPrimaryKey(CenterNoteInform record);
+    
+    CenterNoteInform selectByMap(Map<String, String> map);
+}

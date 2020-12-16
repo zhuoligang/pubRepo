@@ -1,0 +1,18 @@
+package org.bibr.accountcheck.center.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * 
+* @ClassName: TsetController
+* @Description: TODO(测试控制台)
+* @author Administrator
+* @date 2018年12月18日下午5:01:41
+*
+ */
+@Controller
+@RequestMapping("/test")
+public class TsetController {
+
+}

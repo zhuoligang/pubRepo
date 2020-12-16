@@ -1,0 +1,68 @@
+package org.bibr.accountcheck.center.service;
+
+import java.util.List;
+import java.util.concurrent.RecursiveTask;
+
+import org.bibr.accountcheck.center.bean.bo.AssetAccount;
+import org.bibr.accountcheck.center.thread.AccountCheckThread;
+
+public class ForkJoinAssetAccount extends RecursiveTask<Boolean> {
+	
+	private List<AssetAccount> list;
+    private int start;
+    private int end;
+
+    private static final long THRESHOLD = 10L; // 临界值
+
+    public ForkJoinAssetAccount(List<AssetAccount> list) {
+    	this.list = list;
+        this.start = 0;
+        this.end = list.size();
+    }
+
+    public ForkJoinAssetAccount(List<AssetAccount> list, int start, int end) {
+		this.list = list;
+		this.start = start;
+		this.end = end;
+	}
+
+	@Override
+    protected Boolean compute() {
+    	boolean result = false;
+        long length = end - start;
+
+        if (length <= THRESHOLD) {
+            int sum = 0;
+            for (int i = start; i < end; i++) {
+                sum += i;
+                try {
+    				AccountCheckThread accountCheckThread = new AccountCheckThread(list.get(i));
+    				Thread checkThradTwo = new Thread(accountCheckThread);
+    				checkThradTwo.start();
+    				result = true;
+				} catch (Exception e) {
+					return result;
+				}
+            }
+            return result;
+        } else {
+        	int middle = (start + end) / 2;
+
+        	ForkJoinAssetAccount left = new ForkJoinAssetAccount(this.list,start, middle);
+            left.fork(); // 拆分，并将该子任务压入线程队列
+
+            ForkJoinAssetAccount right = new ForkJoinAssetAccount(this.list,middle + 1, end);
+            right.fork();
+            
+//            invokeAll(left, right);//一起压入线程队列
+
+            Boolean subresult1 = left.join();
+            Boolean subresult2 = right.join();
+			if(subresult1 && subresult2){
+				result = true;
+			}
+            return result;
+        }
+    }
+
+}

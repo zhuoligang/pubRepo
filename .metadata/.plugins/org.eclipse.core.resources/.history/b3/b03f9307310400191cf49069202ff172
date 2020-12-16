@@ -1,0 +1,8 @@
+package org.bibr.accountcheck.center.util;
+
+public class Snippet {
+	public static void main(String[] args) {
+		SmsUtils
+	}
+}
+

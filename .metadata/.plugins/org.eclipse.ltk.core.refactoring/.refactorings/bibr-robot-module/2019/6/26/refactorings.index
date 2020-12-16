@@ -1,0 +1,11 @@
+1561456032748	Copy compilation unit
+1561531595086	Extract local variable 'parseObject'
+1561531818324	Extract local variable 'integer'
+1561540842322	Delete element
+1561541181541	Move compilation units
+1561618521177	Extract local variable 'parseObject'
+1561620443190	Extract local variable 'get24hData'
+1561620937917	Extract local variable 'redisGet24hData'
+1561621030918	Extract local variable 'bigDecimal'
+1561621036381	Extract local variable 'bigDecimal'
+1561621041140	Extract local variable 'bigDecimal'

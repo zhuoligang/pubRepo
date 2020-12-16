@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;UserProducer.java&apos; to &apos;bibr-user-center/src/main/java/org.bibr.user.center.configurer.mq&apos;&#x0D;&#x0A;- Original project: &apos;lg-web-module&apos;&#x0D;&#x0A;- Destination element: &apos;bibr-user-center/src/main/java/org.bibr.user.center.configurer.mq&apos;&#x0D;&#x0A;- Original element: &apos;com.lg.web.module.conf.mq.UserProducer.java&apos;" description="Copy compilation unit" destination="=bibr-user-center/src\/main\/java&lt;org.bibr.user.center.configurer.mq" element1="/src\/main\/java&lt;com.lg.web.module.conf.mq{UserProducer.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1564544952100" units="1" version="1.0"/>
+</session>

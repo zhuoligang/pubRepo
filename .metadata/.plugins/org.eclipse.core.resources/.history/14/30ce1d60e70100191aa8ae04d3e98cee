@@ -1,0 +1,32 @@
+package org.bibr.user.center.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.user.center.bean.bo.CenterUserMain;
+import org.bibr.user.center.exception.BusinessException;
+import org.springframework.stereotype.Component;
+
+public interface CenterUserMainMapper {
+    int deleteByPrimaryKey(String id)throws BusinessException;
+
+    int insert(CenterUserMain record)throws BusinessException;
+
+    int insertSelective(CenterUserMain record)throws BusinessException;
+
+    CenterUserMain selectByPrimaryKey(String id)throws BusinessException;
+
+    int updateByPrimaryKeySelective(CenterUserMain record)throws BusinessException;
+
+    int updateByPrimaryKey(CenterUserMain record)throws BusinessException;
+    
+    CenterUserMain selectByMemberId(String memberId)throws BusinessException;
+    
+    List<CenterUserMain> findCenterUserMains(Map<String, String> map)throws BusinessException;
+    
+    int selectExistMobile(String mobile)throws BusinessException;
+    
+    int selectExistIdcard(String idcard)throws BusinessException;
+    
+    String selectParentIdByMemberId(String id)throws BusinessException;
+}

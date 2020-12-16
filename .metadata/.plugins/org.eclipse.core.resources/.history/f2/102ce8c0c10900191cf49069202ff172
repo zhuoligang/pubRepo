@@ -1,0 +1,81 @@
+package org.bibr.distributed.octopus.service;
+
+import java.util.Date;
+import java.util.Map;
+
+import org.bibr.distributed.octopus.bean.po.OctopusColumnTail;
+import org.bibr.distributed.octopus.bean.po.OctopusColumnType;
+import org.bibr.distributed.octopus.constant.OctopusConstant;
+import org.bibr.distributed.octopus.dao.OctopusColumnTailMapper;
+import org.bibr.distributed.octopus.dao.OctopusColumnTypeMapper;
+import org.bibr.distributed.octopus.exception.BusinessException;
+import org.bibr.distributed.octopus.util.OctopusUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OctopusColumnService {
+	 
+	@Autowired
+	private OctopusColumnTypeMapper octopusColumnTypeMapper;
+	@Autowired
+	private OctopusColumnTailMapper octopusColumnTailMapper;
+
+	public String addColumn(Map<String, Object> map) {
+		if(map == null || map.get("columnLevel") == null || map.get("name") == null ||
+				(!"1".equals(map.get("columnLevel")) && map.get("parentId") == null)){//如果不是添加一级栏目，又没有给上级id，判断参数不全
+			throw new BusinessException(OctopusConstant.CODE_500, OctopusConstant.FILL_IN_REQUIRED);
+		}
+		String parentId = null;
+		if(map.get("parentId") != null){
+			parentId = map.get("parentId").toString();
+		}
+		try {
+			OctopusColumnType octopusColumnType = new OctopusColumnType(OctopusUtil.createUUId(),
+					Integer.parseInt(map.get("columnLevel").toString()),parentId,map.get("name").toString(),1,new Date());
+			this.octopusColumnTypeMapper.insertSelective(octopusColumnType);
+		} catch (Exception e) {
+			throw new BusinessException(OctopusConstant.CODE_500, "新增栏目系统错误，请联系管理员");
+		}
+		return "新增成功";
+	}
+
+	public String changeColumn(Map<String, Object> map) {
+		if(map == null || map.get("id") == null || map.get("status") == null){
+			throw new BusinessException(OctopusConstant.CODE_500, OctopusConstant.FILL_IN_REQUIRED);
+		}
+		String id = map.get("id").toString();
+		Integer status = Integer.parseInt(map.get("status").toString());
+		OctopusColumnType octopusColumnType = this.octopusColumnTypeMapper.selectByPrimaryKey(id);
+		if(octopusColumnType == null){
+			throw new BusinessException(OctopusConstant.CODE_500, "没有此栏目");
+		}
+		try {
+			OctopusColumnType oct = new OctopusColumnType();
+			oct.setId(id);
+			oct.setStatus(status);
+			oct.setChangeTime(new Date());
+			this.octopusColumnTypeMapper.updateByPrimaryKeySelective(oct);
+		} catch (Exception e) {
+			throw new BusinessException(OctopusConstant.CODE_500, "修改栏目系统错误，请联系管理员");
+		}
+		return "修改成功";
+	}
+
+	public String addTail(Map<String, Object> map) {
+		if(map == null || map.get("typeId") == null || map.get("title") == null ||
+				map.get("content") == null|| map.get("sort") == null){
+			throw new BusinessException(OctopusConstant.CODE_500, OctopusConstant.FILL_IN_REQUIRED);
+		}
+		String typeId = map.get("typeId").toString();
+		String title = map.get("title").toString();
+		Integer sort = Integer.parseInt(map.get("sort").toString());
+		OctopusColumnTail octopusColumnTail = new OctopusColumnTail(OctopusUtil.createUUId(),
+				typeId,title,1,new Date(),sort,);
+//		String id, String typeId, String title, Integer status, Date publishTime, Integer sort,
+//		String content
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+}

@@ -1,0 +1,105 @@
+package org.bibr.user.center.configurer;
+
+import java.util.List;
+
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
+import org.apache.rocketmq.common.message.MessageConst;
+import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
+import org.bibr.distributed.asset.configuration.DefaultMQCustomerEvent;
+import org.bibr.distributed.asset.contants.AssetContants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * 
+* @ClassName: UserCenterMQCustomerConfiguration
+* @Description: TODO(用户中心RocketMq消费者配置)
+* @author Administrator
+* @date 2018年12月7日上午11:54:38
+*
+ */
+@Configuration
+public class UserCenterMQCustomerConfiguration {
+
+	private final static Logger logger = LoggerFactory.getLogger(UserCenterMQCustomerConfiguration.class);
+
+	@Autowired
+	private ApplicationEventPublisher publisher;
+
+	@Value("${rocketmq.consumer.groupName}")
+	private String consumerGroupName;
+
+	@Value("${rocketmq.consumer.namesrvAddr}")
+	private String consumerNamesrvAddr;
+
+	@Value("${rocketmq.consumer.topic}")
+	private String consumerTopic;
+
+	@Value("${rocketmq.consumer.tag}")
+	private String consumerTag;
+
+	/* 客户端实例名称 */
+	@Value("${rocketmq.consumer.instanceName}")
+	private String consumerInstanceName;
+
+	/**
+	 * Mq客户端主动拉取消息
+	 * 
+	 * @return
+	 * @throws MQClientException
+	 */
+	@Bean(name = "defaultCustomer")
+	public DefaultMQPushConsumer getDefaultCustomer() throws MQClientException {
+		DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(consumerGroupName);
+		consumer.setNamesrvAddr(consumerNamesrvAddr);
+		consumer.setInstanceName(consumerInstanceName);
+		/**
+		 * BROADCASTING : 一条消息被多个consumer消费，即使这些consumer属于同一个ConsumerGroup,
+		 * >消息也会被ConsumerGroup中的每个Consumer都消费一次 
+		 * CLUSTERING : 一个ConsumerGroup中的Consumer实例平均分摊消费消息。例如某个Topic有9条消息，
+		 * >其中一个ConsumerGroup有3个实例，那么每个实例只消费其中部分，消费完的消息不能被其他实例消费。
+		 */
+		consumer.setMessageModel(MessageModel.CLUSTERING);
+		consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
+		consumer.subscribe(consumerTopic, "*");
+		consumer.registerMessageListener(new MessageListenerConcurrently() {
+			@Override
+			public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,ConsumeConcurrentlyContext context) {
+				try {
+					for (MessageExt msg : msgs) {
+						String tag = msg.getProperties().get(MessageConst.PROPERTY_TAGS);
+						publisher.publishEvent(new UserCenterMQCustomerEvent(this, consumerTopic, tag, msg));
+					}
+					return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+				} catch (Exception e) {
+					logger.error("用户中心消息处理异常", e);
+					return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+				}
+			}
+		});
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(5000);
+					consumer.start();
+				} catch (Exception e) {
+					logger.info("DefaultMQCustomerConfiguration getDefaultCustomer start thread", e);
+				}
+			}
+		}).start();
+		return consumer;
+	}
+
+}

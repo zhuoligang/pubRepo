@@ -1,0 +1,69 @@
+package org.bibr.distributed.octopus.bean.po;
+
+import java.util.Date;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel("文章信息")
+public class OctopusArticle {
+    private String id;
+    @ApiModelProperty("类型标识")
+    private Integer typeId;
+    @ApiModelProperty("标题")
+    private String title;
+    @ApiModelProperty("状态")
+    private Integer status;
+    @ApiModelProperty("发布时间")
+    private Date publishTime;
+    @ApiModelProperty("详细内容")
+    private String contents;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id == null ? null : id.trim();
+    }
+
+    public Integer getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title == null ? null : title.trim();
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Date getPublishTime() {
+        return publishTime;
+    }
+
+    public void setPublishTime(Date publishTime) {
+        this.publishTime = publishTime;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents == null ? null : contents.trim();
+    }
+}

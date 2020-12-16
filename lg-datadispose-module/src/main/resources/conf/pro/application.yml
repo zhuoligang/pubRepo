@@ -1,0 +1,99 @@
+server:
+  port: 8082
+  tomcat:
+    max-threads: 1000
+    max-connections: 20000
+
+spring:
+  application:
+    name: rush
+  redis:
+    database0: 0
+    database1: 1
+    host: 172.31.202.138
+    port: 6379
+    password: ieb5p9h0rFgaBdW3o6dofJ8oOBjPG78
+    sentinelHost: 172.31.202.138
+    sentinelPort: 26379
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 5
+        min-idle: 0
+    timeout: 10000
+  jackson:
+    default-property-inclusion: non_null
+  datasource:
+    rushmysql:
+      jdbc-url: jdbc:mysql://172.31.202.142:3306/bibr_rush?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+      username: bier
+      password: xu3D@eF7w#i8HoJ@gsJbu
+      driver-class-name: com.mysql.jdbc.Driver
+      minimumIdle: 10
+      maximumPoolSize: 200
+    assetmysql:
+      jdbc-url: jdbc:mysql://172.31.202.137:3306/bibr_asset_web?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+      username: bier
+      password: '#Yv8U@cxzv5#JHbvKbV@CnHL'
+      driver-class-name: com.mysql.jdbc.Driver
+      minimumIdle: 10
+      maximumPoolSize: 200
+  output:
+    ansi:
+      enabled: detect
+  task:
+    pool:
+      corePoolSize: 50
+      maxPoolSize: 100
+      keepAliveSeconds: 600
+      queueCapacity: 200
+  servlet:
+      multipart:
+        maxFileSize: 100MB
+        maxRequestSize: 100MB
+      
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+
+pagehelper:
+  reasonable: true
+  supportMethodsArguments: true
+  pageSizeZero: true
+  params: count=countSql
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org:
+      bibr:
+        distributed:
+          order:
+            mapper: debug
+
+swagger2:
+  enable: false
+
+shoppingjob:
+  cron:
+    one:
+      start: 0 0 20 28 4 ?
+      end: 0 20 20 28 4 ?
+    two:
+      start: 0 30 20 28 4 ?
+      end: 0 50 20 28 4 ?
+    three:
+      start: 0 0 21 28 4 ?
+      end: 0 20 21 28 4 ?
+      
+subjob:
+   cleaningTime: 0 1 14 18 7 ?
+   savePrice: 0 0 12 18 7 ?
+   startTime: 1561608000000L
+   endTime: 1561629600000L
+
+url:
+  rush:
+    callUserCenterUrl: http://api.bibr.co/USERCENTER/center/api/findInviteeNum
+    callFreezeAssetUrl: http://api.bibr.co/ASSETSWEB/asset/active/lock
+

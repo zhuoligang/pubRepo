@@ -1,0 +1,774 @@
+package org.bibr.distributed.user.service;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.bibr.distributed.user.bean.po.UserMember;
+import org.bibr.distributed.user.bean.po.UserMemberLog;
+import org.bibr.distributed.user.bean.vo.AcceptUserVO;
+import org.bibr.distributed.user.config.RedisCache;
+import org.bibr.distributed.user.constant.CertificationConstant;
+import org.bibr.distributed.user.constant.UserConstant;
+import org.bibr.distributed.user.dao.UserMemberLogMapper;
+import org.bibr.distributed.user.dao.UserMemberMapper;
+import org.bibr.distributed.user.exception.BusinessException;
+import org.bibr.distributed.user.util.RestTemplateUtil;
+import org.bibr.distributed.user.util.StringHelper;
+import org.bibr.distributed.user.util.UserUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSON;
+import com.dyuproject.protostuff.LinkedBuffer;
+import com.dyuproject.protostuff.ProtostuffIOUtil;
+import com.dyuproject.protostuff.runtime.RuntimeSchema;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+@Service
+public class UserMemberService {
+	private final static Logger logger = LoggerFactory.getLogger(UserMemberService.class);
+	
+	@Autowired
+	private RedisCache cache;
+	
+	@Autowired
+	private UserMemberMapper userMemberMapper;
+	@Autowired
+	private UserMemberLogMapper userMemberLogMapper;
+	
+	private RuntimeSchema<AcceptUserVO> schema = RuntimeSchema.createFrom(AcceptUserVO.class);
+	
+	
+	/**
+	 *  根据
+	 * @param map
+	 * @return
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public Map<String,Object> getUserByMemberId(Map<String, String> map) {
+		Map<String,Object> resultMap = new HashMap<>();
+		// 空值判断
+		boolean notEmptyBatch = UserUtil.isNotEmptyBatch(map.get("memberId"));
+		if(!notEmptyBatch) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		UserMember um = findUserByMemberId(map);
+		if(um != null) {//待确认，如果已经存在用户信息，是否需要拉取替换本地信息
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.BAD_CONTINUE);
+		}
+		Map<String,String> sendMap = new HashMap<String,String>();
+		sendMap.put("id", map.get("memberId"));
+		Map<String,String> headerMap = new HashMap<String,String>();
+		headerMap.put("Authorization", UserConstant.BIBR_AUTHORIZATION);
+		Map<String,Object> data_ = callBibr(UserConstant.BIBR_URL_GETMEMBER,sendMap,headerMap);
+		
+		if(data_.get("member") == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_PARMS_ERROR);
+		}
+		UserMember userMember = JSON.parseObject(data_.get("member").toString(),UserMember.class);
+//		List<UserMemberVirtualcoin> userMemberVirtualcoins =
+//				JSON.parseArray(data_.get("memberVirtualcoins").toString(),UserMemberVirtualcoin.class);
+		int i = 0;
+		if(userMember != null) {
+			userMember.setNickname("用户"+UserUtil.getRandomNum(100, 999));
+			userMember.setMemberId(userMember.getId());
+			userMember.setId(UserUtil.createUUId());
+			userMember.setUserType(0);
+			i = this.userMemberMapper.insertSelective(userMember);
+		}
+		if(i > 0) {
+			try {//初始化承兑账户资产信息
+				MultiValueMap<String, String> sendMap_account = new LinkedMultiValueMap<>();
+				sendMap_account.add("userId", userMember.getId());
+				RestTemplateUtil.postForEntity(UserConstant.INIT_ACCOUNT_URL, sendMap_account);
+			} catch (Exception e) {
+				throw new BusinessException(UserConstant.CODE_500, UserConstant.INIT_ACCOUNT_ERROR);
+			}
+			
+		}
+//		if(userMemberVirtualcoins != null && userMemberVirtualcoins.size() > 0) {
+//			for (UserMemberVirtualcoin userMemberVirtualcoin : userMemberVirtualcoins) {
+//				userMemberVirtualcoin.setId(UserUtil.createUUId());
+//				this.userMemberVirtualcoinMapper.insertSelective(userMemberVirtualcoin);
+//			}
+//		}
+		resultMap.put("userMember", userMember);
+//		resultMap.put("memberVirtualcoins", userMemberVirtualcoins);
+		return resultMap;
+		
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public UserMember findUserByMemberId(Map<String, String> map) {
+		if(map == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		UserMember userMember = null;
+		if(map.get("id") != null) {
+			userMember = this.userMemberMapper.selectByPrimaryKey(map.get("id"));
+			return userMember;
+		}else if(map.get("memberId") != null) {
+			userMember = this.userMemberMapper.selectByMemberId(map);
+			return userMember;
+		}
+		return userMember;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public List<UserMember> findUsersByCondition(Map<String, String> map) {
+		if(map == null || (map.get("startTime") == null && map.get("endTime") == null)) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		
+		return this.userMemberMapper.findUsersByCondition(map);
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean updateUserByMemberId(Map<String, String> map,HttpServletRequest request) {
+		boolean flag = false;
+		// 空值判断
+		boolean notEmptyBatch = UserUtil.isNotEmptyBatch(map.get("id"));
+		if(!notEmptyBatch) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		UserMember userMember = findUserByMemberId(map);
+		if(userMember == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.NO_USER_EXIST);
+		}
+		if(map.get("enabled") != null ) {
+			Integer enabled = Integer.parseInt(map.get("enabled"));
+			if(enabled == 0 || enabled == 1) {
+				Map<String,String> sendMap = new HashMap<String,String>();
+				sendMap.put("memberId", userMember.getMemberId());
+				sendMap.put("enabled", enabled.toString());
+				updateMemberBIBR(sendMap);
+			}
+			userMember.setEnabled(enabled);
+		}
+		if(map.get("nickname") != null) {
+			//如果已经是商家，不允许修改昵称；如果不是商家，只允许修改一次昵称
+			if(userMember.getUserType() > 0){
+				throw new BusinessException(UserConstant.CODE_500, "您已是商家用户，不允许修改昵称");
+			}
+			if(userMember.getNicknameChangeTimes() > 0){
+				throw new BusinessException(UserConstant.CODE_500, "您已设置过一次昵称，不能再次设置");
+			}
+			int StringLength = UserUtil.StringLength(map.get("nickname"));
+			if(StringLength < UserConstant.CHECK_NICKNAME_MIN || StringLength > UserConstant.CHECK_NICKNAME_MAX) {
+				throw new BusinessException(UserConstant.CODE_500, UserConstant.CHECK_NICKNAME_ERROR);
+			}
+			userMember.setNickname(map.get("nickname"));
+			userMember.setNicknameChangeTimes(1);
+		}
+		if(map.get("password") != null) {
+			return flag = updatelogin(map,request);
+//			userMember.setPassword(map.get("password"));
+		}
+		if(map.get("tradePassword") != null) {
+			return flag = updatetrade(map,request);
+//			userMember.setTradePassword(map.get("tradePassword"));
+		}
+		if(map.get("userType") != null) {
+			userMember.setUserType(Integer.parseInt(map.get("userType")));
+		}
+		if(map.get("acceptLoginStatus") != null) {
+			boolean bool = map.get("acceptLoginStatus").equals("1") ? true : false ;
+			userMember.setAcceptLoginStatus(bool);
+			if("1".equals(map.get("acceptLoginStatus"))) {
+				Map<String,String> map_ = new HashMap<>();
+				map_.put("memberId", userMember.getMemberId());
+				acceptLogin(map_,request);
+			}else {
+				acceptLoginOut(map,request);
+			}
+			
+		}
+		
+		flag = this.userMemberMapper.updateByPrimaryKeySelective(userMember) > 0 ? true : flag;
+		
+		String keyStr = UserConstant.USER_CACHENAME + userMember.getId();
+		cache.putCacheWithExpireTime(keyStr, userMember,UserConstant.USER_CACHETIME);
+		logger.info("put user cache :" + keyStr + "value :" + userMember);
+		return flag;
+		
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public UserMember acceptLogin(Map<String, String> map,HttpServletRequest request) {
+		if(map.get("memberId") == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		UserMember userMember = null;
+		userMember = findUserByMemberId(map);
+		if(userMember == null) {
+			Map<String,Object> reslutMap = getUserByMemberId(map);
+			userMember = (UserMember) reslutMap.get("userMember");
+		}
+		
+		logger.info("name is :" + userMember.getName() +"nickname is :" + userMember.getNickname());
+		userMember.setAcceptLoginStatus(true);
+		userMember.setAcceptToken(UserUtil.createUUId());
+		int i = this.userMemberMapper.updateUserLoginStatus(userMember);
+		String keyStr = null;
+		if(i > 0) {
+			keyStr = UserConstant.USER_CACHENAME + userMember.getId();
+			cache.putCacheWithExpireTime(keyStr, userMember,UserConstant.USER_CACHETIME);
+			logger.info("put user cache :" + keyStr + "value :" + userMember);
+			recordUserMemberLog(request,userMember.getId(),"登陆");
+		}
+		
+		return userMember;
+		
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean acceptLoginOut(Map<String, String> map,HttpServletRequest request) {
+		if(map == null || map.get("id") == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		UserMember userMember = null;
+		String keyStr = UserConstant.USER_CACHENAME + map.get("id");
+		userMember = cache.getCache(keyStr, UserMember.class);
+		logger.info("get user cache :" + keyStr + "value :" + userMember);
+		if(userMember == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.CACHE_ERROR_USER);
+		}
+		cache.deleteCache(keyStr);
+		logger.info("delete user cache :" + keyStr );
+		userMember.setAcceptLoginStatus(false);
+		userMember.setAcceptToken("");
+		this.userMemberMapper.updateByPrimaryKeySelective(userMember);
+		recordUserMemberLog(request,userMember.getId(),"注销登陆");
+		return true;
+		
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public UserMember checkLoginBySessionId(Map<String, String> map,HttpServletRequest request) {
+		if(map == null || map.get("sessionId") == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		map.put("ipaddr", UserUtil.getIpAddr(request));
+		Map<String,String> headerMap = new HashMap<String,String>();
+		headerMap.put("Authorization", UserConstant.BIBR_AUTHORIZATION);
+		Map<String,Object> data_ = callBibr(UserConstant.BIBR_URL_CHECKMEMBER,map,headerMap);
+		
+		if(data_.get("member") == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_PARMS_ERROR);
+		}
+		UserMember userMember = JSON.parseObject(data_.get("member").toString(),UserMember.class);
+		Map<String, String> map_ = new HashMap<>();
+		map_.put("memberId", userMember.getId());
+		UserMember resultPo = acceptLogin(map_,request);
+	
+		return resultPo;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Map<String,Object> callBibr(String url, Map<String,String> map,Map<String,String> headerMap){
+		String result= null;
+		try {
+			result = RestTemplateUtil.postForEntity(url, JSONUtils.toJSONString(map),headerMap);
+		} catch (BusinessException e) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_URL_ERROR);
+		} catch (Exception e) {
+			throw new BusinessException(UserConstant.CODE_500, e.getMessage());
+		}
+		if(result.isEmpty()) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_RETURN_NULL);
+		}
+		
+		Map<String,Object> result_ = (Map<String, Object>) JSON.parse(result);
+		if(result_.get("code") == null || result_.get("msg") == null || result_.get("data") == null) {
+			if(result_.get("code") != null && result_.get("msg") != null && Integer.parseInt(result_.get("code").toString()) == 0) {
+				throw new BusinessException(UserConstant.CODE_500, result_.get("msg").toString());
+			}
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_PARMS_ERROR);
+		}
+		
+		String data = result_.get("data").toString();
+		Map<String,Object> data_ = (Map<String, Object>) JSON.parse(data);
+		
+		return data_;
+		
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean normalDispose(Map<String, String> map) {
+		boolean bool = false;
+		if(map == null || map.get("name") == null || map.get("idcard") == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		UserMember userMember = findUserByMemberId(map);
+		if(userMember == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.NO_USER_EXIST);
+		}
+		if(userMember.getName() != null || userMember.getIdcard() != null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.INFORMATION_HAVESET);
+		}
+		String name = map.get("name");
+		String idcard = map.get("idcard");
+		int i = this.userMemberMapper.selectCountByMap(map);
+		if(i > 0) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_EXIST_IDCARD);
+		}
+		Date birthday = new Date(Integer.parseInt(idcard.substring(6, 10)) - 1900,
+                Integer.parseInt(idcard.substring(10, 12)) - 1, Integer.parseInt(idcard.substring(12, 14)));
+        long cha = new Date().getTime() - birthday.getTime();
+        if (cha / 60 / 60 / 24 / 365 / 1000 < 18) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_AGE_FAIL);
+        }
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Authorization", "APPCODE " + CertificationConstant.IDCARD_APPCODE);
+        Map<String, Object> sendMap = new HashMap<String, Object>();
+        sendMap.put("name", name);
+        sendMap.put("cardno", idcard);
+        String result = RestTemplateUtil.getForEntity(CertificationConstant.IDCARD_URL,sendMap, headers);
+        
+        Map<String,Object> result_ = (Map<String, Object>) JSON.parse(result);
+		String resp = result_.get("resp").toString();
+		Map<String,Object> data_ = (Map<String, Object>) JSON.parse(resp);
+		int code = Integer.parseInt(data_.get("code").toString());
+        if (code == 0) {
+			Map<String,String> updateMap = new HashMap<String,String>();
+			updateMap.put("memberId", userMember.getMemberId());
+			updateMap.put("name", name);
+			updateMap.put("idcard", idcard);
+			updateMemberBIBR(updateMap);
+        	
+        	userMember.setName(name);
+        	userMember.setIdcard(idcard);
+        	this.userMemberMapper.updateByPrimaryKeySelective(userMember);
+        	
+			String keyStr = UserConstant.USER_CACHENAME + userMember.getId();
+			cache.putCacheWithExpireTime(keyStr, userMember,UserConstant.USER_CACHETIME);
+			logger.info("put user cache :" + keyStr + "value :" + userMember);
+        	bool = true;
+        }
+
+		return bool;
+	}
+
+	/**
+	 * 交易密码修改处理
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public boolean updatetrade(Map<String, String> map,HttpServletRequest request){
+		boolean bool = false;
+		if(map == null || map.get("id") == null || map.get("tradePassword") == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		UserMember userMember = findUserByMemberId(map);
+		if(userMember == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.NO_USER_EXIST);
+		}
+		String tradePassword = map.get("tradePassword");
+        if(tradePassword.length() < UserConstant.USER_PASSWORD_MIN || tradePassword.length() > UserConstant.USER_PASSWORD_MAX){
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_PASSWORD_ERROR_LIMIT);
+        }
+	    if(StringHelper.md5(tradePassword).equals(userMember.getTradePassword())){
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_PASSWORD_ERROR_OLD);
+        }
+	    
+		if (StringHelper.md5(tradePassword).equals(userMember.getPassword())) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_PASSWORD_ERROR_ALIKE);
+		}
+		try {
+			Map<String,String> sendMap = new HashMap<String,String>();
+			sendMap.put("memberId", userMember.getMemberId());
+			sendMap.put("tradePassword", StringHelper.md5(tradePassword));
+			updateMemberBIBR(sendMap);
+			
+			userMember.setTradePassword(StringHelper.md5(tradePassword));
+			this.userMemberMapper.updateByPrimaryKeySelective(userMember);
+			recordUserMemberLog(request,userMember.getId(),UserConstant.USER_TRADEPASSWORD_CHANGE);
+			String keyStr = UserConstant.USER_CACHENAME + userMember.getId();
+			cache.putCacheWithExpireTime(keyStr, userMember,UserConstant.USER_CACHETIME);
+			logger.info("put user cache :" + keyStr + "value :" + userMember);
+			bool = true;
+		} catch (Exception e) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_CHANGE_ERROR);
+		}
+		
+		return bool;
+	}
+	
+	/**
+	 * 修改登陆密码处理
+	 */
+	@Transactional(rollbackFor = Exception.class)
+		public boolean updatelogin(Map<String, String> map,HttpServletRequest request){
+		boolean bool = false;
+		if(map == null || map.get("id") == null || map.get("password") == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		String passwordNew = map.get("password");
+        if(passwordNew.length() < UserConstant.USER_PASSWORD_MIN || passwordNew.length() > UserConstant.USER_PASSWORD_MAX){
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_PASSWORD_ERROR_LIMIT);
+        }
+		UserMember userMember = findUserByMemberId(map);
+		if(userMember == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.NO_USER_EXIST);
+		}
+	    if(StringHelper.md5(passwordNew).equals(userMember.getPassword())){
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_PASSWORD_ERROR_OLD);
+        }
+		if (StringHelper.md5(passwordNew).equals(userMember.getTradePassword())) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_PASSWORD_ERROR_ALIKE);
+		}
+		try {
+			Map<String,String> sendMap = new HashMap<String,String>();
+			sendMap.put("memberId", userMember.getMemberId());
+			sendMap.put("password", StringHelper.md5(passwordNew));
+			updateMemberBIBR(sendMap);
+			
+			userMember.setPassword(StringHelper.md5(passwordNew));
+			this.userMemberMapper.updateByPrimaryKeySelective(userMember);
+			recordUserMemberLog(request,userMember.getId(),UserConstant.USER_PASSWORD_CHANGE);
+			String keyStr = UserConstant.USER_CACHENAME + userMember.getId();
+			cache.putCacheWithExpireTime(keyStr, userMember,UserConstant.USER_CACHETIME);
+			logger.info("put user cache :" + keyStr + "value :" + userMember);
+			bool = true;
+		} catch (Exception e) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_CHANGE_ERROR);
+		}
+		return bool;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public String updateMemberBIBR(Map<String,String> sendMap) {
+		String result = null;
+		Map<String,String> headerMap = new HashMap<String,String>();
+		headerMap.put("Authorization", UserConstant.BIBR_AUTHORIZATION);
+		try {
+			String result_ = RestTemplateUtil.postForEntity(UserConstant.UPDATE_MEMBER_URL, JSONUtils.toJSONString(sendMap),headerMap);
+			Map<String,Object> map_ = (Map<String, Object>) JSON.parse(result_);
+			result = map_.get("data").toString();
+			if(!"ok".equals(result)) {
+				throw new BusinessException(UserConstant.CODE_500, result);
+			}
+		} catch (Exception e) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_URL_ERROR);
+		}
+		return result;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean frozenMembers(Map<String, Object> map) {
+		Boolean bool = false;
+		if(map == null || map.get("uuids") == null || map.get("enabled") == null) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		String[] uuids = String.valueOf(map.get("uuids")).split(",");
+		String enabled = map.get("enabled").toString();
+		map.put("uuids", uuids);
+		if("0".equals(enabled) || "1".equals(enabled)) {
+			String result = null;
+			Integer freeze=Integer.valueOf(enabled);
+			if (freeze==0) {
+				freeze=2;
+			}
+			List<String> strs = this.userMemberMapper.findMemberIds(map);
+			String memberIds = strs.toString();
+			memberIds = memberIds.substring(1, memberIds.length()-1);
+			Map<String,String> sendMap = new HashMap<String,String>();
+			sendMap.put("memberIds", memberIds);
+			sendMap.put("enabled", enabled);
+			Map<String,String> headerMap = new HashMap<String,String>();
+			headerMap.put("Authorization", UserConstant.BIBR_AUTHORIZATION);
+			try {
+				String s = JSONUtils.toJSONString(sendMap);
+				System.out.println(s);
+				String result_ = RestTemplateUtil.postForEntity(UserConstant.FROZEN_MEMBERS, JSONUtils.toJSONString(sendMap),headerMap);
+				Map<String,Object> map_ = (Map<String, Object>) JSON.parse(result_);
+//				result = map_.get("data").toString();
+				Boolean x = (Boolean) map_.get("data");
+//				if(!Boolean.parseBoolean(result)) {
+				if(!x) {
+					throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_CHANGE_ERROR);
+				}
+			} catch (Exception e) {
+				throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_URL_ERROR);
+			}
+			//批量冻结或者解冻时通知广告模块
+			List<String> findBussinessUser = userMemberMapper.findBussinessUser(map);
+			List<AcceptUserVO> list = new ArrayList<>();
+			for(String id:findBussinessUser){
+				list.add(new AcceptUserVO(id,freeze));
+			}			
+			try {
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ProtostuffIOUtil.writeListTo(bos,list, schema,LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE));
+				byte[] bytes = bos.toByteArray();
+				String order_result = RestTemplateUtil.postForProtobuf(UserConstant.INIT_LIST_ORDER_URL, bytes);
+				Map<String,Object> orderResultMap = (Map<String, Object>) JSON.parse(order_result);
+				if(order_result == null) {
+					throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_RETURN_NULL);
+				}
+				if(!"success".equals(orderResultMap.get("message"))) {
+					throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_PARMS_ERROR);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		int i = this.userMemberMapper.frozenMembers(map);
+		bool = i > 0 ? true : bool;
+		Map<String, String> map_ = new HashMap<>();
+		for (String uuid : uuids) {
+			String keyStr = UserConstant.USER_CACHENAME + uuid;
+			UserMember um = cache.getCache(keyStr, UserMember.class);
+			logger.info("get user cache :" + keyStr + "value :" + um);
+			if(um != null) {
+				um.setEnabled(Integer.parseInt(enabled));
+				cache.putCacheWithExpireTime(keyStr, um,UserConstant.USER_CACHETIME);
+				logger.info("put user cache :" + keyStr + "value :" + um);
+			}
+		}
+		return bool;
+
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public String updateMemberByMemberId(Map<String, String> map, HttpServletRequest request) {
+		String result = "修改失败";
+		if(map == null || (map.get("memberId") == null&&map.get("id") == null)){
+			return result = "缺少必要参数";
+		}
+		
+		UserMember member = findUserByMemberId(map);
+		if(member == null){
+			return result = "nouser";
+		}
+		UserMember mem = new UserMember();
+		mem.setId(member.getId());
+		if(map.get("nickname") != null){
+			int StringLength = UserUtil.StringLength(map.get("nickname"));
+			if(StringLength < UserConstant.CHECK_NICKNAME_MIN || StringLength > UserConstant.CHECK_NICKNAME_MAX) {
+				throw new BusinessException(UserConstant.CODE_500, UserConstant.CHECK_NICKNAME_ERROR);
+			}
+			if(member.getUserType() > 0){//修改昵称，如果是商家，需要通知订单系统
+				AcceptUserVO acceptUserVO = new AcceptUserVO(member.getId(), map.get("nickname"));
+				byte[] bytes = ProtostuffIOUtil.toByteArray(acceptUserVO, schema,
+						LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE));
+				String order_result = RestTemplateUtil.postForProtobuf(UserConstant.INIT_ORDER_URL, bytes);
+				Map<String,Object> orderResultMap = (Map<String, Object>) JSON.parse(order_result);
+				if(order_result == null) {
+					throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_RETURN_NULL);
+				}
+				if(!"success".equals(orderResultMap.get("message"))) {
+					throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_PARMS_ERROR);
+				}
+			}
+			mem.setNickname(map.get("nickname"));
+			this.userMemberMapper.updateByPrimaryKeySelective(mem);
+			return result = "ok";
+		}
+		if(map.get("enabled") != null){//是否启用（0：冻结，1：启用）		enabled（非必填）
+			mem.setEnabled(Integer.parseInt(map.get("enabled")));
+			this.userMemberMapper.updateByPrimaryKeySelective(mem);
+			if (member.getUserType()==1) {
+				AcceptUserVO acceptUserVO = new AcceptUserVO();
+				if (Integer.valueOf(map.get("enabled"))==0) {
+					acceptUserVO.setFreeze(2);
+				}else {
+					acceptUserVO.setFreeze(Integer.valueOf(map.get("enabled")));
+				}				
+				acceptUserVO.setUserId( member.getId());
+				byte[] bytes = ProtostuffIOUtil.toByteArray(acceptUserVO, schema,
+						LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE));
+				String order_result = RestTemplateUtil.postForProtobuf(UserConstant.INIT_ORDER_URL, bytes);
+				Map<String,Object> orderResultMap = (Map<String, Object>) JSON.parse(order_result);
+				if(order_result == null) {
+					throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_RETURN_NULL);
+				}
+				if(!"success".equals(orderResultMap.get("message"))) {
+					throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_PARMS_ERROR);
+				}
+			}			
+			return result = "ok";
+		}
+		if(map.get("password") != null){//登陆密码		password（非必填）
+			mem.setPassword(map.get("password"));
+			this.userMemberMapper.updateByPrimaryKeySelective(mem);
+			recordUserMemberLog(request, mem.getId(), "修改登录密码");
+			return result = "ok";
+		}
+		if(map.get("tradePassword") != null){//交易密码		tradePassword（非必填）
+			mem.setTradePassword(map.get("tradePassword"));
+			this.userMemberMapper.updateByPrimaryKeySelective(mem);
+			recordUserMemberLog(request, mem.getId(), "修改交易密码");
+			return result = "ok";
+		}
+		if(map.get("name") != null && map.get("idcard") != null){//普通认证
+			mem.setName(map.get("name"));
+			mem.setIdcard(map.get("idcard"));
+			this.userMemberMapper.updateByPrimaryKeySelective(mem);
+			return result = "ok";
+		}
+		if(map.get("idcardpiccheckId") != null){//高级认证状态
+			mem.setIdcardPicCheckId(Integer.parseInt(map.get("idcardpiccheckId").toString()));
+			if(map.get("idcardpicchecktype") != null){//高级认证类型
+				mem.setIdcardPicCheckType(Integer.parseInt(map.get("idcardpicchecktype").toString()) == 1 ? true : false);
+			}
+			if(map.get("idcardpicfront") != null &&
+					map.get("idcardpicback") != null &&
+					map.get("idcardpiconhand") != null ){//高级认证通过,存图片路径
+				mem.setIdcardPicFront(map.get("idcardpicfront").toString());
+				mem.setIdcardPicBack(map.get("idcardpicback").toString());
+				mem.setIdcardPicOnhand(map.get("idcardpiconhand").toString());
+			}
+			this.userMemberMapper.updateByPrimaryKeySelective(mem);
+			return result = "ok";
+		}
+		if(map.get("userType") != null) {//用户类型（0：普通用户，1：商家）
+			Integer userType = Integer.parseInt(map.get("userType").toString());
+			String order_result = null;
+			AcceptUserVO acceptUserVO = null;
+			if(userType == 1) {
+				acceptUserVO = new AcceptUserVO(mem.getId(), member.getNickname());
+			}else if(userType == 0){
+				acceptUserVO = new AcceptUserVO();
+				acceptUserVO.setUserId(mem.getId());
+				acceptUserVO.setDisable(2);
+			}				
+			byte[] bytes = ProtostuffIOUtil.toByteArray(acceptUserVO, schema,
+					LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE));
+			order_result = RestTemplateUtil.postForProtobuf(UserConstant.INIT_ORDER_URL, bytes);
+			Map<String,Object> orderResultMap = (Map<String, Object>) JSON.parse(order_result);
+			if(order_result == null) {
+				throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_RETURN_NULL);
+			}
+			if(!"success".equals(orderResultMap.get("message"))) {
+				throw new BusinessException(UserConstant.CODE_500, UserConstant.CALL_PARMS_ERROR);
+			}
+			
+			mem.setUserType(userType);
+			this.userMemberMapper.updateByPrimaryKeySelective(mem);
+			return result = "ok";
+		}
+		return result;
+
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean putUserCache(Map<String, String> map) {
+		try {
+			String keyStr = UserConstant.USER_CACHENAME + map.get("id");
+			UserMember um = findUserByMemberId(map);
+			cache.putCacheWithExpireTime(keyStr, um,UserConstant.USER_CACHETIME);
+			logger.info("put user cache :" + keyStr + "value :" + um);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public UserMember getUserCache(Map<String, String> map) {
+		try {
+			String keyStr = UserConstant.USER_CACHENAME + map.get("id");
+			UserMember um = cache.getCache(keyStr, UserMember.class);
+			logger.info("get user cache :" + keyStr + "value :" + um);
+			return um;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean deleteUserCache(Map<String, String> map) {
+		try {
+			String keyStr = UserConstant.USER_CACHENAME + map.get("id");
+			cache.deleteCache(keyStr);
+			logger.info("delete user cache :" + keyStr );
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean recordUserMemberLog(HttpServletRequest request,String userId,String operation) {
+		Boolean bool = false ;
+		try {
+			UserMemberLog userMemberLog = new UserMemberLog(UserUtil.createUUId(), userId, operation, new Date(), UserUtil.getIpAddr(request));
+			this.userMemberLogMapper.insert(userMemberLog);
+			bool = true;
+		} catch (Exception e) {
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.USER_LOG_ERROR);
+		}
+		return bool;
+	}
+	
+	public Map<String, String> selectMemberIdsSelective(Map<String, Object> map) {
+		if(map == null || map.get("uuids") == null){
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		String[] uuids = String.valueOf(map.get("uuids")).split(",");
+		map.put("uuids", uuids);
+		List<UserMember> list = this.userMemberMapper.selectMemberIdsSelective(map);
+		if(list == null || list.size() <= 0){
+			throw new BusinessException(UserConstant.CODE_500,"没有符合条件的匹配结果");
+		}
+		Map<String, String> resultMap = new HashMap<>();
+		for (UserMember userMember : list) {
+			resultMap.put(userMember.getId(), userMember.getMemberId());
+		}
+		return resultMap;
+	}
+
+	public String selectUUIDByMemberId(Map<String, Object> map) {
+		if(map == null || map.get("memberId") == null){
+			throw new BusinessException(UserConstant.CODE_500, UserConstant.FILL_IN_REQUIRED);
+		}
+		return this.userMemberMapper.selectUUIDByMemberId(map);
+	}
+
+	public Boolean findStateByPrimaryKey(Map<String, String> map){
+		int enabled = userMemberMapper.selectStateByPrimaryKey(map);
+		if (enabled==1) {
+			return true;
+		}else {
+			return false;
+		}		
+	}
+
+	public PageInfo<UserMember> findUsersBlurry(Map<String, Object> map) {
+		if(map == null){
+			map = new HashMap<>();
+		}
+		if(map.get("pageNumber") == null){
+			map.put("pageNumber",UserConstant.DEFAULT_PAGE_NUMBER);
+		}
+		if(map.get("pageSize") == null){
+			map.put("pageSize",UserConstant.DEFAULT_PAGE_SIZE);
+		}
+		PageHelper.startPage(Integer.parseInt(map.get("pageNumber").toString()), Integer.parseInt(map.get("pageSize").toString()));
+		List<UserMember> list = this.userMemberMapper.findUsersBlurry(map);
+		return new PageInfo<UserMember>(list);
+	}
+	
+}

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.bibr.user.center.dao.CenterSuperMemberMapper" >
+  <resultMap id="BaseResultMap" type="org.bibr.user.center.bean.bo.CenterSuperMember" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="super_id" property="superId" jdbcType="VARCHAR" />
+    <result column="on_time" property="onTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, super_id, on_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from center_super_member
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from center_super_member
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.bibr.user.center.bean.bo.CenterSuperMember" >
+    insert into center_super_member (id, super_id, on_time
+      )
+    values (#{id,jdbcType=VARCHAR}, #{superId,jdbcType=VARCHAR}, #{onTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.bibr.user.center.bean.bo.CenterSuperMember" >
+    insert into center_super_member
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="superId != null" >
+        super_id,
+      </if>
+      <if test="onTime != null" >
+        on_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="superId != null" >
+        #{superId,jdbcType=VARCHAR},
+      </if>
+      <if test="onTime != null" >
+        #{onTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.bibr.user.center.bean.bo.CenterSuperMember" >
+    update center_super_member
+    <set >
+      <if test="superId != null" >
+        super_id = #{superId,jdbcType=VARCHAR},
+      </if>
+      <if test="onTime != null" >
+        on_time = #{onTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.bibr.user.center.bean.bo.CenterSuperMember" >
+    update center_super_member
+    set super_id = #{superId,jdbcType=VARCHAR},
+      on_time = #{onTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

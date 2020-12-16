@@ -1,0 +1,92 @@
+package org.bibr.accountcheck.center.controller;
+
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.bibr.accountcheck.center.bean.vo.ResultVO;
+import org.bibr.accountcheck.center.constant.AccountCheckConstant;
+import org.bibr.accountcheck.center.exception.BusinessException;
+import org.bibr.accountcheck.center.service.ForkJoinCalculate;
+import org.bibr.accountcheck.center.thread.CoreCheckThread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSONObject;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+/**
+ * 
+* @ClassName: TsetController
+* @Description: TODO(测试控制台)
+* @author Administrator
+* @date 2018年12月18日下午5:01:41
+*
+ */
+@Controller
+@RequestMapping("/test")
+public class TsetController {
+	
+
+    public static void main(String[] args) {
+        ForkJoinPool forkjoinPool = new ForkJoinPool();
+        ForkJoinCalculate forkJoinCalculate = new ForkJoinCalculate(0L, 10000000L);
+        Future<Long> result = forkjoinPool.submit(forkJoinCalculate);
+        try {
+            System.out.println(result.get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+    
+	private final static Logger logger = LoggerFactory.getLogger(TsetController.class);
+	
+	@ApiOperation(value = "测试————zlg",
+			notes = "用户uuid    userId（必填）<br>币种id    coinCode（非必填）")
+	@RequestMapping(value = "/checkTest", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<String> checkTest(@RequestBody @ApiParam(name = "条件map",
+            value = "jeson格式map", required = true) Map<String, String> map,HttpServletRequest request) {
+		logger.info("&AccountCheckMode&TsetController&checkTest&ApiStatistics");
+		String resultStr = "验证成功开启";
+		try {
+			if(map.get("userId") == null || "".equals(map.get("userId"))){
+				logger.error(AccountCheckConstant.FILL_IN_REQUIRED);
+				throw new BusinessException(AccountCheckConstant.CODE_500, AccountCheckConstant.FILL_IN_REQUIRED);
+			}
+			String userId = map.get("userId");
+			String coinCode = null;
+			if(map.get("coinCode") != null && !"".equals(map.get("coinCode"))){
+				coinCode = map.get("coinCode").toUpperCase();
+			}
+			resultStr = "。。。。。测试。。。。。。";
+			CoreCheckThread coreCheckThread = new CoreCheckThread(userId, coinCode);
+//			coreCheckThread.run();
+			Thread th = new Thread(coreCheckThread);
+			th.start();
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("checkTest?" + JSONObject.toJSONString(map));
+			throw new BusinessException(AccountCheckConstant.CODE_500, e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("checkTest?" + JSONObject.toJSONString(map));
+			throw new BusinessException(AccountCheckConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<String>(AccountCheckConstant.CODE_200,AccountCheckConstant.SUCCESS, resultStr);
+	}
+	
+	
+}

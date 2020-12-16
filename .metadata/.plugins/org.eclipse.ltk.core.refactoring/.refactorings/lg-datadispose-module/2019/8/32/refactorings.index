@@ -1,0 +1,37 @@
+1564969623002	Rename package 'com.lg.datadispose.module.thread'
+1564969667675	Rename package 'com.lg.datadispose.module.pool'
+1564972986043	Extract local variable 'string'
+1564974225648	Extract local variable 'selectByPrimaryKey'
+1564989694963	Move compilation unit
+1564991089090	Delete element
+1564991092528	Delete element
+1564991095451	Delete element
+1564993128276	Extract local variable 'userBtCount'
+1564993547527	Extract local variable 'date'
+1564993566038	Extract local variable 'instance'
+1564993641676	Extract local variable 'i'
+1564994338402	Extract local variable 'day30Along'
+1564996247787	Extract local variable 'day30AlongBo'
+1564998167279	Extract local variable 'userBtCount'
+1564998544713	Extract local variable 'hGet'
+1564999172063	Extract local variable 'turnoverDay30'
+1565000025579	Extract local variable 'hGet'
+1565006104400	Extract local variable 'string'
+1565058750541	Copy packages
+1565058795598	Copy files
+1565058889892	Copy compilation unit
+1565058978491	Copy compilation unit
+1565059112087	Copy compilation units
+1565059137343	Copy compilation units
+1565059173744	Copy compilation unit
+1565059316517	Copy compilation units
+1565059330549	Copy compilation unit
+1565059347506	Copy compilation units
+1565059363117	Copy compilation units
+1565059423538	Copy compilation units
+1565059434872	Copy compilation units
+1565059658767	Copy compilation unit
+1565059667067	Copy compilation unit
+1565059812663	Copy compilation unit
+1565059891167	Copy compilation units
+1565059996783	Copy compilation unit

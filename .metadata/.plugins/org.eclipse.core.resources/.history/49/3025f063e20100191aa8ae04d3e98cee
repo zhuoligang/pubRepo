@@ -1,0 +1,35 @@
+package org.bibr.user.center.bean.bo;
+
+import java.util.Date;
+
+public class CenterSuperMember {
+    private String id;
+
+    private String superId;
+
+    private Date onTime;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id == null ? null : id.trim();
+    }
+
+    public String getSuperId() {
+        return superId;
+    }
+
+    public void setSuperId(String superId) {
+        this.superId = superId == null ? null : superId.trim();
+    }
+
+    public Date getOnTime() {
+        return onTime;
+    }
+
+    public void setOnTime(Date onTime) {
+        this.onTime = onTime;
+    }
+}

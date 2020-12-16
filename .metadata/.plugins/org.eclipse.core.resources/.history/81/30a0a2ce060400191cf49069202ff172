@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.bibr.accountcheck.center.dao.AssetAccountMapper" >
+  <resultMap id="BaseResultMap" type="org.bibr.accountcheck.center.bean.bo.AssetAccount" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="hot_money" property="hotMoney" jdbcType="DECIMAL" />
+    <result column="cold_money" property="coldMoney" jdbcType="DECIMAL" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="account_num" property="accountNum" jdbcType="VARCHAR" />
+    <result column="currency_type" property="currencyType" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="publickey" property="publickey" jdbcType="VARCHAR" />
+    <result column="privatekey" property="privatekey" jdbcType="VARCHAR" />
+    <result column="coin_name" property="coinName" jdbcType="VARCHAR" />
+    <result column="coin_code" property="coinCode" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, version, user_id, hot_money, cold_money, user_name, account_num, currency_type, 
+    status, publickey, privatekey, coin_name, coin_code, create_time, update_time, create_user, 
+    update_user
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from asset_account
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from asset_account
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.bibr.accountcheck.center.bean.bo.AssetAccount" >
+    insert into asset_account (id, version, user_id, 
+      hot_money, cold_money, user_name, 
+      account_num, currency_type, status, 
+      publickey, privatekey, coin_name, 
+      coin_code, create_time, update_time, 
+      create_user, update_user)
+    values (#{id,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, 
+      #{hotMoney,jdbcType=DECIMAL}, #{coldMoney,jdbcType=DECIMAL}, #{userName,jdbcType=VARCHAR}, 
+      #{accountNum,jdbcType=VARCHAR}, #{currencyType,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{publickey,jdbcType=VARCHAR}, #{privatekey,jdbcType=VARCHAR}, #{coinName,jdbcType=VARCHAR}, 
+      #{coinCode,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.bibr.accountcheck.center.bean.bo.AssetAccount" >
+    insert into asset_account
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="hotMoney != null" >
+        hot_money,
+      </if>
+      <if test="coldMoney != null" >
+        cold_money,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="accountNum != null" >
+        account_num,
+      </if>
+      <if test="currencyType != null" >
+        currency_type,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="publickey != null" >
+        publickey,
+      </if>
+      <if test="privatekey != null" >
+        privatekey,
+      </if>
+      <if test="coinName != null" >
+        coin_name,
+      </if>
+      <if test="coinCode != null" >
+        coin_code,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="hotMoney != null" >
+        #{hotMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="coldMoney != null" >
+        #{coldMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNum != null" >
+        #{accountNum,jdbcType=VARCHAR},
+      </if>
+      <if test="currencyType != null" >
+        #{currencyType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="publickey != null" >
+        #{publickey,jdbcType=VARCHAR},
+      </if>
+      <if test="privatekey != null" >
+        #{privatekey,jdbcType=VARCHAR},
+      </if>
+      <if test="coinName != null" >
+        #{coinName,jdbcType=VARCHAR},
+      </if>
+      <if test="coinCode != null" >
+        #{coinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.bibr.accountcheck.center.bean.bo.AssetAccount" >
+    update asset_account
+    <set >
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="hotMoney != null" >
+        hot_money = #{hotMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="coldMoney != null" >
+        cold_money = #{coldMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNum != null" >
+        account_num = #{accountNum,jdbcType=VARCHAR},
+      </if>
+      <if test="currencyType != null" >
+        currency_type = #{currencyType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="publickey != null" >
+        publickey = #{publickey,jdbcType=VARCHAR},
+      </if>
+      <if test="privatekey != null" >
+        privatekey = #{privatekey,jdbcType=VARCHAR},
+      </if>
+      <if test="coinName != null" >
+        coin_name = #{coinName,jdbcType=VARCHAR},
+      </if>
+      <if test="coinCode != null" >
+        coin_code = #{coinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.bibr.accountcheck.center.bean.bo.AssetAccount" >
+    update asset_account
+    set version = #{version,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=VARCHAR},
+      hot_money = #{hotMoney,jdbcType=DECIMAL},
+      cold_money = #{coldMoney,jdbcType=DECIMAL},
+      user_name = #{userName,jdbcType=VARCHAR},
+      account_num = #{accountNum,jdbcType=VARCHAR},
+      currency_type = #{currencyType,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      publickey = #{publickey,jdbcType=VARCHAR},
+      privatekey = #{privatekey,jdbcType=VARCHAR},
+      coin_name = #{coinName,jdbcType=VARCHAR},
+      coin_code = #{coinCode,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!--  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~核对平台新增~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <select id="selectCoinCodesByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from asset_account
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+</mapper>

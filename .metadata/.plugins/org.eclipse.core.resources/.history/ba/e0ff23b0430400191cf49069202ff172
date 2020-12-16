@@ -1,0 +1,207 @@
+package org.bibr.user.center.constant;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+/**
+ * 
+ * @author zhuoligang
+ *
+ */
+@Component
+public class UserCenterConstant {
+	
+	//用户id生成、取出文件路径
+	public static String ID_GENERATE_URL;
+	@Value("${url.center.idGenerateUrl}")
+	public void setID_GENERATE_URL(String iD_GENERATE_URL) {
+		ID_GENERATE_URL = iD_GENERATE_URL;
+	}
+	//短信密匙
+	public static String DUANXIN_APIKEY;
+	@Value("${url.duanxin.apikey}")
+	public void setDUANXIN_APIKEY(String dUANXIN_APIKEY) {
+		DUANXIN_APIKEY = dUANXIN_APIKEY;
+	}
+	//身份证校验接口
+	public static String IDCARD_ADDRESS;
+	@Value("${url.idcard.address}")
+	public void setIDCARD_ADDRESS(String iDCARD_ADDRESS) {
+		IDCARD_ADDRESS = iDCARD_ADDRESS;
+	}
+	//身份证校验密匙
+	public static String IDCARD_APPCODE;
+	@Value("${url.idcard.appcode}")
+	public void setIDCARD_APPCODE(String iDCARD_APPCODE) {
+		IDCARD_APPCODE = iDCARD_APPCODE;
+	}
+	//faceid获取token的用户访问拼接地址
+	public static String FACEID_TOKEN_ADDRESS;
+	@Value("${url.faceid.token_address}")
+	public void setFACEID_TOKEN_ADDRESS(String fACEID_TOKEN_ADDRESS) {
+		FACEID_TOKEN_ADDRESS = fACEID_TOKEN_ADDRESS;
+	}
+	//faceid获取token接口地址
+	public static String FACEID_GET_TOKEN_URL;
+	@Value("${url.faceid.get_token_url}")
+	public void setFACEID_GET_TOKEN_URL(String fACEID_GET_TOKEN_URL) {
+		FACEID_GET_TOKEN_URL = fACEID_GET_TOKEN_URL;
+	}
+	//主动获取faceid识别结果接口地址
+	public static String FACEID_GET_RESULT;
+	@Value("${url.faceid.get_result}")
+	public void setFACEID_GET_RESULT(String fACEID_GET_RESULT) {
+		FACEID_GET_RESULT = fACEID_GET_RESULT;
+	}
+	public static String FACEID_API_KEY;
+	@Value("${url.faceid.api_key}")
+	public void setFACEID_API_KEY(String fACEID_API_KEY) {
+		FACEID_API_KEY = fACEID_API_KEY;
+	}
+	public static String FACEID_API_SECRET;
+	@Value("${url.faceid.api_secret}")
+	public void setFACEID_API_SECRET(String fACEID_API_SECRET) {
+		FACEID_API_SECRET = fACEID_API_SECRET;
+	}
+	public static String FACEID_COMPARISON_TYPE;
+	@Value("${url.faceid.comparison_type}")
+	public void setFACEID_COMPARISON_TYPE(String fACEID_COMPARISON_TYPE) {
+		FACEID_COMPARISON_TYPE = fACEID_COMPARISON_TYPE;
+	}
+	public static String FACEID_IDCARD_MODE;
+	@Value("${url.faceid.idcard_mode}")
+	public void setFACEID_IDCARD_MODE(String fACEID_IDCARD_MODE) {
+		FACEID_IDCARD_MODE = fACEID_IDCARD_MODE;
+	}
+	public static String FACEID_WAP_SUCCESS_URL;
+	@Value("${url.faceid.wap_success_url}")
+	public void setFACEID_WAP_SUCCESS_URL(String fACEID_WAP_SUCCESS_URL) {
+		FACEID_WAP_SUCCESS_URL = fACEID_WAP_SUCCESS_URL;
+	}
+	public static String FACEID_WAP_FAIL_URL;
+	@Value("${url.faceid.wap_fail_url}")
+	public void setFACEID_WAP_FAIL_URL(String fACEID_WAP_FAIL_URL) {
+		FACEID_WAP_FAIL_URL = fACEID_WAP_FAIL_URL;
+	}
+	public static String FACEID_WAP_SUSPEND_URL;
+	@Value("${url.faceid.wap_suspend_url}")
+	public void setFACEID_WAP_SUSPEND_URL(String fACEID_WAP_SUSPEND_URL) {
+		FACEID_WAP_SUSPEND_URL = fACEID_WAP_SUSPEND_URL;
+	}
+	public static String FACEID_RETURN_URL;
+	@Value("${url.faceid.return_url}")
+	public void setFACEID_RETURN_URL(String fACEID_RETURN_URL) {
+		FACEID_RETURN_URL = fACEID_RETURN_URL;
+	}
+	public static String FACEID_NOTIFY_URL;
+	@Value("${url.faceid.notify_url}")
+	public void setFACEID_NOTIFY_URL(String fACEID_NOTIFY_URL) {
+		FACEID_NOTIFY_URL = fACEID_NOTIFY_URL;
+	}
+	//图片物理存放路径
+	public static String FACEID_IMAGES_SAVE_BASEURL;
+	@Value("${url.faceid.image_save_url}")
+	public void setFACEID_IMAGES_SAVE_BASEURL(String fACEID_IMAGES_SAVE_BASEURL) {
+		FACEID_IMAGES_SAVE_BASEURL = fACEID_IMAGES_SAVE_BASEURL;
+	}
+	//加密解密密匙
+	public static String DES_KEY;
+	@Value("${url.des.key}")
+	public void setDES_KEY(String dES_KEY) {
+		DES_KEY = dES_KEY;
+	}
+	//认证中心url
+	public static String AUTH_REGISTER_URL;
+	@Value("${url.auth.register}")
+	public void setAUTH_URL(String aUTH_URL) {
+		AUTH_REGISTER_URL = aUTH_URL;
+	}
+	//初始化账户资产信息url
+	public static String ASSET_ACCOUNT_CREATE;
+	@Value("${url.asset.create}")
+	public void setASSET_ACCOUNT_CREATE(String aSSET_ACCOUNT_CREATE) {
+		ASSET_ACCOUNT_CREATE = aSSET_ACCOUNT_CREATE;
+	}
+	public static String ROCKETMQ_PRODUCER_GROUPNAME;
+	@Value("${rocketmq.producer.groupName}")
+	public void setROCKETMQ_PRODUCER_GROUPNAME(String rOCKETMQ_PRODUCER_GROUPNAME) {
+		ROCKETMQ_PRODUCER_GROUPNAME = rOCKETMQ_PRODUCER_GROUPNAME;
+	}
+	public static String ROCKETMQ_PRODUCER_NAMESRVADDR;
+	@Value("${rocketmq.producer.namesrvAddr}")
+	public void setROCKETMQ_PRODUCER_NAMESRVADDR(String rOCKETMQ_PRODUCER_NAMESRVADDR) {
+		ROCKETMQ_PRODUCER_NAMESRVADDR = rOCKETMQ_PRODUCER_NAMESRVADDR;
+	}
+	public static String ROCKETMQ_PRODUCER_INSTANCENAME;
+	@Value("${rocketmq.producer.instanceName}")
+	public void setROCKETMQ_PRODUCER_INSTANCENAME(String rOCKETMQ_PRODUCER_INSTANCENAME) {
+		ROCKETMQ_PRODUCER_INSTANCENAME = rOCKETMQ_PRODUCER_INSTANCENAME;
+	}
+	public static String ROCKETMQ_PRODUCER_TOPIC;
+	@Value("${rocketmq.producer.topic}")
+	public void setROCKETMQ_PRODUCER_TOPIC(String rOCKETMQ_PRODUCER_TOPIC) {
+		ROCKETMQ_PRODUCER_TOPIC = rOCKETMQ_PRODUCER_TOPIC;
+	}
+	//新增
+	public static final String ROCKETMQ_PRODUCER_TAGS_ADD = "add";
+	//修改
+	public static final String ROCKETMQ_PRODUCER_TAGS_EDIT = "edit";
+	public static String ROCKETMQ_CONSUMER_GROUPNAME;
+	@Value("${rocketmq.consumer.groupName}")
+	public void setROCKETMQ_CONSUMER_GROUPNAME(String rOCKETMQ_CONSUMER_GROUPNAME) {
+		ROCKETMQ_CONSUMER_GROUPNAME = rOCKETMQ_CONSUMER_GROUPNAME;
+	}
+	public static String ROCKETMQ_CONSUMER_NAMESRVADDR;
+	@Value("${rocketmq.consumer.namesrvAddr}")
+	public void setROCKETMQ_CONSUMER_NAMESRVADDR(String rOCKETMQ_CONSUMER_NAMESRVADDR) {
+		ROCKETMQ_CONSUMER_NAMESRVADDR = rOCKETMQ_CONSUMER_NAMESRVADDR;
+	}
+	public static String ROCKETMQ_CONSUMER_INSTANCENAME;
+	@Value("${rocketmq.consumer.instanceName}")
+	public void setROCKETMQ_CONSUMER_INSTANCENAME(String rOCKETMQ_CONSUMER_INSTANCENAME) {
+		ROCKETMQ_CONSUMER_INSTANCENAME = rOCKETMQ_CONSUMER_INSTANCENAME;
+	}
+	// 通讯成功
+	public static final int CODE_200 = 200;
+	// 非法，ip非法等
+	public static final int CODE_300 = 300;
+	// 失败
+	public static final int CODE_500 = 500;
+	// 需登录
+	public static final int CODE_600 = 600;
+	
+	public static final String SUCCESS = "success";
+	
+	public static final String FAILURE = "failure";
+	
+	public static final String KEYWORDS_SUCCESS = "成功";
+	
+	public static final String KEYWORDS_FAILURE = "失败";
+	
+	public static final String DESERIALIZATION_ERROR = "反序列化出现错误";
+	
+	public static final String FILL_IN_REQUIRED ="请规范填写必填内容";
+	
+	//币币平台缓存名头部
+	public static String BIBR_CACHENAME_HEAD = "bi_activity_";
+	//缓存用户前缀
+	public static String BIBR_CACHENAME_USER = "|CacheMember|";
+	
+	// 用户缓存名前缀
+	public final static String USER_CACHENAME = "user:";
+	// 用户缓存默认时间 7天-秒
+	public final static int USER_CACHETIME = 604800;
+	
+	// 短信缓存名前缀
+	public final static String DUANXIN_CACHENAME = "duanxin:";
+	// 短信发送频率时间-毫秒-1分钟
+	public static final long DUANXIN_PASS_TIME = 60000;
+	// 短信缓存时间-毫秒-10分钟
+	public static final long DUANXIN_REDIS_TIME = 600000;
+	
+	public static final String FACEID_RETURN_ERROR = "认证失败，请1小时后用本人身份证认证";
+	//图片数据库存放路径
+	public static final String FACEID_IMAGES_SAVE_SENDURL = "/user/idcardimages/";
+	
+	
+}

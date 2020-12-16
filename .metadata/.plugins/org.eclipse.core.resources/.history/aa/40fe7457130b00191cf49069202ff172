@@ -1,0 +1,51 @@
+/**
+ * 
+ */
+package org.bibr.accountcheck.center.util;
+
+import org.springframework.beans.BeansException;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+@Component
+public class SpringContextUtil implements ApplicationContextAware {
+    private static ApplicationContext applicationContext = null;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public static Object getBean(String beanName) {
+        return applicationContext.getBean(beanName);
+    }
+
+    public static Object getBean(Class c) {
+        return applicationContext.getBean(c);
+    }
+
+    public static DataSourceTransactionManager getTransactionManager() {
+        ApplicationContext appCtx = getApplicationContext();
+        DataSourceTransactionManager transactionManager = appCtx.getBean("transactionManager",
+                DataSourceTransactionManager.class);
+        return transactionManager;
+    }
+
+    public static TransactionStatus getStatus(DataSourceTransactionManager transactionManager) {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        TransactionStatus status = transactionManager.getTransaction(def);
+        return status;
+    }
+
+}

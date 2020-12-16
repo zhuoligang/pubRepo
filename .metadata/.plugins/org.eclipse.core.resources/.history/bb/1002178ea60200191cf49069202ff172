@@ -1,0 +1,5 @@
+package org.bibr.accountcheck.center.controller.api;
+
+public class AccountCheckApiController {
+
+}

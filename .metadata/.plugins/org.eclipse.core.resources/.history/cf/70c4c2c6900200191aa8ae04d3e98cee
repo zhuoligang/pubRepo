@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.bibr.user.center.dao.CenterSuperInvitesMapper" >
+  <resultMap id="BaseResultMap" type="org.bibr.user.center.bean.bo.CenterSuperInvites" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="super_id" property="superId" jdbcType="VARCHAR" />
+    <result column="member_id" property="memberId" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="relation_level" property="relationLevel" jdbcType="INTEGER" />
+    <result column="relation_time" property="relationTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, super_id, member_id, mobile, relation_level, relation_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from center_super_invites
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from center_super_invites
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.bibr.user.center.bean.bo.CenterSuperInvites" >
+    insert into center_super_invites (id, super_id, member_id, 
+      mobile, relation_level, relation_time
+      )
+    values (#{id,jdbcType=VARCHAR}, #{superId,jdbcType=VARCHAR}, #{memberId,jdbcType=VARCHAR}, 
+      #{mobile,jdbcType=VARCHAR}, #{relationLevel,jdbcType=INTEGER}, #{relationTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.bibr.user.center.bean.bo.CenterSuperInvites" >
+    insert into center_super_invites
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="superId != null" >
+        super_id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="relationLevel != null" >
+        relation_level,
+      </if>
+      <if test="relationTime != null" >
+        relation_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="superId != null" >
+        #{superId,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="relationLevel != null" >
+        #{relationLevel,jdbcType=INTEGER},
+      </if>
+      <if test="relationTime != null" >
+        #{relationTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.bibr.user.center.bean.bo.CenterSuperInvites" >
+    update center_super_invites
+    <set >
+      <if test="superId != null" >
+        super_id = #{superId,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="relationLevel != null" >
+        relation_level = #{relationLevel,jdbcType=INTEGER},
+      </if>
+      <if test="relationTime != null" >
+        relation_time = #{relationTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.bibr.user.center.bean.bo.CenterSuperInvites" >
+    update center_super_invites
+    set super_id = #{superId,jdbcType=VARCHAR},
+      member_id = #{memberId,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      relation_level = #{relationLevel,jdbcType=INTEGER},
+      relation_time = #{relationTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- ```````````````````````````````````````````````以下为新增`````````````````````````````````````````````````````` -->
+  <select id="findCenterSuperInvites" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from center_super_invites
+    where super_id = #{superId,jdbcType=VARCHAR}
+  </select>
+</mapper>

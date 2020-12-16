@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;bibr-distributed-pm/bibr-accountcheck-center&apos; to &apos;bibr-verifysafety-center&apos;" description="Rename resource &apos;bibr-accountcheck-center&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="bibr-accountcheck-center" name="bibr-verifysafety-center" stamp="1546599877654" updateReferences="true"/>
+</session>

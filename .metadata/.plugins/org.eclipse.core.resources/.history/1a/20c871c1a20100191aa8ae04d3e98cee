@@ -1,0 +1,23 @@
+package org.bibr.user.center.service;
+
+import org.bibr.user.center.configurer.UserCenterMQCustomerEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
+/**
+ * RocketMQ消费者示例
+ * @author ybc
+ * @since 2018-09-27
+ */
+@Component
+public class ConsumerEvent {
+
+	@EventListener(condition = "#event.topic == 'UserCenter'")
+	public void rocketmqMsgListen(UserCenterMQCustomerEvent event) {
+		try {
+			System.out.println("监听到一个消息达到：" + new String(event.getMsg().getBody()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

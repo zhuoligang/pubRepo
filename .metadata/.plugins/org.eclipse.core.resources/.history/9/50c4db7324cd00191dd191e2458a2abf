@@ -1,0 +1,194 @@
+package org.bibr.user.center.controller.accept;
+
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.user.center.bean.bo.CenterUserMain;
+import org.bibr.user.center.bean.vo.CoinTradeUserMsgVO;
+import org.bibr.user.center.bean.vo.ResultVO;
+import org.bibr.user.center.constant.UserCenterConstant;
+import org.bibr.user.center.exception.BusinessException;
+import org.bibr.user.center.service.CoinTradeService;
+import org.bibr.user.center.service.UserCenterAcceptService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+@Controller
+@RequestMapping("/center/api/accept")
+@Api(value = "用户相关的api")
+public class UserCenterAcceptController {
+
+	private final static Logger logger = LoggerFactory.getLogger(UserCenterAcceptController.class);
+
+	@Autowired
+	private UserCenterAcceptService userCenterAcceptService;
+
+	@Autowired
+	private CoinTradeService coinTradeService;
+
+	@ApiOperation(value = "精确查询用户信息————zlg", notes = "用户uuid		uuid（非必填）")
+	@RequestMapping(value = "/findCenterUserMain", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<CenterUserMain> findCenterUserMain(
+			@RequestBody @ApiParam(name = "条件map", value = "jeson格式map", required = true) Map<String, String> map) {
+		logger.info("&UserCenterMode&UserCenterAcceptController&findCenterUserMain&ApiStatistics");
+		CenterUserMain centerUserMain = null;
+		try {
+			centerUserMain = this.userCenterAcceptService.findCenterUserMain(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("findCenterUserMain?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("findCenterUserMain?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<CenterUserMain>(UserCenterConstant.CODE_200, UserCenterConstant.SUCCESS, centerUserMain);
+	}
+
+	@ApiOperation(value = "根据用户memberId查询uuid————zlg", notes = "用户id		memberId（必填）")
+	@RequestMapping(value = "/selectUUIDByMemberId", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<String> selectUUIDByMemberId(
+			@RequestBody @ApiParam(name = "条件map", value = "jeson格式map", required = true) Map<String, Object> map) {
+		logger.info("&UserCenterMode&UserCenterAcceptController&selectUUIDByMemberId&ApiStatistics");
+		String centerUserMains = null;
+		try {
+			centerUserMains = this.userCenterAcceptService.selectUUIDByMemberId(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("selectUUIDByMemberId?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("selectUUIDByMemberId?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<String>(UserCenterConstant.CODE_200, UserCenterConstant.SUCCESS, centerUserMains);
+	}
+
+	@ApiOperation(value = "根据用户uuid集合查询memberId集合————zlg", notes = "用户uuid组		uuids（必填）")
+	@RequestMapping(value = "/selectMemberIdsSelective", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<Map<String, String>> selectMemberIdsSelective(
+			@RequestBody @ApiParam(name = "条件map", value = "jeson格式map", required = true) Map<String, Object> map) {
+		logger.info("&UserCenterMode&UserCenterAcceptController&selectMemberIdsSelective&ApiStatistics");
+		Map<String, String> resultMap = null;
+		try {
+			resultMap = this.userCenterAcceptService.selectMemberIdsSelective(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("selectMemberIdsSelective?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("selectMemberIdsSelective?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<Map<String, String>>(UserCenterConstant.CODE_200, UserCenterConstant.SUCCESS, resultMap);
+	}
+
+	@ApiOperation(value = "根据用户uuid集合查询用户信息集合————zlg", notes = "用户uuid组（uuid以，分隔）		uuids（必填）")
+	@RequestMapping(value = "/selectCenterUserMainsSelective", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<List<CenterUserMain>> selectCenterUserMainsSelective(
+			@RequestBody @ApiParam(name = "条件map", value = "jeson格式map", required = true) Map<String, Object> map) {
+		logger.info("&UserCenterMode&UserCenterAcceptController&selectCenterUserMainsSelective&ApiStatistics");
+		List<CenterUserMain> resultList = null;
+		try {
+			resultList = this.userCenterAcceptService.selectCenterUserMainsSelective(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("selectCenterUserMainsSelective?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("selectCenterUserMainsSelective?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<List<CenterUserMain>>(UserCenterConstant.CODE_200, UserCenterConstant.SUCCESS, resultList);
+	}
+
+	@ApiOperation(value = "校验用户认证情况（普通、高级实名认证，资金安全密码设置）————zlg", notes = "用户uuid		uuid（必填）")
+	@RequestMapping(value = "/checkPerson", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<Boolean> checkPerson(
+			@RequestBody @ApiParam(name = "条件map", value = "jeson格式map", required = true) Map<String, Object> map) {
+		logger.info("&UserCenterMode&UserCenterAcceptController&checkPerson&ApiStatistics");
+		Boolean result = null;
+		try {
+			result = this.userCenterAcceptService.checkPerson(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("checkPerson?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("checkPerson?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<Boolean>(UserCenterConstant.CODE_200, UserCenterConstant.SUCCESS, result);
+	}
+
+	@ApiOperation(value = "校验用户交易密码是否输入正确————zlg", notes = "用户uuid     uuid（必填）<br>交易密码    tradePassword（必填）")
+	@RequestMapping(value = "/checkTradePassword", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<Boolean> checkTradePassword(
+			@RequestBody @ApiParam(name = "条件map", value = "jeson格式map", required = true) Map<String, String> map) {
+		logger.info("&UserCenterMode&UserCenterAcceptController&checkTradePassword&ApiStatistics");
+		Boolean resultStr = null;
+		try {
+			resultStr = this.userCenterAcceptService.checkTradePassword(map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("checkTradePassword?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("checkTradePassword?" + JSONObject.toJSONString(map));
+			throw new BusinessException(UserCenterConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<Boolean>(UserCenterConstant.CODE_200, UserCenterConstant.SUCCESS, resultStr);
+	}
+
+	@ApiOperation(value = "后台查询法币用户接口————zch", notes = "用户memberId		memberId（选填）<br>"
+			+ "用户账号		accountNum（选填）<br>" + "法币交易       0：关；1：开（选填）tradeState<br>"
+			+ "广告发布       0：关；1：开（选填）advertState<br>" + "分页条数    pageSize(必填)<br>      当前页数 pageNumber（必填）")
+	@RequestMapping(value = "/findUser", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<PageInfo<CoinTradeUserMsgVO>> findCoinTradeUser(
+			@RequestBody @ApiParam(name = "条件map", value = "jeson格式map", required = true) Map<String, String> map) {
+		return this.coinTradeService.findCoinTradeUser(map);
+	}
+
+	@ApiOperation(value = "禁用/启用用户法币交易接口————zch", notes = "用户memberId		memberId（选填）<br>"
+			+ "开关       0：关；1：开（必填）state<br>")
+	@RequestMapping(value = "/updateTrade", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<?> updateTrade(@RequestBody Map<String, String> map) {
+		return this.coinTradeService.updateTrade(map);
+	}
+
+	@ApiOperation(value = "禁用/启用用户法币广告接口————zch", notes = "用户memberId		memberId（选填）<br>"
+			+ "开关       0：关；1：开（必填）state<br>")
+	@RequestMapping(value = "/updateAdvert", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<?> updateAdvert(@RequestBody Map<String, String> map) {
+		return this.coinTradeService.updateAdvert(map);
+	} 
+
+}

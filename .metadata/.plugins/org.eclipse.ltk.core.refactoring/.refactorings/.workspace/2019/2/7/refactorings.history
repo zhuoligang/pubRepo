@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete 13 resources" deleteContents="true" description="Delete 13 resources" element1="/bibr-distributed-pm" element10="/bibr-web-assets" element11="/bibr-web-entrust" element12="/bibr-web-kline" element13="/bibr-whale-module" element2="/bibr-distributed-sleuth" element3="/bibr-news-module" element4="/bibr-octopus-module" element5="/bibr-robot-module" element6="/bibr-user-center" element7="/bibr-user-module" element8="/bibr-verifysafety-center" element9="/bibr-web-activity" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="13" stamp="1550111389948"/>
+</session>

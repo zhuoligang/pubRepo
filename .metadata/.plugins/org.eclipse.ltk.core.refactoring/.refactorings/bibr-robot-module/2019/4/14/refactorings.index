@@ -1,0 +1,13 @@
+1554097805327	Extract local variable 'frequency'
+1554109234401	Extract local variable 'createSignMD5'
+1554112921068	Delete element
+1554112927540	Delete element
+1554112930726	Delete element
+1554113576252	Delete element
+1554113579446	Delete element
+1554113583683	Delete element
+1554172679315	Extract local variable 'string'
+1554173928958	Extract local variable 'selectByMap'
+1554194274676	Extract local variable 'selectEntrustIds'
+1554194448519	Extract local variable 'revokes'
+1554194672302	Move compilation unit

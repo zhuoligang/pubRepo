@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/task 
+    http://www.springframework.org/schema/task/spring-task.xsd ">
+
+	<task:annotation-driven />
+	<context:annotation-config />
+ 
+  <bean id="springContextUtil" class="com.bi.activity.util.SpringContextUtil"></bean>
+	<!-- 自定义任务类 -->
+    <bean name="processRunJobDetail"    class="org.springframework.scheduling.quartz.JobDetailFactoryBean">  
+        <property name="jobClass" value="com.bi.activity.quartz.ProcessRunSchedJob" />  
+        <property name="durability" value="true" />  
+    </bean>  
+    
+    <bean name="memberLoginJobDetail"    class="org.springframework.scheduling.quartz.JobDetailFactoryBean">  
+        <property name="jobClass" value="com.bi.activity.quartz.MemberLoginJob" />  
+        <property name="durability" value="true" />  
+    </bean> 
+    
+    
+   <!-- 触发器定义 -->
+    <bean id="processRunTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+        <property name="jobDetail" ref="processRunJobDetail" />  
+        <property name="cronExpression" value="0 0 1 * * ?" />  <!--每日1点执行--> 
+    </bean>  
+    
+    <bean id="memberLoginTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+        <property name="jobDetail" ref="memberLoginJobDetail" />  
+        <property name="cronExpression" value="0 0 0 * * ?" />  <!--每日0点执行--> 
+    </bean> 
+    
+
+   
+<!-- 绑定 SchedulerFactoryBean  后续添加任务只需要在这个类上面添加-->
+    <bean  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+    	<property name="jobDetails">  
+            <list>   
+                <ref bean="processRunJobDetail" /> 
+                <ref bean="memberLoginJobDetail" /> 
+            </list>  
+        </property>  
+        <property name="triggers">  
+            <list>  
+                <ref bean="processRunTrigger" />
+                <ref bean="memberLoginTrigger" />
+            </list>  
+        </property>  
+    </bean>  
+</beans>  
+ 	
+ 	
+

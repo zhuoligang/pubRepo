@@ -1,0 +1,71 @@
+package org.bibr.accountcheck.center.thread;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bibr.verifysafety.center.bean.bo.AssetAccount;
+import org.bibr.verifysafety.center.constant.AccountCheckConstant;
+import org.bibr.verifysafety.center.exception.BusinessException;
+import org.bibr.verifysafety.center.service.AccountCheckService;
+import org.bibr.verifysafety.center.util.RestTemplateUtil;
+import org.bibr.verifysafety.center.util.SpringContextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+/**
+ * 
+* @ClassName: AccountCheckThread
+* @Description: TODO(币种资产校验，)
+* @author Administrator
+* @date 2018年12月20日下午12:51:57
+*
+ */
+public class AccountCheckThread implements Runnable{
+	
+	private final static Logger logger = LoggerFactory.getLogger(CoreCheckThread.class);
+	
+	private AccountCheckService accountCheckService = (AccountCheckService) SpringContextUtil.getBean(AccountCheckService.class);
+	
+	private AssetAccount assetAccount;
+	
+	public AccountCheckThread(AssetAccount assetAccount) {
+		super();
+		this.assetAccount = assetAccount;
+	}
+
+	@Override
+	public void run() {
+		//a 查询用户持有币种，分别校验【分别做业务】
+		String coinCode = assetAccount.getCoinCode();
+		//资产币种冻结数量
+		BigDecimal coldMoney = assetAccount.getColdMoney();
+		//资产币种可用数量
+		BigDecimal hotMoney = assetAccount.getHotMoney();
+		//资产总额
+		BigDecimal sumMoney = hotMoney.add(coldMoney);
+		//币流水记录总额
+		BigDecimal sumSerialMoney = this.accountCheckService.sumSerialMoney(assetAccount.getUserId(), coinCode);
+		if(sumSerialMoney.compareTo(sumMoney) != 0){
+			try {//账务有误，通知用户中心冻结用户
+				String url = AccountCheckConstant.CENTER_USER_fREEZE;
+				Map<String,String> sendMap = new HashMap<>();
+				sendMap.put("uuid", assetAccount.getUserId());
+				String result = RestTemplateUtil.postForEntity(url, JSONObject.toJSONString(sendMap));
+				Map<String,Object> map_ = (Map<String, Object>) JSON.parse(result);
+				if(map_.get("code") == null || Integer.parseInt(map_.get("code").toString()) != 200){
+					logger.error("用户中心系统错误，请联系管理员");
+					throw new BusinessException(AccountCheckConstant.CODE_500, "用户中心系统错误，请联系管理员");
+				}
+			} catch (Exception e) {
+				logger.error("调用用户中心错误");
+				throw new BusinessException(AccountCheckConstant.CODE_500, "调用用户中心错误");
+			}
+		}
+		System.err.println("···················资产校验完成··················");
+	}
+
+}

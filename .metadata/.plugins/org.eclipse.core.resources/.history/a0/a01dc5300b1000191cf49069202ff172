@@ -1,0 +1,123 @@
+server:
+  port: 7085
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://172.31.202.143:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+
+
+spring:
+  application:
+    name: verifySafety
+  task:
+    pool:
+      corePoolSize: 50
+      maxPoolSize: 100
+      keepAliveSeconds: 600
+      queueCapacity: 200
+  redis:
+    database: 0
+    host: 172.31.202.143
+    port: 6379
+    password: 123456
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 5
+        min-idle: 0
+    timeout: 10000
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://172.31.202.143:3306/bibr_asset_web?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    username: bier
+    password: Yv8U@cxzv5#JHbvKbV@CnHL
+    initialSize: 5
+    minIdle: 1
+    maxActive: 20
+    maxWait: 60000
+    minEvictableIdleTimeMillis: 300000
+    timeBetweenEvictionRunsMillis: 60000
+    validationQuery: SELECT 1 FROM DUAL
+    testOnBorrow: true
+    poolPreparedStatements: true
+    useGlobalDataSourceStat: true
+    maxOpenPreparedStatements: 20
+    maxPoolPreparedStatementPerConnectionSize: 20
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    filters: stat,wall
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+
+pagehelper:
+  reasonable: true
+  supportMethodsArguments: true
+  pageSizeZero: true
+  params: count=countSql
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org:
+      bibr:
+        distributed:
+          user:
+            dao: debug
+
+swagger2:
+  enable: true
+  
+   
+url:
+  center:
+    idGenerateUrl: /usr/project_test/staticFile/usercenter/IDGenerate/
+  duanxin:
+    account: cdjs003018
+    password: zm0513@
+    apikey: 3042fa5bc6c843df9dd1056b793646aa
+  idcard:
+    address: http://idcard.market.alicloudapi.com/lianzhuo/idcard?name={name}&cardno={cardno}
+    appcode: 676531e980d048509f38a9c3e8e87d15
+  des:
+    key: zlg123
+  faceid:
+    token_address: https://api.megvii.com/faceid/lite/do?token=
+    get_token_url: https://api.megvii.com/faceid/lite/get_token
+    api_key: Nl-_VZ3ataKaPHBr9SnbL4jsbgWkPlcX
+    api_secret: yD5rp58Au29V7yKgZ7fJuGmfN_fXj3lJ
+    comparison_type: 1
+    idcard_mode: 2
+    wap_success_url: https://www.bibr.com/wap/success
+    wap_fail_url: https://www.bibr.com/wap/fail
+    wap_suspend_url: https://www.bibr.com/wap/suspend
+    return_url: https://test.bibr.co/bibr/offer/returnUrlFollowUp
+    notify_url: https://test.bibr.co/bibr/offer/notifyUrlFollowUp
+    get_result: https://api.megvii.com/faceid/lite/get_result?api_key={api_key}&api_secret={api_secret}&biz_id={biz_id}&return_image=4
+    image_save_url: /usr/project/staticFile/user/idcardimages/
+  auth:
+    register: http://172.31.202.143:9000/AUTH/register
+  asset:
+    create: http://172.31.202.143:9000/ASSET/asset/account/create
+
+
+rocketmq:
+  producer:
+    groupName: UserCenterGroup
+    namesrvAddr: 172.31.202.143:9876
+    instanceName: UserCenterProducer
+    topic: UserCenter
+    maxMessageSize: 131072 # 1024*128
+    sendMsgTimeout: 10000
+  consumer:
+    groupName: UserCenterGroup
+    namesrvAddr: 172.31.202.143:9876
+    instanceName: UserCenterCustomer
+    topic: UserCenter
+    tag: TEST
+

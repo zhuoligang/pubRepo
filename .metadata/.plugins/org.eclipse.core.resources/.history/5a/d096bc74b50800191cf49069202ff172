@@ -1,0 +1,43 @@
+package org.bibr.user.center.configurer;
+
+import java.io.IOException;
+
+import javax.security.sasl.AuthenticationException;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+
+public class MyFilter extends AbstractAuthenticationProcessingFilter {
+
+	private String servletPath;
+
+	public MyFilter(String servletPath) {
+		super(servletPath);
+		this.servletPath = servletPath;
+		setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
+	}
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+//		if (false) {
+//			System.out.println("进入自定义过滤器");
+//			return;
+//		}
+		chain.doFilter(request, response);
+	}
+
+	@Override
+	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+			throws AuthenticationException, IOException, ServletException {
+		return null;
+	}
+
+}

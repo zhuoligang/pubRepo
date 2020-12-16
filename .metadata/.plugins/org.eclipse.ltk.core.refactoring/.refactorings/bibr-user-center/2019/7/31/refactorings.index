@@ -1,0 +1,32 @@
+1564387025239	Extract local variable 'checkMobileOrEmail'
+1564388086497	Extract local variable 'checkMobileOrEmail'
+1564391177943	Extract local variable 'checkMobileOrEmail'
+1564392248740	Extract local variable 'chooseMobileOrEmail'
+1564454509246	Encapsulate field 'reqType'
+1564455621362	Extract local variable 'checkMobileOrEmail'
+1564467745612	Move compilation unit
+1564469736180	Delete element
+1564470339490	Extract local variable 'queryAll'
+1564470666745	Extract local variable 'string'
+1564471190084	Extract local variable 'jsonString'
+1564471843839	Extract local variable 'jsonString'
+1564472207727	Extract local variable 'hGet'
+1564472638012	Extract local variable 'selectByPrimaryKey'
+1564473544121	Extract local variable 'centerIntegralExplain'
+1564473902480	Extract local variable 'buildCenterIntegralDetail'
+1564480524633	Copy file
+1564482053173	Extract local variable 'hGet'
+1564540424444	Extract local variable 'selectByUserIdToday'
+1564540856473	Extract local variable 'changeIntegral'
+1564544592929	Rename package 'org.bibr.user.center.configurer.integral'
+1564544598205	Move compilation units
+1564544932270	Move compilation unit
+1564561959930	Extract local variable 'selectByUserIdToday'
+1564562201547	Extract local variable 'string'
+1564563858581	Extract local variable 'selectByUserIdToday'
+1564566772101	Extract local variable 'hashMap'
+1564567012210	Extract local variable 'selectParentIdByMap'
+1564567525461	Extract local variable 'selectByMap'
+1564567706112	Extract local variable 'regTime'
+1564567755280	Extract local variable 'date'
+1564567804470	Extract local variable 'format'

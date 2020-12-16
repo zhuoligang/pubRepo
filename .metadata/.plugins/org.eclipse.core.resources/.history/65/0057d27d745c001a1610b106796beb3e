@@ -1,0 +1,140 @@
+package org.bibr.invest.center.service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.bibr.invest.center.bean.bo.BtcComData;
+import org.bibr.invest.center.bean.bo.PoolProductInfoBO;
+import org.bibr.invest.center.bean.po.PoolProductBase;
+import org.bibr.invest.center.contants.Codes;
+import org.bibr.invest.center.contants.Messages;
+import org.bibr.invest.center.dao.PoolProductBaseMapper;
+import org.bibr.invest.center.exception.BusinessException;
+import org.bibr.invest.center.redis.RedisCache;
+import org.bibr.invest.center.service.common.CommonService;
+import org.bibr.invest.center.util.InvestCenterUtil;
+import org.bibr.invest.center.util.Json2Obj;
+import org.bibr.invest.center.util.RestTemplateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+@Service
+public class InvestPassService extends CommonService {
+
+    private Logger logger = LoggerFactory.getLogger(InvestPassService.class);
+    
+    // btc.com获取矿池数据接口
+    @Value(value = "${url.btccom.getdata}")
+    private String URL_BTCCOM_GETDATA;
+    
+    @Autowired
+    private RedisCache redisCache;
+
+    @Autowired
+    private PoolProductBaseMapper poolProductBaseDao;
+
+    private BtcComData btcComRequest(String url) {
+        //缓存redis，如果调用失败，取redis的值返回
+        String key = "investcenter:btcComData:";
+        BtcComData bcd = null;
+        try {
+            String result = RestTemplateUtil.getForEntityFormDataHttps(url);
+            System.out.println(result);
+            JSONObject jsonObj = JSONObject.parseObject(result).getJSONObject("data");
+            bcd = buildBtcComData(jsonObj);
+            
+            this.redisCache.putForValue(key, JSONObject.toJSONString(bcd));
+            logger.info("put btcComData->"+JSONObject.toJSONString(bcd));
+        } catch (Exception e) {
+            try {
+                String str = this.redisCache.getForValue(key);
+                bcd = Json2Obj.j2o(str, BtcComData.class);
+            } catch (Exception e2) {
+              logger.error(e2.getMessage());
+              throw new BusinessException(Codes.CODE_500, Messages.SYSTEM_COMMUNICATION_ERROR);
+            }
+        }
+        return bcd;
+    }
+
+    public BtcComData buildBtcComData(JSONObject jsonObj) {
+        BtcComData bcd = new BtcComData();
+        bcd.setMiningEarnings(jsonObj.getBigDecimal("mining_earnings"));
+        bcd.setNetworkHashrate(jsonObj.getBigDecimal("network_hashrate").setScale(2, BigDecimal.ROUND_HALF_EVEN));
+        bcd.setNetworkHashrateUnit(jsonObj.getString("network_hashrate_unit"));
+        bcd.setPoolHashrate(jsonObj.getBigDecimal("pool_hashrate").setScale(2, BigDecimal.ROUND_HALF_EVEN));
+        bcd.setPoolHashrateUnit(jsonObj.getString("pool_hashrate_unit"));
+        bcd.setBTC2CNY(jsonObj.getJSONObject("exchange_rate").getBigDecimal("BTC2CNY").setScale(2,
+                BigDecimal.ROUND_HALF_EVEN));
+        bcd.setBTC2USD(jsonObj.getJSONObject("exchange_rate").getBigDecimal("BTC2USD").setScale(2,
+                BigDecimal.ROUND_HALF_EVEN));
+        return bcd;
+    }
+
+    public BtcComData getPoolData() {
+        try {
+            return btcComRequest(URL_BTCCOM_GETDATA);
+        } catch (BusinessException e) {
+            logger.error(e.getMessage(), e);
+            throw new BusinessException(Codes.CODE_500, e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new BusinessException(Codes.CODE_500, e.getMessage());
+        }
+    }
+
+    public PageInfo<?> getProducts(Map<String, String> map, HttpServletRequest request) {
+        try {
+            if (InvestCenterUtil.checkMap(new String[] { "enabled" }, map)) {
+                throw new BusinessException(Codes.CODE_500, Messages.FILL_IN_REQUIRED);
+            }
+            if(Codes.CODE_0 == Integer.parseInt(map.get("enabled"))){
+                throw new BusinessException(Codes.CODE_500, Messages.AUTH_NOT_ENOUGH);
+            }
+            map = PageMap(map);
+            PageHelper.startPage(Integer.parseInt(map.get("pageNumber")), Integer.parseInt(map.get("pageSize")));
+            List<PoolProductBase> list = this.poolProductBaseDao.selectListByMap(map);
+            return new PageInfo<>(list);
+        } catch (BusinessException e) {
+            logger.error(e.getMessage(), e);
+            logger.error("getProducts?" + JSONObject.toJSONString(map));
+            throw new BusinessException(Codes.CODE_500, e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            logger.error("getProducts?" + JSONObject.toJSONString(map));
+            throw new BusinessException(Codes.CODE_500, e.getMessage());
+        }
+    }
+
+    public PoolProductInfoBO getProductInfo(Map<String, String> map, HttpServletRequest request) {
+        try {
+            if (InvestCenterUtil.checkMap(new String[] { "productId" }, map)) {
+                throw new BusinessException(Codes.CODE_500, Messages.FILL_IN_REQUIRED);
+            }
+            PoolProductInfoBO ppio = this.poolProductBaseDao.selectByProductId(map.get("productId"));
+//            PoolProductInfoBO ppo = Json2Obj.o2o(ppi, PoolProductInfoBO.class);
+//            LocalDate localDate = LocalDate.now().plusDays(ppi.getEffectiveDate());
+//            ppo.setEffectiveDate(InvestCenterUtil.localDate2Date(localDate));
+            return ppio;
+        } catch (BusinessException e) {
+            logger.error(e.getMessage(), e);
+            logger.error("getProductInfo?" + JSONObject.toJSONString(map));
+            throw new BusinessException(Codes.CODE_500, e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            logger.error("getProductInfo?" + JSONObject.toJSONString(map));
+            throw new BusinessException(Codes.CODE_500, e.getMessage());
+        }
+    }
+
+}

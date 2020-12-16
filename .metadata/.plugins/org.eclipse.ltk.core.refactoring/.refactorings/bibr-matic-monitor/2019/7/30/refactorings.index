@@ -1,0 +1,14 @@
+1563951115956	Delete element
+1563951226824	Move compilation unit
+1563951956907	Extract local variable 'selectByPrimaryKey'
+1563955754771	Delete element
+1563955756856	Delete element
+1564038715200	Delete element
+1564040775537	Extract local variable 'id'
+1564041932793	Extract local variable 'username'
+1564045687717	Extract local variable 'parseObject'
+1564045924737	Extract local variable 'parseArray'
+1564046373599	Extract local variable 'depthData'
+1564046537004	Extract local variable 'depthData'
+1564049487343	Extract local variable 'parseObject'
+1564111298628	Extract local variable 'sendCustomInform'

@@ -1,0 +1,5 @@
+package org.bibr.robot.module.bean.vo;
+
+public class OrderVo {
+
+}

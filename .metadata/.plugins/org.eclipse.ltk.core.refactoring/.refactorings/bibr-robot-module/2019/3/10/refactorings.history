@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract local variable &apos;showTasks&apos; from expression &apos;this.robotConfMapper.showTasks(map)&apos;&#x0D;&#x0A;- Original project: &apos;bibr-robot-module&apos;&#x0D;&#x0A;- Variable name: &apos;showTasks&apos;&#x0D;&#x0A;- Destination method: &apos;org.bibr.robot.module.service.RobotService.showTasks()&apos;&#x0D;&#x0A;- Variable expression: &apos;this.robotConfMapper.showTasks(map)&apos;&#x0D;&#x0A;- Replace occurrences of expression with variable" description="Extract local variable &apos;showTasks&apos;" final="false" id="org.eclipse.jdt.ui.extract.temp" input="/src\/main\/java&lt;org.bibr.robot.module.service{RobotService.java" name="showTasks" replace="true" selection="4677 36" stamp="1552029597296" version="1.0"/>
+</session>

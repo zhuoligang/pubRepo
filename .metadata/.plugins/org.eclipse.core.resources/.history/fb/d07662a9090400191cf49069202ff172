@@ -1,0 +1,59 @@
+package org.bibr.accountcheck.center.thread;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bibr.accountcheck.center.constant.AccountCheckConstant;
+import org.bibr.accountcheck.center.util.RestTemplateUtil;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import com.alibaba.fastjson.JSON;
+
+/**
+ * 
+* @ClassName: ThresholdThread
+* @Description: TODO(阈值控制校验)
+* @author Administrator
+* @date 2018年12月18日下午5:26:21
+*
+ */
+public class ThresholdThread implements Runnable{
+	public static void main(String[] args) {
+		Map<String,String> headerMap = new HashMap<>();
+		headerMap.put("Accept", "application/json");
+		headerMap.put("X-CMC_PRO_API_KEY", "13f7c0fa-2598-424e-8aa7-40092431662b");
+		Map<String, Object> sendMap = new HashMap<String, Object>();
+        sendMap.put("symbol", "ETH");
+        sendMap.put("convert", "CNY");
+		String str = RestTemplateUtil.getForEntity(AccountCheckConstant.GET_COIN_RATE, sendMap, headerMap);
+		String price = null;
+		try {
+			JSONObject jsonObj = new JSONObject(str);
+			price = jsonObj.getJSONObject("data").getJSONObject("ETH").getJSONObject("quote").getJSONObject("CNY").get("price").toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(price);
+	}
+	
+	private final static Logger logger = LoggerFactory.getLogger(ThresholdThread.class);
+	//阈值：参考值1000000
+	private BigDecimal countThreshold;
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

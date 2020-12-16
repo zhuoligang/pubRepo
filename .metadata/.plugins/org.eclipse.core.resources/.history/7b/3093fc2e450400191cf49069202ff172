@@ -1,0 +1,81 @@
+package org.bibr.user.center.bean.bo;
+
+import java.util.Date;
+
+public class CenterNoteInform {
+    private String id;
+
+    private String mobile;
+
+    private String userId;
+
+    private String memberId;
+
+    private Date sendTime;
+
+    private Integer type;
+    
+    
+
+    public CenterNoteInform() {
+		super();
+	}
+
+	public CenterNoteInform(String id, String mobile, String userId, String memberId, Date sendTime, Integer type) {
+		super();
+		this.id = id;
+		this.mobile = mobile;
+		this.userId = userId;
+		this.memberId = memberId;
+		this.sendTime = sendTime;
+		this.type = type;
+	}
+
+	public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id == null ? null : id.trim();
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile == null ? null : mobile.trim();
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId == null ? null : userId.trim();
+    }
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId == null ? null : memberId.trim();
+    }
+
+    public Date getSendTime() {
+        return sendTime;
+    }
+
+    public void setSendTime(Date sendTime) {
+        this.sendTime = sendTime;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+}

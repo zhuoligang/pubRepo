@@ -1,0 +1,177 @@
+/**
+ * ImageThread.java
+ * com.hongkuncheng.vcoin.thread
+ *
+ * Function： TODO 
+ *
+ *   ver     date      		author
+ * ──────────────────────────────────
+ *   ver1.0  2018年11月19日 		zhuoligang
+ *
+ * Copyright (c) 2018, b-i All Rights Reserved.
+*/
+
+package org.bibr.user.center.thread;
+
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.bibr.user.center.bean.bo.CenterUserMain;
+import org.bibr.user.center.bean.bo.MemberImages;
+import org.bibr.user.center.constant.UserCenterConstant;
+import org.bibr.user.center.dao.CenterUserMainMapper;
+import org.bibr.user.center.exception.BusinessException;
+import org.bibr.user.center.util.Base64Change;
+import org.bibr.user.center.util.DateHelper;
+import org.bibr.user.center.util.RestTemplateUtil;
+import org.bibr.user.center.util.SpringContextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.alibaba.fastjson.JSON;
+
+/**
+ * ClassName:ImageThread（Describe this Class）
+ * @author   zhuoligang
+ * @version  Ver 1.0
+ * @Date	 2018年11月19日		下午4:49:53
+ * @see 	 
+ */
+public class ImageThread implements Runnable {
+	private final static Logger logger = LoggerFactory.getLogger(ImageThread.class);
+	
+    private String biz_id;
+    private CenterUserMain member;
+    private HttpServletRequest request;
+    
+    public ImageThread(String biz_id, CenterUserMain member,HttpServletRequest request) {
+        super();
+        this.request = request;
+        this.biz_id = biz_id;
+        this.member = member;
+    }
+
+    @Override
+    public void run() {
+        try {
+            //验证成功对图片处理
+        	Map<String, Object> map = getCheckResult(biz_id);
+            String msg = doImages(member,map,request);
+            System.out.println("图片处理结果："+msg); 
+        } catch (Exception e) {
+        	logger.error("图像文件处理错误，请联系管理员", e);
+            throw new BusinessException(UserCenterConstant.CODE_500, "图像文件处理错误，请联系管理员");
+        } 
+    }
+    
+	/**
+	 * 
+	* @Title: getCheckResult
+	* @Description: TODO(主动获取faceid认证结果)
+	* @param @param biz_id
+	* @param @return    设定文件
+	* @return Map<String,Object>    返回类型
+	* @throws
+	 */
+    public Map<String,Object> getCheckResult(String biz_id){
+		Map<String, Object> sendMap = new HashMap<String, Object>();
+        sendMap.put("api_key", UserCenterConstant.FACEID_API_KEY);
+        sendMap.put("api_secret", UserCenterConstant.FACEID_API_SECRET);
+        sendMap.put("biz_id", biz_id);
+        Map<String,Object> map = null;
+        try {
+            String result = RestTemplateUtil.getForEntity(UserCenterConstant.FACEID_GET_RESULT,sendMap, null);
+            map = (Map<String, Object>) JSON.parse(result);
+		} catch (Exception e) {
+			logger.error("请求第三方服务器出错，请联系管理员", e);
+			throw new BusinessException(UserCenterConstant.CODE_500, "请求第三方服务器出错，请联系管理员");
+		}
+        return map;
+        
+    }
+    
+	/**
+     * 
+    * doImages:(转存用户验证审核成功的图片)
+    * @param member
+    * @param jsonObj
+    * @return    
+    * @throws
+     */
+	@Transactional(rollbackFor = Exception.class)
+    public String doImages(CenterUserMain member,Map<String,Object> jsonObj,HttpServletRequest request){
+        String images = "";
+        try {
+            images = jsonObj.get("images").toString();
+        } catch (Exception e) {
+            return null;
+        }
+        if(jsonObj.get("images") == null || "".equals(jsonObj.get("images"))){
+            return null;
+        }
+        MemberImages mi = (MemberImages) JSON.parseObject(images, MemberImages.class);
+        
+//        String savepath = "/uploads/";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String dateUrl = sdf.format(new Date());
+        String savepath = UserCenterConstant.FACEID_IMAGES_SAVE_SENDURL + dateUrl +"/";
+        String realsavepath = UserCenterConstant.FACEID_IMAGES_SAVE_BASEURL + dateUrl +"/";
+        File file = new File(realsavepath);
+        if(!file.exists()) {
+        	file.mkdirs();
+        }
+        //20181018 为了测试------------------------------------------------
+//        String realsavepath_ = request.getRealPath(savepath);
+        try {
+            //base64图片转图片并做逻辑处理
+            String image_best = mi.getImage_best();
+            StringBuffer str = new StringBuffer();
+            str.append("成功生成图片, ");
+            String filename = "";
+
+            if(image_best != null){
+                filename = DateHelper.getFilename(".jpg");
+                boolean  bool1 = Base64Change.ChangeBase64(image_best,realsavepath + filename);
+                if(bool1){
+                    str.append(filename+",");
+                    member.setIdcardPicOnhand(savepath + filename);
+                }
+            }
+            String image_idcard_back = mi.getImage_idcard_back(); 
+            if(image_idcard_back != null){
+                filename = DateHelper.getFilename(".jpg");
+                boolean bool2 = Base64Change.ChangeBase64(image_idcard_back,realsavepath + filename);
+                if(bool2){
+                    str.append(filename+",");
+                    member.setIdcardPicBack(savepath + filename);
+                }
+            }
+            String image_idcard_front = mi.getImage_idcard_front();
+            if(image_idcard_front != null){
+                filename = DateHelper.getFilename(".jpg");
+                boolean bool3 = Base64Change.ChangeBase64(image_idcard_front,realsavepath + filename);
+                if(bool3){
+                    str.append(filename+",");
+                    member.setIdcardPicFront(savepath + filename);
+                }
+            }
+            CenterUserMainMapper centerUserMainMapper = (CenterUserMainMapper) SpringContextUtil.getBean(CenterUserMainMapper.class);
+            centerUserMainMapper.updateByPrimaryKeySelective(member);
+            String message = str.substring(0,str.lastIndexOf(","));
+            return message;
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	logger.error("图片处理错误，请联系管理员",e);
+            return null;
+        }
+    }
+    
+}
+

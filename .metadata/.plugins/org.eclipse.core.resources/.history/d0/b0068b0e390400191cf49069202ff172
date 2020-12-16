@@ -1,0 +1,128 @@
+package org.bibr.user.center.util;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bibr.user.center.constant.UserCenterConstant;
+import org.bibr.user.center.exception.BusinessException;
+
+import com.alibaba.fastjson.JSONObject;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
+
+/**
+ * 
+* @ClassName: DuanxinHelper
+* @Description: TODO(短信帮助类)
+* @author Administrator
+* @date 2018年11月22日下午5:35:35
+*
+ */
+public class DuanxinHelper {
+	
+	/**
+	 * 
+	* @Title: sendSms
+	* @Description: TODO(阿里云短信发送)
+	* @param @param mobile
+	* @param @param contents
+	* @param @return    设定文件
+	* @return boolean    返回类型
+	* @throws
+	 */
+	public static boolean sendSms(String mobile, String code){
+		boolean bool = false;
+		if(code.isEmpty()){
+			return bool;
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("code", code);
+		JSONObject jsonParam = new JSONObject(map);
+		SendSmsResponse ssp = null ;
+//		try {
+//			ssp = SmsUtils.sendSms(mobile, jsonParam.toJSONString());
+//		} catch (ClientException e) {
+//			e.printStackTrace();
+//			throw new BusinessException(UserCenterConstant.CODE_500, "阿里云短信接口错误，请联系管理员");
+//		}
+//		if(ssp != null && ssp.getCode().equalsIgnoreCase("ok")){
+//			bool = true;
+//		}
+//		return bool;
+		//测试阶段不发送短信
+		return true;
+	}
+	
+	/**
+	 * 
+	* @Title: sendSms
+	* @Description: TODO(阿里云短信发送通知消息)
+	* @param @param mobile
+	* @param @param contents
+	* @param @return    设定文件
+	* @return boolean    返回类型
+	* @throws
+	 */
+	public static boolean sendSms(String mobile, String memberId, String countThreshold){
+		boolean bool = false;
+		if(memberId == null || countThreshold== null){
+			return bool;
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("memberId", memberId);
+		map.put("countThreshold", countThreshold);
+		JSONObject jsonParam = new JSONObject(map);
+		SendSmsResponse ssp = null ;
+//		try {
+//			ssp = SmsUtils.sendSmsInform(mobile, jsonParam.toJSONString());
+//		} catch (ClientException e) {
+//			e.printStackTrace();
+//			throw new BusinessException(UserCenterConstant.CODE_500, "阿里云短信接口错误，请联系管理员");
+//		}
+//		if(ssp != null && ssp.getCode().equalsIgnoreCase("ok")){
+//			bool = true;
+//		}
+//		return bool;
+		//测试阶段不发送短信
+		return true;
+	}
+
+    // 发送短信
+    public static boolean send(String mobile, String contents) {
+        // 凌凯短信
+        // Map<String, Object> params = new HashMap<String, Object>();
+        // params.put("CorpID", account);
+        // params.put("Pwd", password);
+        // params.put("Mobile", mobile);
+        // params.put("Content", contents);
+        // String result =
+        // HttpHelper.post("https://sdk2.028lk.com/sdk2/BatchSend2.aspx",
+        // params);
+        // return Integer.parseInt(result) > 0;
+        // 铁壳短信
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Authorization", "Basic " + new String(Base64.encode(new String("api:" + UserCenterConstant.DUANXIN_APIKEY).getBytes())));
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("mobile", mobile);
+        params.put("message", contents + "【币和】测试");
+        System.out.println(contents);
+        return true;
+//         String json =
+//         HttpHelper.post("https://sms-api.luosimao.com/v1/send.json", headers,
+//         params);
+//         JSONObject jsonObj = new JSONObject(json);
+//         return jsonObj.getInt("error") == 0;
+    }
+
+    // 获取余额
+//    public static int balance() {
+//        // 铁壳短信
+//        Map<String, String> headers = new HashMap<String, String>();
+//        headers.put("Authorization", "Basic " + new String(Base64.encode(new String("api:" + UserCenterConstant.DUANXIN_APIKEY).getBytes())));
+//        String json = HttpHelper.get("http://sms-api.luosimao.com/v1/status.json", headers);
+//        JSONObject jsonObj = new JSONObject(json);
+//        return jsonObj.getInt("deposit");
+//    }
+
+}

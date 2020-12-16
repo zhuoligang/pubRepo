@@ -1,0 +1,20 @@
+package org.bibr.distributed.octopus.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.distributed.octopus.bean.vo.OctopusArticleVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OctopusColumnService {
+	private final static Logger logger = LoggerFactory.getLogger(OctopusColumnService.class);
+
+	public List<OctopusArticleVO> addColumn(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+}

@@ -1,0 +1,385 @@
+package org.bibr.invest.center.service;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.bibr.invest.center.bean.po.PoolProductBase;
+import org.bibr.invest.center.contants.Codes;
+import org.bibr.invest.center.contants.Messages;
+import org.bibr.invest.center.dao.PoolProductBaseMapper;
+import org.bibr.invest.center.exception.BusinessException;
+import org.bibr.invest.center.service.common.CommonService;
+import org.bibr.invest.center.util.InvestCenterUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+@Service
+public class BackerApiService extends CommonService {
+	private Logger logger = LoggerFactory.getLogger(BackerApiService.class);
+
+	@Autowired
+	private PoolProductBaseMapper poolProductBaseDao;
+
+	@Transactional(rollbackFor = Exception.class)
+	public void publishProductBase(Map<String, String> map, HttpServletRequest request) {
+		try {
+			if (InvestCenterUtil.checkMap(new String[] { "name", "eunit", "image", "hashrateSingle",
+					"hashratePresenter", "hashrateUnit", "total",
+					// 暂时非必填
+					// "effectiveDate", "payTypes","clearingForm",
+					"rent", "rentEunit", "lockPeriod", "expectYield", "orderLimit", "poolIntroduce",
+					"contractDescription", "riskWarning", "disclaimer" }, map)) {
+				throw new BusinessException(Codes.CODE_500, Messages.FILL_IN_REQUIRED);
+			}
+			PoolProductBase ppb = buildPublishPpb(map);
+			this.poolProductBaseDao.insertSelective(ppb);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("publishProductBase?" + JSONObject.toJSONString(map));
+			throw new BusinessException(Codes.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("publishProductBase?" + JSONObject.toJSONString(map));
+			throw new BusinessException(Codes.CODE_500, e.getMessage());
+		}
+	}
+
+	private PoolProductBase buildPublishPpb(Map<String, String> map) {
+		PoolProductBase ppb = new PoolProductBase();
+		ppb.setId(InvestCenterUtil.createUUId());
+		ppb.setEunit(map.get("eunit"));
+		ppb.setImage(map.get("image"));
+		ppb.setName(map.get("name"));
+		ppb.setHashrateSingle(new BigDecimal(map.get("hashrateSingle")));
+		ppb.setHashratePresenter(new BigDecimal(map.get("hashratePresenter")));
+		ppb.setHashrateUnit(map.get("hashrateUnit"));
+		ppb.setTotal(Integer.parseInt(map.get("total")));
+		ppb.setRemainingCopies(Integer.parseInt(map.get("total")));
+		ppb.setRent(new BigDecimal(map.get("rent")));
+		ppb.setRentEunit(map.get("rentEunit"));
+		ppb.setLockPeriod(Integer.parseInt(map.get("lockPeriod")));
+		ppb.setExpectYield(new BigDecimal(map.get("expectYield")));
+		ppb.setOrderLimit(Integer.parseInt(map.get("orderLimit")));
+		ppb.setPoolIntroduce(map.get("poolIntroduce"));
+		ppb.setContractDescription(map.get("contractDescription"));
+		ppb.setRiskWarning(map.get("riskWarning"));
+		ppb.setDisclaimer(map.get("disclaimer"));
+		if (!InvestCenterUtil.checkMap(new String[] { "effectiveDate" }, map)) {
+			ppb.setEffectiveDate(Integer.parseInt(map.get("effectiveDate")));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "payTypes" }, map)) {
+			ppb.setPayTypes(map.get("payTypes"));
+		} else {
+			ppb.setPayTypes("USDT,CNT");
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "clearingForm" }, map)) {
+			ppb.setClearingForm(map.get("clearingForm"));
+		} else {
+			ppb.setClearingForm("每日结算，次日发放至账户");
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "sort" }, map)) {
+			ppb.setSort(Integer.parseInt(map.get("sort")));
+		} else {
+			ppb.setSort(99999999);
+		}
+		ppb.setPublishTime(new Date());
+		return ppb;
+	}
+
+	public void editProductBase(Map<String, String> map, HttpServletRequest request) {
+		try {
+			if (InvestCenterUtil.checkMap(new String[] { "id" }, map)) {
+				throw new BusinessException(Codes.CODE_500, Messages.FILL_IN_REQUIRED);
+			}
+			String id = map.get("id");
+			editProductBaseDo(id, map);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("editProductBase?" + JSONObject.toJSONString(map));
+			throw new BusinessException(Codes.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("editProductBase?" + JSONObject.toJSONString(map));
+			throw new BusinessException(Codes.CODE_500, e.getMessage());
+		}
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	private void editProductBaseDo(String id, Map<String, String> map) throws InterruptedException {
+		int i = 0;
+		boolean bool = true;
+		while (bool) {
+			PoolProductBase ppb = this.poolProductBaseDao.selectByPrimaryKey(id);
+			if (ppb == null) {
+				throw new BusinessException(Codes.CODE_500, Messages.PRODUCT_OBJECT_NONEXISTENT);
+			}
+			PoolProductBase edit_ppb = buildEditPpb(ppb, map);
+			try {
+				this.poolProductBaseDao.updateByPrimaryKeySelective(edit_ppb);
+				bool = false;
+			} catch (Exception e) {
+				// 修改失败，重试10次竞争版本号
+				i += 1;
+				if (i >= 10) {
+					bool = false;
+				}
+				Thread.sleep(100);
+			}
+		}
+	}
+
+	private PoolProductBase buildEditPpb(PoolProductBase ppb, Map<String, String> map) {
+		PoolProductBase edit_ppb = new PoolProductBase();
+		edit_ppb.setId(ppb.getId());
+		edit_ppb.setVersion(ppb.getVersion());
+		if (!InvestCenterUtil.checkMap(new String[] { "eunit" }, map)) {
+			edit_ppb.setEunit(map.get("eunit"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "image" }, map)) {
+			edit_ppb.setImage(map.get("image"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "name" }, map)) {
+			edit_ppb.setName(map.get("name"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "hashrateSingle" }, map)) {
+			edit_ppb.setHashrateSingle(new BigDecimal(map.get("hashrateSingle")));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "hashratePresenter" }, map)) {
+			edit_ppb.setHashratePresenter(new BigDecimal(map.get("hashratePresenter")));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "hashrateUnit" }, map)) {
+			edit_ppb.setHashrateUnit(map.get("hashrateUnit"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "total" }, map)) {
+			int total = Integer.parseInt(map.get("total"));
+			// 已售份数
+			int soldCopies = ppb.getTotal() - ppb.getRemainingCopies();
+			if (total < soldCopies) {
+				throw new BusinessException(Codes.CODE_500, Messages.TOTAL_PARAMETER_ERROR);
+			}
+			edit_ppb.setTotal(total);
+			edit_ppb.setRemainingCopies(total - soldCopies);
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "rent" }, map)) {
+			edit_ppb.setRent(new BigDecimal(map.get("rent")));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "rentEunit" }, map)) {
+			edit_ppb.setRentEunit(map.get("rentEunit"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "lockPeriod" }, map)) {
+			edit_ppb.setLockPeriod(Integer.parseInt(map.get("lockPeriod")));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "expectYield" }, map)) {
+			edit_ppb.setExpectYield(new BigDecimal(map.get("expectYield")));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "orderLimit" }, map)) {
+			edit_ppb.setOrderLimit(Integer.parseInt(map.get("orderLimit")));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "contractDescription" }, map)) {
+			edit_ppb.setContractDescription(map.get("contractDescription"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "poolIntroduce" }, map)) {
+			edit_ppb.setPoolIntroduce(map.get("poolIntroduce"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "riskWarning" }, map)) {
+			edit_ppb.setRiskWarning(map.get("riskWarning"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "disclaime" }, map)) {
+			edit_ppb.setDisclaimer(map.get("disclaime"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "effectiveDate" }, map)) {
+			edit_ppb.setEffectiveDate(Integer.parseInt("effectiveDate"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "payTypes" }, map)) {
+			edit_ppb.setPayTypes(map.get("payTypes"));
+		}
+		if (!InvestCenterUtil.checkMap(new String[] { "clearingForm" }, map)) {
+			edit_ppb.setClearingForm(map.get("clearingForm"));
+		}
+		// if (!InvestCenterUtil.checkMap(new String[] { "remainingCopies" },
+		// map)) {
+		// edit_ppb.setRemainingCopies(Integer.parseInt(map.get("remainingCopies")));
+		// }
+		// if (!InvestCenterUtil.checkMap(new String[] { "soldRent" }, map)) {
+		// edit_ppb.setSoldRent(new BigDecimal(map.get("soldRent")));
+		// }
+		// if (!InvestCenterUtil.checkMap(new String[] { "soldRate" }, map)) {
+		// edit_ppb.setSoldRate(new BigDecimal(map.get("soldRate")));
+		// }
+		if (!InvestCenterUtil.checkMap(new String[] { "sort" }, map)) {
+			edit_ppb.setSort(Integer.parseInt(map.get("sort")));
+		}
+		// if (!InvestCenterUtil.checkMap(new String[] { "enabled" }, map)) {
+		// edit_ppb.setEnabled(Integer.parseInt(map.get("enabled")));
+		// }
+		if (!InvestCenterUtil.checkMap(new String[] { "delFlag" }, map)) {
+			edit_ppb.setDelFlag(Integer.parseInt(map.get("delFlag")));
+		}
+
+		edit_ppb.setLastAlterTime(new Date());
+		return edit_ppb;
+	}
+
+	public void productTop(Map<String, String> map, HttpServletRequest request) {
+		try {
+			if (InvestCenterUtil.checkMap(new String[] { "id", "topFlag" }, map)) {
+				throw new BusinessException(Codes.CODE_500, Messages.FILL_IN_REQUIRED);
+			}
+			String id = map.get("id");
+			int i = 0;
+			boolean bool = true;
+			while (bool) {
+				PoolProductBase ppb = this.poolProductBaseDao.selectByPrimaryKey(id);
+				if (ppb == null) {
+					throw new BusinessException(Codes.CODE_500, Messages.PRODUCT_OBJECT_NONEXISTENT);
+				}
+				int topFlag = Integer.parseInt(map.get("topFlag"));
+				if (topFlag == ppb.getTopFlag()) {
+					throw new BusinessException(Codes.CODE_500, Messages.STATUS_NOT_CHANGE);
+				}
+
+				PoolProductBase edit_ppb = new PoolProductBase();
+				edit_ppb.setId(ppb.getId());
+				edit_ppb.setVersion(ppb.getVersion());
+				if (topFlag == Codes.CODE_1) {
+					int minSort = this.poolProductBaseDao.selectMinSort();
+					edit_ppb.setSort(minSort - 1);
+				} else {
+					edit_ppb.setSort(99999999);
+				}
+				edit_ppb.setTopFlag(topFlag);
+				try {
+					this.poolProductBaseDao.updateByPrimaryKeySelective(edit_ppb);
+					bool = false;
+				} catch (Exception e) {
+					// 修改失败，重试10次竞争版本号
+					i += 1;
+					if (i >= 10) {
+						bool = false;
+					}
+					Thread.sleep(100);
+				}
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("productTop?" + JSONObject.toJSONString(map));
+			throw new BusinessException(Codes.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("productTop?" + JSONObject.toJSONString(map));
+			throw new BusinessException(Codes.CODE_500, e.getMessage());
+		}
+	}
+
+	public PageInfo<?> getProducts(Map<String, String> map, HttpServletRequest request) {
+		try {
+			map = PageMap(map);
+			PageHelper.startPage(Integer.parseInt(map.get("pageNumber")), Integer.parseInt(map.get("pageSize")));
+			List<PoolProductBase> list = this.poolProductBaseDao.selectListByMap(map);
+			return new PageInfo<>(list);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("getProducts?" + JSONObject.toJSONString(map));
+			throw new BusinessException(Codes.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("getProducts?" + JSONObject.toJSONString(map));
+			throw new BusinessException(Codes.CODE_500, e.getMessage());
+		}
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void editProductStatus(Map<String, String> map, HttpServletRequest request) {
+		try {
+			if (InvestCenterUtil.checkMap(new String[] { "id", "enabled" }, map)) {
+				throw new BusinessException(Codes.CODE_500, Messages.FILL_IN_REQUIRED);
+			}
+			String id = map.get("id");
+			PoolProductBase ppb = this.poolProductBaseDao.selectByPrimaryKey(id);
+			if (ppb == null) {
+				throw new BusinessException(Codes.CODE_500, Messages.PRODUCT_OBJECT_NONEXISTENT);
+			}
+			int enabled = Integer.parseInt(map.get("enabled"));
+			if (enabled == ppb.getEnabled()) {
+				throw new BusinessException(Codes.CODE_500, Messages.STATUS_NOT_CHANGE);
+			}
+			PoolProductBase edit_ppb = new PoolProductBase();
+			edit_ppb.setId(ppb.getId());
+			edit_ppb.setVersion(ppb.getVersion());
+			if (Codes.CODE_0 == enabled) {// 下架
+				// edit_ppb.setEnabled(enabled);
+			} else if (Codes.CODE_1 == enabled) {// 上架
+				//如果重新上架的是已售馨的产品，需要发布一款类似该产品的新产品,同时以前的产品需要做逻辑删除
+				if(ppb.getRemainingCopies() == Codes.CODE_0){
+					PoolProductBase insert_ppb = buildPublishPpb(ppb);
+					this.poolProductBaseDao.insertSelective(insert_ppb);
+					edit_ppb.setDelFlag(1);
+					this.poolProductBaseDao.updateByPrimaryKeySelective(edit_ppb);
+					return;
+				}
+			} else {// 暂时不支持的类型
+				throw new BusinessException(Codes.CODE_500, Messages.NUMBER_INVALID);
+			}
+			edit_ppb.setEnabled(enabled);
+			this.poolProductBaseDao.updateByPrimaryKeySelective(edit_ppb);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("editProductStatus?" + JSONObject.toJSONString(map));
+			throw new BusinessException(Codes.CODE_500, e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("editProductStatus?" + JSONObject.toJSONString(map));
+			throw new BusinessException(Codes.CODE_500, e.getMessage());
+		}
+	}
+
+	private PoolProductBase buildPublishPpb(PoolProductBase ppb_) {
+		PoolProductBase ppb = new PoolProductBase();
+		ppb.setId(InvestCenterUtil.createUUId());
+		ppb.setEunit(ppb_.getEunit());
+		ppb.setImage(ppb_.getImage());
+		ppb.setName(ppb_.getName());
+		ppb.setHashrateSingle(ppb_.getHashrateSingle());
+		ppb.setHashratePresenter(ppb_.getHashratePresenter());
+		ppb.setHashrateUnit(ppb_.getHashrateUnit());
+		ppb.setTotal(ppb_.getTotal());
+		ppb.setRemainingCopies(ppb.getTotal());
+		ppb.setRent(ppb_.getRent());
+		ppb.setRentEunit(ppb_.getRentEunit());
+		ppb.setLockPeriod(ppb_.getLockPeriod());
+		ppb.setExpectYield(ppb_.getExpectYield());
+		ppb.setOrderLimit(ppb_.getOrderLimit());
+		ppb.setPoolIntroduce(ppb_.getPoolIntroduce());
+		ppb.setContractDescription(ppb_.getContractDescription());
+		ppb.setRiskWarning(ppb_.getRiskWarning());
+		ppb.setDisclaimer(ppb_.getDisclaimer());
+		if (ppb_.getEffectiveDate() != null) {
+			ppb.setEffectiveDate(ppb_.getEffectiveDate());
+		}
+		if (ppb_.getPayTypes() != null) {
+			ppb.setPayTypes(ppb_.getPayTypes());
+		} else {
+			ppb.setPayTypes("USDT,CNT");
+		}
+		if (ppb_.getClearingForm() != null) {
+			ppb.setClearingForm(ppb_.getClearingForm());
+		} else {
+			ppb.setClearingForm("每日结算，次日发放至账户");
+		}
+		ppb.setSort(99999999);
+		ppb.setPublishTime(new Date());
+		return ppb;
+	}
+
+}

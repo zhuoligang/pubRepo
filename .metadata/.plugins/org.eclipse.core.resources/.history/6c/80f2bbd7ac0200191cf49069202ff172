@@ -1,0 +1,24 @@
+package org.bibr.accountcheck.center.thread;
+
+import org.bibr.accountcheck.center.service.AccountCheckService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 
+* @ClassName: CoreCheckThread
+* @Description: TODO(核心校验)
+* @author Administrator
+* @date 2018年12月18日下午6:05:59
+*
+ */
+public class CoreCheckThread implements Runnable{
+	private final static Logger logger = LoggerFactory.getLogger(CoreCheckThread.class);
+	
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

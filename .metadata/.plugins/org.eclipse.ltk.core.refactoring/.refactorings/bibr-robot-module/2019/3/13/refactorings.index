@@ -1,0 +1,6 @@
+1553507827967	Extract local variable 'showTasksOnLine'
+1553508578985	Extract local variable 'applicationContext'
+1553508987154	Rename package 'org.bibr.robot.module.listener'
+1553854725250	Extract local variable 'platCode'
+1553854755343	Extract local variable 'coinCode'
+1553856019037	Extract local variable 'opStatus'

@@ -1,0 +1,19 @@
+package org.bibr.user.center.thread;
+
+/**
+ * 
+* @ClassName: SuperMemberThread
+* @Description: TODO(超级伙伴异步线程)
+* @author Administrator
+* @date 2018年12月17日下午6:16:30
+*
+ */
+public class SuperMemberThread implements Runnable {
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

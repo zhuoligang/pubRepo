@@ -1,0 +1,50 @@
+1559111564366	Delete element
+1559111572367	Rename type 'RobotApplication'
+1559111668627	Rename package 'com.bibr.lg'
+1559111678899	Delete element
+1559118252283	Delete element
+1559118255733	Delete element
+1559119161171	Copy compilation unit
+1559120104564	Rename type 'LGApplication'
+1559120571161	Copy packages
+1559120670781	Delete element
+1559120710014	Copy packages
+1559120720317	Copy files
+1559120723302	Copy folder
+1559120727087	Copy folder
+1559120729491	Copy files
+1559120733481	Copy files
+1559120742378	Delete element
+1559185050096	Rename package 'com.lg.module'
+1559185067610	Copy package
+1559185093564	Rename package 'com.lg.module.bean'
+1559185131218	Move compilation unit
+1559185135605	Move compilation unit
+1559185139646	Move compilation unit
+1559185142584	Delete element
+1559185159348	Rename package 'com.lg.module'
+1559185192919	Rename package 'com.lg.module.bean'
+1559185199830	Rename package 'com.lg.module.conf'
+1559185207680	Rename package 'com.lg.module.constant'
+1559185212210	Rename package 'com.lg.module.controller'
+1559185225781	Rename package 'com.lg.module.dao'
+1559185230542	Rename package 'com.lg.module.exception'
+1559185234077	Rename package 'com.lg.module.schedule'
+1559185237356	Rename package 'com.lg.module.service'
+1559185241362	Rename package 'com.lg.module.util'
+1559185246486	Rename package 'com.lg.module.websocket'
+1559185268776	Rename package 'com.lg.module.bean.bo'
+1559185275315	Rename package 'com.lg.module.bean.po'
+1559185278521	Rename package 'com.lg.module.bean.vo'
+1559185334525	Rename package 'com.lg.web.module.controller.verify'
+1559185360502	Delete element
+1559185732406	Rename type 'LgWebApplication'
+1559199325431	Move compilation unit
+1559199341555	Rename type 'LgConstant'
+1559212022572	Extract local variable 'selectByPrimaryKey'
+1559271363675	Rename type 'WebMQCustomerEvent'
+1559285807125	Delete element
+1559286705609	Delete element
+1559286771734	Delete element
+1559286797122	Copy file
+1559286802076	Delete element

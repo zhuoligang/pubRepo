@@ -1,0 +1,21 @@
+package org.bibr.accountcheck.center.util;
+
+import java.util.UUID;
+
+/**
+ * 
+* @ClassName: AccountCheckUtil
+* @Description: TODO(这里用一句话描述这个类的作用)
+* @author Administrator
+* @date 2018年12月18日下午4:53:06
+*
+ */
+public class AccountCheckUtil {
+	/**
+	 * uuid生产
+	 * @return
+	 */
+	public static String createUUId() {
+		return UUID.randomUUID().toString().replace("-", "");
+	}
+}

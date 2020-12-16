@@ -1,0 +1,61 @@
+package org.bibr.robot.module.bean.vo;
+
+import java.math.BigDecimal;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel("机器人模拟下单实体类")
+public class OrderVo {
+	
+    @ApiModelProperty("机器人id")
+	private Integer robotId;
+    @ApiModelProperty("价格")
+    private BigDecimal price;
+    @ApiModelProperty("数量")
+    private BigDecimal countCurform;
+    @ApiModelProperty("1:买，2：卖")
+    private Integer isBuy;
+    @ApiModelProperty("交易区国际码")
+    private String platEunit;
+    @ApiModelProperty("币种国际码")
+    private String coinEunit;
+    
+	public Integer getRobotId() {
+		return robotId;
+	}
+	public void setRobotId(Integer robotId) {
+		this.robotId = robotId;
+	}
+	public BigDecimal getPrice() {
+		return price;
+	}
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+	public BigDecimal getCountCurform() {
+		return countCurform;
+	}
+	public void setCountCurform(BigDecimal countCurform) {
+		this.countCurform = countCurform;
+	}
+	public Integer getIsBuy() {
+		return isBuy;
+	}
+	public void setIsBuy(Integer isBuy) {
+		this.isBuy = isBuy;
+	}
+	public String getPlatEunit() {
+		return platEunit;
+	}
+	public void setPlatEunit(String platEunit) {
+		this.platEunit = platEunit;
+	}
+	public String getCoinEunit() {
+		return coinEunit;
+	}
+	public void setCoinEunit(String coinEunit) {
+		this.coinEunit = coinEunit;
+	}
+    
+}

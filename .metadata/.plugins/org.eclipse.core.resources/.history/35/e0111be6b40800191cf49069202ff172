@@ -1,0 +1,77 @@
+package org.bibr.user.center.configurer.security;
+
+import java.io.IOException;
+
+import javax.security.sasl.AuthenticationException;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.bibr.web.order.bean.bo.TokenDTO;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.jwt.Jwt;
+import org.springframework.security.jwt.JwtHelper;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+
+import com.alibaba.fastjson.JSONObject;
+
+/**
+ * token认证filter
+ * 
+ * @author tangxing
+ * @date 2018年12月21日 上午11:33:08
+ */
+public class TokenAuthenticateFilter extends AbstractAuthenticationProcessingFilter {
+
+	private String servletPath;
+
+	public TokenAuthenticateFilter(String servletPath) {
+		super(servletPath);
+		this.servletPath = servletPath;
+		setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
+	}
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		HttpServletRequest req = (HttpServletRequest) request;
+		HttpServletResponse res = (HttpServletResponse) response;
+		
+		String token = req.getHeader("Authorization");
+		String userId = req.getHeader("userId");
+		
+		// 前端约定，header没有携带token和userId的请求，则在token是否本人生成过滤器中放行，由后续过滤器验证是否真正为放行资源和token的正确性
+		if (StringUtils.isEmpty(token) && StringUtils.isEmpty(userId)) {
+			chain.doFilter(request, response);
+			return;
+		}
+		String str = "Bearer ";
+		token = token.substring(token.indexOf(str) + str.length());
+		Jwt accessJwt = null;
+		try {
+			accessJwt = JwtHelper.decode(token);
+		} catch (Exception e) {
+			unsuccessfulAuthentication(req, res, new InsufficientAuthenticationException("601-用户token不正确"));
+			return;
+		}
+		TokenDTO tokenDTO = JSONObject.toJavaObject(JSONObject.parseObject(accessJwt.getClaims()), TokenDTO.class);
+		
+		if (!tokenDTO.getUserId().equals(userId)) {
+			unsuccessfulAuthentication(req, res, new InsufficientAuthenticationException("606-用户token非本人申请"));
+			return;
+		}
+		chain.doFilter(request, response);
+	}
+
+	@Override
+	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+			throws AuthenticationException, IOException, ServletException {
+		return null;
+	}
+
+}

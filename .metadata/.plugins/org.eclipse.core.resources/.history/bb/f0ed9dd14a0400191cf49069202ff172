@@ -1,0 +1,103 @@
+package org.bibr.user.center.service;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.bibr.user.center.bean.bo.CenterNoteInform;
+import org.bibr.user.center.bean.bo.CenterNoteSend;
+import org.bibr.user.center.bean.bo.CenterUserMain;
+import org.bibr.user.center.constant.UserCenterConstant;
+import org.bibr.user.center.dao.CenterNoteInformMapper;
+import org.bibr.user.center.exception.BusinessException;
+import org.bibr.user.center.util.DuanxinHelper;
+import org.bibr.user.center.util.UserCenterUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ForAccountCheckService {
+	private final static Logger logger = LoggerFactory.getLogger(UserCenterFrontService.class);
+	@Autowired
+	private CenterNoteInformMapper centerNoteInformMapper;
+	
+	@Autowired
+	private UserCenterService userCenterService;
+	
+	/**
+	 * 
+	* @Title: checkThresholdNote
+	* @Description: TODO(检查用户使用有短信发送资格)
+	* @param @param map
+	* @param @param request
+	* @param @return    设定文件
+	* @return boolean    返回类型
+	* @throws
+	 */
+	public boolean checkThresholdNote(Map<String, String> map, HttpServletRequest request){
+		if(map == null || map.get("mobile") == null || map.get("curtime") == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		String mobile = map.get("mobile");
+        long curtime = Long.parseLong(map.get("curtime"));
+        Map<String, Object> map_ = new HashMap<String, Object>();
+        map_.put("mobile", mobile);
+        map_.put("sendTime", new Date(curtime - UserCenterConstant.THRESHOLD_PASS_TIME));//发送间隔24小时
+        map_.put("type", 1);
+        int i = this.centerNoteInformMapper.selectSendTime(map_);
+        if(i > 0){
+//        	throw new BusinessException(UserCenterConstant.CODE_500, "发送间隔短于"+UserCenterConstant.DUANXIN_PASS_TIME/3600000+"小时，请稍后再试");
+    		return false;
+        }
+		return true;
+	}
+	
+	/**
+	 * 
+	* @Title: sendThresholdNote
+	* @Description: TODO(触发阈值短信通知)
+	* @param @param map
+	* @param @param request
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String sendThresholdNote(Map<String, String> map, HttpServletRequest request) {
+		if(map == null || map.get("mobile") == null || map.get("uuid") == null || map.get("countThreshold") == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		CenterUserMain centerUserMain = this.userCenterService.findCenterUserMain(map);
+		if(centerUserMain == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, "没有这个用户");
+		}
+		String mobile = map.get("mobile");
+		String resultMsg = "短信发送失败";
+		Map<String, String> sendmap = new HashMap<>();
+		sendmap.put("mobile", mobile);
+		sendmap.put("curtime", String.valueOf(new Date().getTime()));
+		if(checkThresholdNote(sendmap,request)){
+			try {
+				boolean result = DuanxinHelper.sendSms(mobile, centerUserMain.getMemberId(), map.get("countThreshold"));
+				if(!result){
+					throw new BusinessException(UserCenterConstant.CODE_500, "短信接口异常，请联系管理员");
+				}
+				CenterNoteInform centerNoteInform = new CenterNoteInform(id, mobile, userId, memberId, sendTime, 1);
+				CenterNoteSend centerNoteSend = new CenterNoteSend();
+				centerNoteSend.setId(UserCenterUtil.createUUId());
+				centerNoteSend.setMobile(mobile);
+				centerNoteSend.setSendTime(date);
+				centerNoteSend.setIpAddress(UserCenterUtil.getIpAddr(request));
+				this.centerNoteInformMapper.insert(centerNoteSend);
+				resultMsg = "短信发送成功";
+			} catch (Exception e) {
+				throw new BusinessException(UserCenterConstant.CODE_500, "短信系统错误，请联系管理员");
+			}
+		}
+		return resultMsg;
+	}
+	
+}

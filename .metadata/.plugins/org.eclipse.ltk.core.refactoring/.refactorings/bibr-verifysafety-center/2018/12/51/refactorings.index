@@ -1,0 +1,13 @@
+1545122395729	Delete element
+1545122409517	Rename type 'UserCenterApplication'
+1545122592723	Delete element
+1545123381331	Rename type 'AccountCheckController'
+1545127432307	Move compilation unit
+1545208045446	Extract local variable 'hotMoney'
+1545208048724	Extract local variable 'coldMoney'
+1545210431662	Extract local variable 'sumHotMoney'
+1545211155065	Extract local variable 'sumSerialMoney'
+1545280289695	Extract local variable 'assetCountCNY'
+1545293090865	Extract local variable 'selectCoinCodeByUserId'
+1545294423887	Delete element
+1545297044320	Extract local variable 'split'

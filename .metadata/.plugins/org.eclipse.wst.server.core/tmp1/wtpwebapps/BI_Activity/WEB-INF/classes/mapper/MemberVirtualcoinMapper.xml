@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bi.activity.dao.MemberVirtualcoinMapper" >
+  <resultMap id="BaseResultMap" type="com.bi.activity.entity.MemberVirtualcoin" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="member_id" property="memberId" jdbcType="INTEGER" />
+    <result column="virtualcoin_id" property="virtualcoinId" jdbcType="INTEGER" />
+    <result column="countactive" property="countactive" jdbcType="DECIMAL" />
+    <result column="countdisable" property="countdisable" jdbcType="DECIMAL" />
+    <result column="walletaddress" property="walletaddress" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, member_id, virtualcoin_id, countactive, countdisable, walletaddress
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_virtualcoin
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from member_virtualcoin
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.bi.activity.entity.MemberVirtualcoin" >
+    insert into member_virtualcoin (id, member_id, virtualcoin_id, 
+      countactive, countdisable, walletaddress
+      )
+    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{virtualcoinId,jdbcType=INTEGER}, 
+      #{countactive,jdbcType=DECIMAL}, #{countdisable,jdbcType=DECIMAL}, #{walletaddress,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.bi.activity.entity.MemberVirtualcoin" >
+    insert into member_virtualcoin
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="virtualcoinId != null" >
+        virtualcoin_id,
+      </if>
+      <if test="countactive != null" >
+        countactive,
+      </if>
+      <if test="countdisable != null" >
+        countdisable,
+      </if>
+      <if test="walletaddress != null" >
+        walletaddress,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=INTEGER},
+      </if>
+      <if test="virtualcoinId != null" >
+        #{virtualcoinId,jdbcType=INTEGER},
+      </if>
+      <if test="countactive != null" >
+        #{countactive,jdbcType=DECIMAL},
+      </if>
+      <if test="countdisable != null" >
+        #{countdisable,jdbcType=DECIMAL},
+      </if>
+      <if test="walletaddress != null" >
+        #{walletaddress,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bi.activity.entity.MemberVirtualcoin" >
+    update member_virtualcoin
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=INTEGER},
+      </if>
+      <if test="virtualcoinId != null" >
+        virtualcoin_id = #{virtualcoinId,jdbcType=INTEGER},
+      </if>
+      <if test="countactive != null" >
+        countactive = #{countactive,jdbcType=DECIMAL},
+      </if>
+      <if test="countdisable != null" >
+        countdisable = #{countdisable,jdbcType=DECIMAL},
+      </if>
+      <if test="walletaddress != null" >
+        walletaddress = #{walletaddress,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bi.activity.entity.MemberVirtualcoin" >
+    update member_virtualcoin
+    set member_id = #{memberId,jdbcType=INTEGER},
+      virtualcoin_id = #{virtualcoinId,jdbcType=INTEGER},
+      countactive = #{countactive,jdbcType=DECIMAL},
+      countdisable = #{countdisable,jdbcType=DECIMAL},
+      walletaddress = #{walletaddress,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByMemberId" resultType="com.bi.activity.entity.MemberVirtualcoin" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_virtualcoin
+    where member_id = #{memberId,jdbcType=INTEGER}
+      <if test="virtualcoinId != null" >
+       and virtualcoin_id = #{virtualcoinId,jdbcType=INTEGER}
+      </if>
+  </select>
+
+  <insert id="newInsert" parameterType="com.bi.activity.entity.MemberVirtualcoin" >
+    insert into member_virtualcoin (member_id, virtualcoin_id, 
+      countactive, countdisable, walletaddress
+      )
+    values (#{id,jdbcType=INTEGER}, #{memberId,jdbcType=INTEGER}, #{virtualcoinId,jdbcType=INTEGER}, 
+      #{countactive,jdbcType=DECIMAL}, #{countdisable,jdbcType=DECIMAL}, #{walletaddress,jdbcType=VARCHAR}
+      )
+  </insert>  
+  
+  <select id="selectMemberVirtualcoinDtosByMemberId" resultType="com.bi.activity.dto.MemberVirtualcoinDto" parameterType="map" >
+		SELECT
+		mv.id,
+		mv.member_id,
+		mv.virtualcoin_id,
+		vi.cname,
+		vi.eunit,
+		mv.countactive,
+		mv.countdisable,
+		mv.walletaddress
+		FROM
+		member_virtualcoin AS mv ,
+		virtualcoin AS vi
+		WHERE
+		mv.virtualcoin_id = vi.id
+		and member_id = #{memberId,jdbcType=INTEGER}
+      <if test="virtualcoinIds != null" >
+       and virtualcoin_id in
+       	    <foreach item="item" index="index" collection="virtualcoinIds" open="(" separator="," close=")">  
+			    #{item}  
+			</foreach> 
+      </if>
+  </select>
+  
+</mapper>

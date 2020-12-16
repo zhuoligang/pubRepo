@@ -1,0 +1,19 @@
+package org.bibr.accountcheck.center.dao;
+
+import org.bibr.accountcheck.center.bean.bo.AssetColdAccountRecord;
+
+public interface AssetColdAccountRecordMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(AssetColdAccountRecord record);
+
+    int insertSelective(AssetColdAccountRecord record);
+
+    AssetColdAccountRecord selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(AssetColdAccountRecord record);
+
+    int updateByPrimaryKeyWithBLOBs(AssetColdAccountRecord record);
+
+    int updateByPrimaryKey(AssetColdAccountRecord record);
+}

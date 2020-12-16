@@ -1,0 +1,19 @@
+package org.bibr.accountcheck.center.thread;
+
+import org.bibr.accountcheck.center.service.AccountCheckService;
+import org.bibr.accountcheck.center.util.SpringContextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class AccountCheckThread implements Runnable{
+	
+	private final static Logger logger = LoggerFactory.getLogger(CoreCheckThread.class);
+	
+	private AccountCheckService accountCheckService = (AccountCheckService) SpringContextUtil.getBean(AccountCheckService.class);
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

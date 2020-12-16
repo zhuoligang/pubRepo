@@ -1,0 +1,129 @@
+package org.bibr.user.center.service;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.bibr.user.center.bean.bo.CenterUserMain;
+import org.bibr.user.center.configurer.RedisCache;
+import org.bibr.user.center.constant.UserCenterConstant;
+import org.bibr.user.center.dao.CenterUserMainMapper;
+import org.bibr.user.center.exception.BusinessException;
+import org.bibr.user.center.thread.ImageThread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+
+@Service
+public class FaceIdService {
+	private final static Logger logger = LoggerFactory.getLogger(FaceIdService.class);
+	@Autowired
+	private RedisCache cache;
+	
+	@Autowired
+	private UserCenterService userCenterService;
+	@Autowired
+	private CenterUserMainMapper centerUserMainMapper;
+	
+	/**
+	 * 
+	* @Title: returnUrlFollowUp
+	* @Description: TODO(高级认证，人脸识别结果逻辑处理部分)
+	* @param @param data
+	* @param @param request
+	* @param @param response
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String returnUrlFollowUp(String data, HttpServletRequest request, HttpServletResponse response) throws IOException{
+		if(data == null || "".equals(data)) {
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FACEID_RETURN_ERROR);
+		}
+        Map<String,Object> jsonObj = (Map<String, Object>) JSON.parse(data);
+        
+        if(jsonObj.get("status") == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FACEID_RETURN_ERROR);
+        }
+        String status = jsonObj.get("status").toString();
+
+        String biz_info = jsonObj.get("biz_info").toString();
+        Map json = (Map) JSON.parse(biz_info);
+        String biz_no = (String) json.get("biz_no");
+        //相当于此次流程的流水号
+        String biz_id = (String) json.get("biz_id");
+        
+        Map<String, String> map = new HashMap<>();
+        map.put("uuid", biz_no);
+        CenterUserMain centerUserMain = this.userCenterService.findCenterUserMain(map);
+        if(centerUserMain == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FACEID_RETURN_ERROR);
+        }
+        if (centerUserMain.getName() == null || centerUserMain.getIdcard() == null) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "请先完成实名认证才能使用该功能哟！");
+        }
+		if(centerUserMain.getIdcardPicCheckType() == 1 && centerUserMain.getIdcardPicCheckId() > 2){
+		throw new BusinessException(UserCenterConstant.CODE_500, "不能重复认证！");
+		}
+        String idcard_info = jsonObj.get("idcard_info").toString();
+        Map map_idcard_info = (Map) JSON.parse(idcard_info);
+        if(map_idcard_info != null){
+            String idcard_name = map_idcard_info.get("idcard_name").toString();
+            String idcard_number = map_idcard_info.get("idcard_number").toString();
+            if(!centerUserMain.getName().equals(idcard_name) || !centerUserMain.getIdcard().equalsIgnoreCase(idcard_number)){
+    			centerUserMain.setIdcardPicCheckId(2);
+            	this.centerUserMainMapper.updateByPrimaryKeySelective(centerUserMain);
+                
+    			throw new BusinessException(UserCenterConstant.CODE_500, "普通认证和高级认证信息不一致，请1小时后用本人身份证认证");
+            }
+            
+        }
+        
+        /**
+         *  NOT_STARTED：get_token 之后，并没有调用过 do 方法，还没有开始验证；
+            PROCESSING：正在进行 FaceID Lite 验证；
+            OK：完成了 FaceID Lite 验证（OK并不表示通过了实名验证，是流程正常结束）；
+            FAILED：验证流程未完成或出现异常；
+            CANCELLED：用户主动取消了验证流程；
+            TIMEOUT：流程超时。
+         */
+        if(status.equalsIgnoreCase("ok")){//完成验证
+            
+            String verify_result = jsonObj.get("verify_result").toString();
+            Map map_verify_result = (Map) JSON.parse(verify_result);
+            String result_faceid = map_verify_result.get("result_faceid").toString();
+            // 比对结果的置信度，Float类型，取值［0，100］， 数字越大表示两张照片越可能是同一个人。
+            Float confidence = Float.parseFloat(((Map) JSON.parse(result_faceid)).get("confidence").toString());
+            String thresholds = ((Map) JSON.parse(result_faceid)).get("thresholds").toString();
+            //误识率为万分之一的置信度阈值；
+            Float checkstandard = Float.parseFloat(((Map) JSON.parse(thresholds)).get("1e-4").toString());
+            if(confidence >= checkstandard){
+            	centerUserMain.setIdcardPicCheckId(3);
+            	centerUserMain.setIdcardPicCheckType(1);
+            	this.centerUserMainMapper.updateByPrimaryKeySelective(centerUserMain);
+                //图片处理交给线程慢慢处理
+                Thread imageThread = new ImageThread(biz_id,centerUserMain,request);
+                imageThread.start();
+                response.sendRedirect(UserCenterConstant.FACEID_WAP_SUCCESS_URL);
+          }else{
+        	centerUserMain.setIdcardPicCheckId(2);
+        	this.centerUserMainMapper.updateByPrimaryKeySelective(centerUserMain);
+            response.sendRedirect(UserCenterConstant.FACEID_WAP_FAIL_URL);
+          }
+          
+      }else{//没有完成验证
+			centerUserMain.setIdcardPicCheckId(1);
+			this.centerUserMainMapper.updateByPrimaryKeySelective(centerUserMain);
+			response.sendRedirect(UserCenterConstant.FACEID_WAP_SUSPEND_URL);
+      }
+		
+		return null;
+	}
+	
+}

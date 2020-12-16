@@ -1,0 +1,154 @@
+package org.bibr.accountcheck.center.service;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.verifysafety.center.bean.bo.AssetAccount;
+import org.bibr.verifysafety.center.constant.AccountCheckConstant;
+import org.bibr.verifysafety.center.dao.AssetAccountMapper;
+import org.bibr.verifysafety.center.dao.AssetColdAccountRecordMapper;
+import org.bibr.verifysafety.center.dao.AssetHotAccountRecordMapper;
+import org.bibr.verifysafety.center.exception.BusinessException;
+import org.bibr.verifysafety.center.thread.CoreCheckThread;
+import org.bibr.verifysafety.center.util.AccountCheckUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+
+@Service
+public class AccountCheckService {
+	private final static Logger logger = LoggerFactory.getLogger(AccountCheckService.class);
+	
+	@Autowired
+	private AssetAccountMapper assetAccountMapper;
+	@Autowired
+	private AssetColdAccountRecordMapper assetColdAccountRecordMapper;
+	@Autowired
+	private AssetHotAccountRecordMapper assetHotAccountRecordMapper;
+	
+	
+	/**
+	 * 
+	* @Title: selectCoinCodesByUserId
+	* @Description: TODO(查询用户持有所有币种账户信息)
+	* @param @param userId
+	* @param @return    设定文件
+	* @return List<String>    返回类型
+	* @throws
+	 */
+	public List<AssetAccount> selectCoinCodesByUserId(String userId){
+		if(userId == null || "".equals(userId)){
+			logger.error(AccountCheckConstant.FILL_IN_REQUIRED);
+			throw new BusinessException(AccountCheckConstant.CODE_500, AccountCheckConstant.FILL_IN_REQUIRED);
+		}
+		return this.assetAccountMapper.selectCoinCodesByUserId(userId);
+		
+	}
+	/**
+	 * 
+	* @Title: selectCoinCodeByUserId
+	* @Description: TODO(查询用户持有指定币种账户信息)
+	* @param @param map
+	* @param @return    设定文件
+	* @return AssetAccount    返回类型
+	* @throws
+	 */
+	public AssetAccount selectCoinCodeByUserId(Map<String, String> map){
+		if(map.get("userId") == null || "".equals(map.get("userId")) || map.get("coinCode") == null || "".equals(map.get("coinCode"))){
+			logger.error(AccountCheckConstant.FILL_IN_REQUIRED);
+			throw new BusinessException(AccountCheckConstant.CODE_500, AccountCheckConstant.FILL_IN_REQUIRED);
+		}
+		return this.assetAccountMapper.selectCoinCodeByUserId(map);
+		
+	}
+	
+	/**
+	 * 
+	* @Title: sumHotMoney
+	* @Description: TODO(查询用户指定币种币流水数量总额)
+	* @param @param userId
+	* @param @param coinCode
+	* @param @return    设定文件
+	* @return BigDecimal    返回类型
+	* @throws
+	 */
+	public BigDecimal sumSerialMoney(String userId,String coinCode){
+		if(userId == null || "".equals(userId) || coinCode == null || "".equals(coinCode)){
+			logger.error(AccountCheckConstant.FILL_IN_REQUIRED);
+			throw new BusinessException(AccountCheckConstant.CODE_500, AccountCheckConstant.FILL_IN_REQUIRED);
+		}
+		Map<String, String> sendMap = new HashMap<>();
+		sendMap.put("userId", userId);
+		sendMap.put("coinCode", coinCode);
+		BigDecimal sumHotMoney = this.assetHotAccountRecordMapper.sumHotMoney(sendMap);
+		BigDecimal sumColdMoney = this.assetColdAccountRecordMapper.sumColdMoney(sendMap);
+		if(sumHotMoney == null){
+			sumHotMoney = BigDecimal.ZERO;
+		}
+		if(sumColdMoney == null){
+			sumColdMoney = BigDecimal.ZERO;
+		}
+		return sumHotMoney.subtract(sumColdMoney);
+		
+	}
+	
+	/**
+	 * 
+	* @Title: getAssetCountCNY
+	* @Description: TODO(获取用户资产人名币价值总额)
+	* @param @param userId
+	* @param @return    设定文件
+	* @return BigDecimal    返回类型
+	* @throws
+	 */
+	public BigDecimal getAssetCountCNY(String userId){
+		if(userId == null || "".equals(userId)){
+			logger.error(AccountCheckConstant.FILL_IN_REQUIRED);
+			throw new BusinessException(AccountCheckConstant.CODE_500, AccountCheckConstant.FILL_IN_REQUIRED);
+		}
+		List<AssetAccount> list = selectCoinCodesByUserId(userId);
+		//所有币种人名币价值总额
+		BigDecimal coinCountSum = BigDecimal.ZERO;
+		for (AssetAccount assetAccount : list) {
+			BigDecimal coinCount = assetAccount.getColdMoney().add(assetAccount.getHotMoney());
+			//该币种当前人名币价值
+			BigDecimal price = AccountCheckUtil.getCoinRate(assetAccount.getCoinCode(), "CNY");
+			coinCountSum = coinCountSum.add(coinCount.multiply(price));
+		}
+		return coinCountSum;
+	}
+	
+	/**
+	 * 
+	* @Title: safeCheck
+	* @Description: TODO(对指定用户的所有（或指定）持有币种资产做校验)
+	* @param @param map
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String safeCheck(Map<String, String> map) {
+		if(map.get("userId") == null || "".equals(map.get("userId"))){
+			logger.error(AccountCheckConstant.FILL_IN_REQUIRED);
+			throw new BusinessException(AccountCheckConstant.CODE_500, AccountCheckConstant.FILL_IN_REQUIRED);
+		}
+		try {
+			String userId = map.get("userId");
+			String coinCode = null;
+			if(map.get("coinCode") != null && !"".equals(map.get("coinCode"))){
+				coinCode = map.get("coinCode").toUpperCase();
+			}
+			CoreCheckThread coreCheckThread = new CoreCheckThread(userId, coinCode);
+			Thread th = new Thread(coreCheckThread);
+			th.start();
+		} catch (Exception e) {
+			logger.error("核心校验程序出错");
+			throw new BusinessException(AccountCheckConstant.CODE_500, "核心校验程序出错");
+		}
+		return "核心校验程序启动";
+	}
+}

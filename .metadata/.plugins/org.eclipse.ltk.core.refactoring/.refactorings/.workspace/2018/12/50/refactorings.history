@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;bibr-distributed-pm&apos;" deleteContents="true" description="Delete resource &apos;bibr-distributed-pm&apos;" element1="/bibr-distributed-pm" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1544599167658"/>&#x0A;<refactoring comment="Delete resource &apos;bibr-robot-module&apos;" deleteContents="true" description="Delete resource &apos;bibr-robot-module&apos;" element1="/bibr-robot-module" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1544599183785"/>
+</session>

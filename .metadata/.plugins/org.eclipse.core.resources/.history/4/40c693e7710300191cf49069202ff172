@@ -1,0 +1,62 @@
+package org.bibr.accountcheck.center.thread;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.accountcheck.center.bean.bo.AssetAccount;
+import org.bibr.accountcheck.center.constant.AccountCheckConstant;
+import org.bibr.accountcheck.center.exception.BusinessException;
+import org.bibr.accountcheck.center.service.AccountCheckService;
+import org.bibr.accountcheck.center.util.RestTemplateUtil;
+import org.bibr.accountcheck.center.util.SpringContextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+/**
+ * 
+* @ClassName: CoreCheckThread
+* @Description: TODO(核心校验)
+* @author Administrator
+* @date 2018年12月18日下午6:05:59
+*
+ */
+public class CoreCheckThread implements Runnable{
+	private final static Logger logger = LoggerFactory.getLogger(CoreCheckThread.class);
+	
+	private AccountCheckService accountCheckService = (AccountCheckService) SpringContextUtil.getBean(AccountCheckService.class);
+	
+	//用户uuid
+	private String userId;
+	//币种国际码
+	private String coinCode;
+	
+	public CoreCheckThread(String userId, String coinCode) {
+		super();
+		this.userId = userId;
+		this.coinCode = coinCode;
+	}
+	
+	@Override
+	public void run() {
+		//1.一键核对（用户所有持有币种资产校验）
+		List<AssetAccount> list = this.accountCheckService.selectCoinCodesByUserId(userId);
+		for (AssetAccount assetAccount : list) {
+			//a 查询用户持有币种，分别校验【分别做业务】
+			AccountCheckThread accountCheckThread = new AccountCheckThread(assetAccount);
+			Thread th = new Thread(accountCheckThread);
+			th.start();
+		}
+		
+		//2.阈值校验（后台设置阈值，阈值触碰冻结用户）
+		
+		//3.业务校验（用户本次交易涉及的币种资产校验）
+		
+		
+	}
+
+}

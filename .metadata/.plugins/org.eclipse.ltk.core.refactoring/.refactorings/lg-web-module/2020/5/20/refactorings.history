@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract local variable &apos;expire&apos; from expression &apos;this.redisCache.getExpire(&quot;minutes_options:one:&quot;,TimeUnit.SECONDS)&apos;&#x0D;&#x0A;- Original project: &apos;lg-web-module&apos;&#x0D;&#x0A;- Variable name: &apos;expire&apos;&#x0D;&#x0A;- Destination method: &apos;com.lg.web.module.schedule.LgSchedule.oneMinutesOptionsNoticeJob()&apos;&#x0D;&#x0A;- Variable expression: &apos;this.redisCache.getExpire(&quot;minutes_options:one:&quot;,TimeUnit.SECONDS)&apos;&#x0D;&#x0A;- Replace occurrences of expression with variable" description="Extract local variable &apos;expire&apos;" final="false" id="org.eclipse.jdt.ui.extract.temp" input="/src\/main\/java&lt;com.lg.web.module.schedule{LgSchedule.java" name="expire" replace="true" selection="1372 0" stamp="1589522752599" version="1.0"/>
+</session>

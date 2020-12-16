@@ -1,0 +1,49 @@
+package org.bibr.accountcheck.center.service;
+
+import java.util.List;
+import java.util.concurrent.RecursiveTask;
+
+public class ForkJoinCalculate extends RecursiveTask<Boolean> {
+	
+	private List<Object> list;
+    private int start;
+    private int end;
+
+    private static final long THRESHOLD = 10000L; // 临界值
+
+    public ForkJoinCalculate(List<Object> list,int start, int end) {
+    	this.list = list;
+        this.start = start;
+        this.end = end;
+    }
+
+    @Override
+    protected Boolean compute() {
+    	boolean result = false;
+        long length = end - start;
+
+        if (length <= THRESHOLD) {
+            int sum = 0;
+            for (int i = start; i <= end; i++) {
+                sum += list.get(i);
+            }
+            return result;
+        } else {
+            long middle = (start + end) / 2;
+
+            ForkJoinCalculate left = new ForkJoinCalculate(this.list,start, middle);
+            left.fork(); // 拆分，并将该子任务压入线程队列
+
+            ForkJoinCalculate right = new ForkJoinCalculate(this.list,middle + 1, end);
+            right.fork();
+
+            Boolean subresult1 = left.join();
+            Boolean subresult2 = right.join();
+			if(subresult1 && subresult2){
+				result = true;
+			}
+            return result;
+        }
+    }
+
+}

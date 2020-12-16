@@ -1,0 +1,8 @@
+1565577759680	Extract local variable 'selectTodayScore'
+1565578577715	Extract local variable 'selectByMap2'
+1565579074369	Extract local variable 'selectByMap'
+1565580559502	Extract local variable 'score'
+1565580704072	Extract local variable 'subtract'
+1565747573614	Encapsulate field 'vipExplan'
+1565834302495	Extract local variable 'checkRegTime'
+1565947165206	Extract local variable 'selectByMap'

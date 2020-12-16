@@ -1,0 +1,46 @@
+1564728857913	Delete element
+1564728861383	Delete element
+1564728877765	Delete element
+1564728906542	Rename package 'org.bibr.rush.module'
+1564728991423	Delete elements
+1564728995431	Delete elements
+1564728998144	Delete element
+1564729008833	Delete elements
+1564729013511	Delete elements
+1564729015579	Delete element
+1564729030321	Delete element
+1564729031868	Delete element
+1564729033494	Delete element
+1564729049036	Delete elements
+1564729052557	Delete elements
+1564729070011	Delete elements
+1564729131023	Delete elements
+1564729136664	Delete elements
+1564729143263	Delete element
+1564729151271	Delete element
+1564729275375	Delete element
+1564729366128	Delete element
+1564729376694	Delete elements
+1564729381268	Delete elements
+1564729384029	Delete element
+1564729395305	Delete element
+1564729399843	Delete elements
+1564729401812	Delete element
+1564729990120	Copy package
+1564730056682	Copy packages
+1564730081100	Copy package
+1564730104365	Copy package
+1564730123755	Copy package
+1564730146025	Delete element
+1564730228051	Rename package 'org.bibr.rush.module'
+1564730250856	Rename type 'RushApplication'
+1564730330994	Rename type 'RushDataSourceConfig'
+1564730436958	Rename type 'CenterDataSourceConfig'
+1564730477386	Rename package 'rushmapper'
+1564731377154	Delete element
+1564734437343	Delete element
+1564734688466	Extract local variable 'selectByPrimaryKey'
+1564735044664	Extract local variable 'regTime'
+1564735910067	Extract local variable 'currentTimeMillis'
+1564738040328	Extract local variable 'reqMonth'
+1564739608954	Extract local variable 'centerIntegralBase'

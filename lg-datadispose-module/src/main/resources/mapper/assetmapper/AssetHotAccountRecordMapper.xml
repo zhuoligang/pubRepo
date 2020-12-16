@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.lg.datadispose.module.dao.assetdao.AssetHotAccountRecordMapper">
+	<resultMap id="BaseResultMap"
+		type="com.lg.datadispose.module.bean.po.AssetHotAccountRecord">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="account_id" property="accountId" jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="stream_type" property="streamType" jdbcType="INTEGER" />
+		<result column="transaction_num" property="transactionNum"
+			jdbcType="DECIMAL" />
+		<result column="transaction_area" property="transactionArea"
+			jdbcType="VARCHAR" />
+		<result column="transaction_no" property="transactionNo"
+			jdbcType="VARCHAR" />
+		<result column="actual_money" property="actualMoney" jdbcType="DECIMAL" />
+		<result column="fee" property="fee" jdbcType="DECIMAL" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="coin_code" property="coinCode" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="available" property="available" jdbcType="INTEGER" />
+		<result column="entrust_no" property="entrustNo" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, account_id, user_id, member_id, type, stream_type, transaction_num,
+		transaction_area,
+		transaction_no, actual_money, fee, status, coin_code, remark, create_time,
+		update_time,
+		create_user, update_user, available, entrust_no, version
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from asset_hot_account_record
+		where id = #{id,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from asset_hot_account_record
+		where id = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert"
+		parameterType="com.lg.datadispose.module.bean.po.AssetHotAccountRecord">
+		insert into asset_hot_account_record (id, account_id, user_id,
+		member_id, type, stream_type,
+		transaction_num, transaction_area, transaction_no,
+		actual_money, fee, status,
+		coin_code, remark, create_time,
+		update_time, create_user, update_user,
+		available, entrust_no, version
+		)
+		values (#{id,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR},
+		#{userId,jdbcType=VARCHAR},
+		#{memberId,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{streamType,jdbcType=INTEGER},
+		#{transactionNum,jdbcType=DECIMAL},
+		#{transactionArea,jdbcType=VARCHAR},
+		#{transactionNo,jdbcType=VARCHAR},
+		#{actualMoney,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER},
+		#{coinCode,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{updateTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateUser,jdbcType=VARCHAR},
+		#{available,jdbcType=INTEGER}, #{entrustNo,jdbcType=VARCHAR},
+		#{version,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.lg.datadispose.module.bean.po.AssetHotAccountRecord">
+		insert into asset_hot_account_record
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="accountId != null">
+				account_id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="memberId != null">
+				member_id,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="streamType != null">
+				stream_type,
+			</if>
+			<if test="transactionNum != null">
+				transaction_num,
+			</if>
+			<if test="transactionArea != null">
+				transaction_area,
+			</if>
+			<if test="transactionNo != null">
+				transaction_no,
+			</if>
+			<if test="actualMoney != null">
+				actual_money,
+			</if>
+			<if test="fee != null">
+				fee,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="coinCode != null">
+				coin_code,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="createUser != null">
+				create_user,
+			</if>
+			<if test="updateUser != null">
+				update_user,
+			</if>
+			<if test="available != null">
+				available,
+			</if>
+			<if test="entrustNo != null">
+				entrust_no,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="accountId != null">
+				#{accountId,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				#{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="streamType != null">
+				#{streamType,jdbcType=INTEGER},
+			</if>
+			<if test="transactionNum != null">
+				#{transactionNum,jdbcType=DECIMAL},
+			</if>
+			<if test="transactionArea != null">
+				#{transactionArea,jdbcType=VARCHAR},
+			</if>
+			<if test="transactionNo != null">
+				#{transactionNo,jdbcType=VARCHAR},
+			</if>
+			<if test="actualMoney != null">
+				#{actualMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="fee != null">
+				#{fee,jdbcType=DECIMAL},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="coinCode != null">
+				#{coinCode,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUser != null">
+				#{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="available != null">
+				#{available,jdbcType=INTEGER},
+			</if>
+			<if test="entrustNo != null">
+				#{entrustNo,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.lg.datadispose.module.bean.po.AssetHotAccountRecord">
+		update asset_hot_account_record
+		<set>
+			<if test="accountId != null">
+				account_id = #{accountId,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="memberId != null">
+				member_id = #{memberId,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="streamType != null">
+				stream_type = #{streamType,jdbcType=INTEGER},
+			</if>
+			<if test="transactionNum != null">
+				transaction_num = #{transactionNum,jdbcType=DECIMAL},
+			</if>
+			<if test="transactionArea != null">
+				transaction_area = #{transactionArea,jdbcType=VARCHAR},
+			</if>
+			<if test="transactionNo != null">
+				transaction_no = #{transactionNo,jdbcType=VARCHAR},
+			</if>
+			<if test="actualMoney != null">
+				actual_money = #{actualMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="fee != null">
+				fee = #{fee,jdbcType=DECIMAL},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="coinCode != null">
+				coin_code = #{coinCode,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				create_user = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="updateUser != null">
+				update_user = #{updateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="available != null">
+				available = #{available,jdbcType=INTEGER},
+			</if>
+			<if test="entrustNo != null">
+				entrust_no = #{entrustNo,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				version = #{version,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.lg.datadispose.module.bean.po.AssetHotAccountRecord">
+		update asset_hot_account_record
+		set account_id = #{accountId,jdbcType=VARCHAR},
+		user_id = #{userId,jdbcType=VARCHAR},
+		member_id = #{memberId,jdbcType=VARCHAR},
+		type = #{type,jdbcType=INTEGER},
+		stream_type = #{streamType,jdbcType=INTEGER},
+		transaction_num = #{transactionNum,jdbcType=DECIMAL},
+		transaction_area = #{transactionArea,jdbcType=VARCHAR},
+		transaction_no = #{transactionNo,jdbcType=VARCHAR},
+		actual_money = #{actualMoney,jdbcType=DECIMAL},
+		fee = #{fee,jdbcType=DECIMAL},
+		status = #{status,jdbcType=INTEGER},
+		coin_code = #{coinCode,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		create_user = #{createUser,jdbcType=VARCHAR},
+		update_user = #{updateUser,jdbcType=VARCHAR},
+		available = #{available,jdbcType=INTEGER},
+		entrust_no = #{entrustNo,jdbcType=VARCHAR},
+		version = #{version,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<!-- 以下为新增 -->
+	<select id="getDay30AlongBo" resultType="com.lg.datadispose.module.bean.bo.Day30AlongBo"
+		parameterType="map">
+		SELECT
+		coin_code coinCode,SUM(transaction_num) sumCount
+		from asset_hot_account_record
+		where
+		user_id = #{userId,jdbcType=VARCHAR}
+		and create_time &gt;= #{day30Along,jdbcType=TIMESTAMP}
+		<!-- 类型为增加 -->
+		and type = 1
+		<!-- 最终成功 -->
+		and `status` = 5
+		<!-- 类型为交易 -->
+		and (stream_type = 1 or stream_type = 2 or stream_type = 3 or
+		stream_type = 4)
+		GROUP BY coin_code
+
+	</select>
+
+</mapper>

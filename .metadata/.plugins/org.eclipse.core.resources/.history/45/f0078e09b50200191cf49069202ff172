@@ -1,0 +1,58 @@
+package org.bibr.accountcheck.center.thread;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bibr.accountcheck.center.constant.AccountCheckConstant;
+import org.bibr.accountcheck.center.exception.BusinessException;
+import org.bibr.accountcheck.center.util.RestTemplateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+/**
+ * 
+* @ClassName: CoreCheckThread
+* @Description: TODO(核心校验)
+* @author Administrator
+* @date 2018年12月18日下午6:05:59
+*
+ */
+public class CoreCheckThread implements Runnable{
+	private final static Logger logger = LoggerFactory.getLogger(CoreCheckThread.class);
+	//用户uuid
+	private String userId;
+	//币种国际码
+	private String coinCode;
+	
+	public CoreCheckThread(String userId, String coinCode) {
+		super();
+		this.userId = userId;
+		this.coinCode = coinCode;
+	}
+	
+	@Override
+	public void run() {
+		try {//调用资产接口，询问该用户该币种账务是否有问题
+			String url = AccountCheckConstant.ASSET_ACCOUNT_ALL;
+			Map<String,String> sendMap = new HashMap<>();
+			sendMap.put("userId", userId);
+			sendMap.put("coinCode", coinCode);
+			String result = RestTemplateUtil.postForEntity(url, JSONObject.toJSONString(sendMap));
+			Map<String,Object> asset_map = (Map<String, Object>) JSON.parse(result);
+			//用户资产校验有问题，冻结账户
+			if(asset_map.get("code") == null){
+				throw new BusinessException(AccountCheckConstant.CODE_500, "资产中心系统错误，请联系管理员");
+			}
+			if(Integer.parseInt(asset_map.get("code").toString()) != 200){
+				
+			}
+		} catch (Exception e) {
+			throw new BusinessException(AccountCheckConstant.CODE_500, "调用资产中心错误");
+		}
+	}
+
+}

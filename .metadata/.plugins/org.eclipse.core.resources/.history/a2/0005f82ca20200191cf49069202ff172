@@ -1,0 +1,36 @@
+package org.bibr.user.center.exception;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.bibr.user.center.bean.vo.ResultVO;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+/**
+ * 全局异常处理器
+ * 
+ * @author Administrator
+ *
+ */
+@ResponseBody
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+	/**
+	 * 自定义异常
+	 * 
+	 * @param request
+	 * @param exception
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@ExceptionHandler(value = BusinessException.class)
+	public Object businessHandler(HttpServletRequest request, BusinessException exception, Model model)
+			throws Exception {
+		return new ResultVO<String>(exception.getCode(), exception.getMessage());
+	}
+
+}

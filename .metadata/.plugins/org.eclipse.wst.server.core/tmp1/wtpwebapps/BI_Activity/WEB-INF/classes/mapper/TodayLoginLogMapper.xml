@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bi.activity.dao.TodayLoginLogMapper" >
+  <resultMap id="BaseResultMap" type="com.bi.activity.entity.TodayLoginLog" >
+    <id column="member_id" property="memberId" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from today_login_log
+    where member_id = #{memberId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.bi.activity.entity.TodayLoginLog" >
+    insert into today_login_log (member_id)
+    values (#{memberId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bi.activity.entity.TodayLoginLog" >
+    insert into today_login_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="memberId != null" >
+        member_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="memberId != null" >
+        #{memberId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <delete id="deleteAll" >
+    delete from today_login_log
+  </delete>
+  
+</mapper>

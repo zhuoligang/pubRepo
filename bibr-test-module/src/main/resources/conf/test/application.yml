@@ -1,0 +1,39 @@
+server:
+  port: 8901
+
+spring:
+  application:
+    name: test
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.16.224.145:3306/test?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    username: bidai
+    password: YYhud44TGQMfHemEVefi
+    initialSize: 5
+    minIdle: 1
+    maxActive: 20
+    maxWait: 60000
+    minEvictableIdleTimeMillis: 300000
+    timeBetweenEvictionRunsMillis: 60000
+    validationQuery: SELECT 1 FROM DUAL
+    testOnBorrow: true
+    poolPreparedStatements: true
+    useGlobalDataSourceStat: true
+    maxOpenPreparedStatements: 20
+    maxPoolPreparedStatementPerConnectionSize: 20
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    filters: stat,wall
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org:
+      bibr:
+        test:
+          module:
+            dao: debug
+
+

@@ -1,0 +1,80 @@
+server:
+  port: 8089
+  tomcat:
+    max-threads: 1000
+    max-connections: 20000
+
+spring:
+  application:
+    name: datadispose
+  redis:
+    database0: 0
+    database1: 1
+    host: 118.190.244.217
+    port: 6379
+    password: iAB2RGCpeUyaIpjgNWCOl72A
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 5
+        min-idle: 0
+    timeout: 10000
+  jackson:
+    default-property-inclusion: non_null
+  datasource:
+    druid:
+      usermysql:
+        url: jdbc:mysql://120.27.0.135:3306/bibr_user_center?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+        username: bier
+        password: 2T8zoAJKmAgZ4XDzhSkw
+        driver-class-name: com.mysql.jdbc.Driver
+        min-idle: 10
+        max-active: 200
+      assetmysql:
+        url: jdbc:mysql://47.105.139.229:3306/bibr_asset_web?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+        username: bier
+        password: w#Nt3D@5#I9dOfjAghHyfd@8
+        driver-class-name: com.mysql.jdbc.Driver
+        min-idle: 10
+        max-active: 200
+  output:
+    ansi:
+      enabled: detect
+  task:
+    pool:
+      corePoolSize: 50
+      maxPoolSize: 100
+      keepAliveSeconds: 600
+      queueCapacity: 200
+  servlet:
+      multipart:
+        maxFileSize: 100MB
+        maxRequestSize: 100MB
+      
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+
+pagehelper:
+  reasonable: true
+  supportMethodsArguments: true
+  pageSizeZero: true
+  params: count=countSql
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    com:
+      lg:
+        datadispose:
+          module:
+            mapper: debug
+
+swagger2:
+  enable: true
+
+prefix:
+  auth: http://192.168.31.28:8089/
+oauth:
+    redirectUrl: /token
+    tokenUrl: /token

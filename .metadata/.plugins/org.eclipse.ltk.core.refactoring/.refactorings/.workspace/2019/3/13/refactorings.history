@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;bibr-octopus-module/src/main/java/org/bibr/distributed/octopus/controller/ocr/Tess4JTest.java&apos;" deleteContents="false" description="Delete resource &apos;bibr-octopus-module/src/main/java/org/bibr/distributed/octopus/controller/ocr/Tess4JTest.java&apos;" element1="/bibr-octopus-module/src/main/java/org/bibr/distributed/octopus/controller/ocr/Tess4JTest.java" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1553824865395"/>
+</session>

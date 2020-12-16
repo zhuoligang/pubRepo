@@ -1,0 +1,19 @@
+package org.bibr.accountcheck.center.thread;
+
+/**
+ * 
+* @ClassName: CoreCheckThread
+* @Description: TODO(核心校验)
+* @author Administrator
+* @date 2018年12月18日下午6:05:59
+*
+ */
+public class CoreCheckThread implements Runnable{
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

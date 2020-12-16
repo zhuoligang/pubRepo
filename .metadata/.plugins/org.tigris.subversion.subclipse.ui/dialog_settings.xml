@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="" key="DirectorySelectionPage.lastParent_https://pc-201311301552/svn/taotao-test"/>
+	<item value="218" key="CommitDialog.location.y"/>
+	<item value="383" key="CommitDialog.location.x"/>
+	<item value="203" key="HistoryTableProvider.SVNHistoryPage.作者"/>
+	<item value="500" key="CommitDialog.weights.0"/>
+	<item value="508" key="HistoryTableProvider.SVNHistoryPage.注释"/>
+	<item value="" key="DirectorySelectionPage.lastParent_https://pc-201311301552/svn/e3-JavaEE32"/>
+	<item value="500" key="CommitDialog.weights.1"/>
+	<item value="671" key="CommitDialog.size.y"/>
+	<item value="1017" key="CommitDialog.size.x"/>
+	<item value="255" key="HistoryTableProvider.SVNHistoryPage.日期"/>
+	<item value="trunk" key="DirectorySelectionPage.lastParent_https://win-92lo3kn30nf/svn/e3-ejie"/>
+	<item value="497" key="ChooseUrlDialog.size.x"/>
+	<item value="trunk" key="DirectorySelectionPage.lastParent_https://win-92lo3kn30nf/svn/e3mall"/>
+	<item value="376" key="ChooseUrlDialog.size.y"/>
+	<item value="https://win-92lo3kn30nf/svn/e3mall" key="RepositorySelectionPage.lastRepository"/>
+	<item value="1278" key="ChooseUrlDialog.location.x"/>
+	<item value="102" key="HistoryTableProvider.SVNHistoryPage.修订"/>
+	<item value="228" key="ChooseUrlDialog.location.y"/>
+	<section name="CommitWizard">
+		<item value="500" key="VWeight2"/>
+		<item value="500" key="VWeight1"/>
+		<item value="false" key="ShowCompare"/>
+	</section>
+	<section name="IgnoreResourcesDialog">
+		<item value="0" key="Action"/>
+	</section>
+	<section name="NewLocationWizard">
+		<list key="ConfigurationWizardMainPage.STORE_URL_ID">
+			<item value="https://WIN-92LO3KN30NF/svn/e3mall/"/>
+			<item value="https://WIN-92LO3KN30NF/svn/e3-ejie/"/>
+		</list>
+	</section>
+</section>

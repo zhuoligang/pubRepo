@@ -1,0 +1,41 @@
+package org.bibr.accountcheck.center.thread;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bibr.accountcheck.center.constant.AccountCheckConstant;
+import org.bibr.accountcheck.center.util.RestTemplateUtil;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import com.alibaba.fastjson.JSON;
+
+/**
+ * 
+* @ClassName: ThresholdThread
+* @Description: TODO(阈值控制校验)
+* @author Administrator
+* @date 2018年12月18日下午5:26:21
+*
+ */
+public class ThresholdThread implements Runnable{
+	
+	private final static Logger logger = LoggerFactory.getLogger(ThresholdThread.class);
+	//阈值：参考值1000000
+	private BigDecimal countThreshold;
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

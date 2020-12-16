@@ -1,0 +1,16 @@
+1568099094420	Delete element
+1568099297849	Rename package 'org.bibr.module.cloudpower'
+1568099457967	Copy files
+1568099459023	Copy files
+1568099681344	Rename package 'org.bibr.cloudpower.module.contants'
+1568099797216	Delete element
+1568099848615	Rename type 'ApiCloudPowerController'
+1568099881836	Delete element
+1568100620076	Copy compilation unit
+1568100628367	Move compilation unit
+1568100631003	Delete element
+1568100636137	Delete element
+1568104118108	Copy compilation unit
+1568191615975	Extract local variable 'pulbicSend'
+1568259312955	Extract local variable 'encryptParameter'
+1568259392510	Extract local variable 'decryptpParameter'

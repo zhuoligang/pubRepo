@@ -1,0 +1,82 @@
+package org.bibr.accountcheck.center.util;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.bibr.accountcheck.center.constant.AccountCheckConstant;
+import org.bibr.accountcheck.center.exception.BusinessException;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
+/**
+ * 
+* @ClassName: AccountCheckUtil
+* @Description: TODO(这里用一句话描述这个类的作用)
+* @author Administrator
+* @date 2018年12月18日下午4:53:06
+*
+ */
+public class AccountCheckUtil {
+	public static void main(String[] args) {
+		String price = null;
+		Map<String,String> headerMap = new HashMap<>();
+		headerMap.put("Accept", "application/json");
+		headerMap.put("X-CMC_PRO_API_KEY", "13f7c0fa-2598-424e-8aa7-40092431662b");
+		Map<String, Object> sendMap = new HashMap<String, Object>();
+        sendMap.put("symbol", "ETH");
+        sendMap.put("convert", "CNY");
+		String str = RestTemplateUtil.getForEntity(AccountCheckConstant.GET_COIN_RATE, sendMap, headerMap);
+		try {
+			JSONObject jsonObj = new JSONObject(str);
+			price = jsonObj.getJSONObject("data").getJSONObject("ETH").getJSONObject("quote").getJSONObject("CNY").get("price").toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(price);
+	}
+	
+	/**
+	 * 
+	* @Title: getCoinRate
+	* @Description: TODO(查询币与目标币种之间的汇率)
+	* @param @param coinCode
+	* @param @param targetCoinCode
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public static BigDecimal getCoinRate(String coinCode,String targetCoinCode){
+		if(coinCode != null && !"".equals(coinCode)){
+			coinCode = coinCode.toUpperCase();
+		}
+		if(targetCoinCode != null && !"".equals(targetCoinCode)){
+			targetCoinCode = targetCoinCode.toUpperCase();
+		}
+		String price = null;
+		try {
+		Map<String,String> headerMap = new HashMap<>();
+		headerMap.put("Accept", "application/json");
+		headerMap.put("X-CMC_PRO_API_KEY", "13f7c0fa-2598-424e-8aa7-40092431662b");
+		Map<String, Object> sendMap = new HashMap<String, Object>();
+        sendMap.put("symbol", coinCode);
+        sendMap.put("convert", targetCoinCode);
+		String str = RestTemplateUtil.getForEntity(AccountCheckConstant.GET_COIN_RATE, sendMap, headerMap);
+			JSONObject jsonObj = new JSONObject(str);
+			price = jsonObj.getJSONObject("data").getJSONObject(coinCode).getJSONObject("quote").getJSONObject(targetCoinCode).get("price").toString();
+		} catch (JSONException e) {
+			throw new BusinessException(AccountCheckConstant.CODE_500, "获取汇率 出错");
+		}
+		return new BigDecimal(price);
+		
+	}
+	/**
+	 * uuid生产
+	 * @return
+	 */
+	public static String createUUId() {
+		return UUID.randomUUID().toString().replace("-", "");
+	}
+}

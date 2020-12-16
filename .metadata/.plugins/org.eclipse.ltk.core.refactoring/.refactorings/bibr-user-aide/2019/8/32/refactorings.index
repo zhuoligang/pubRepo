@@ -1,0 +1,15 @@
+1565058793279	Delete elements
+1565058963399	Delete element
+1565059780075	Copy folder
+1565060165412	Delete element
+1565060273091	Rename package 'org.bibr.user.aide.vent'
+1565080175253	Extract local variable 'instance'
+1565081546376	Extract local variable 'selectByPrimaryKey'
+1565316334866	Extract local variable 'multiGet'
+1565316775877	Extract local variable 'hMultiGet'
+1565317519879	Extract local variable 'hGetAll'
+1565318581232	Extract local variable 'parseObject'
+1565342901701	Extract local variable 'selectByMap'
+1565343076920	Extract local variable 'selectByPrimaryKey'
+1565343286245	Extract local variable 'selectByMap'
+1565344020103	Copy compilation unit

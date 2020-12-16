@@ -1,0 +1,63 @@
+package org.bibr.distributed.octopus.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.bibr.distributed.octopus.bean.vo.OctopusArticleVO;
+import org.bibr.distributed.octopus.bean.vo.ResultVO;
+import org.bibr.distributed.octopus.constant.OctopusConstant;
+import org.bibr.distributed.octopus.exception.BusinessException;
+import org.bibr.distributed.octopus.service.OctopusColumnService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSONObject;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+/**
+ * 
+* @ClassName: OctopusColumnController
+* @Description: TODO(按照栏目等级的文档支撑控制台)
+* @author Administrator
+* @date 2018年12月27日下午4:47:07
+*
+ */
+@Controller
+@RequestMapping("/octopusColumn")
+@Api(value = "文章管理相关的api")
+public class OctopusColumnController {
+	private final static Logger logger = LoggerFactory.getLogger(OctopusArticleController.class);
+	@Autowired
+	private OctopusColumnService octopusColumnService;
+	
+	@ApiOperation(value = "新增栏目（等级不限）————zlg",notes = "栏目等级    columnLevel（必填）<br>栏目名称    name（必填）<br>"
+			+ "上级栏目id    parentId（非必填，新增1级栏目可以不填）")
+	@RequestMapping(value = "/addColumn", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultVO<List<OctopusArticleVO>> addColumn(@RequestBody @ApiParam(name = "条件map",
+            value = "jeson格式map", required = true) Map<String, Object> map) {
+		logger.info("&OctopusMode&OctopusColumnController&addColumn&ApiStatistics");
+		List<OctopusArticleVO> resultMap = null;
+		try {
+			resultMap = octopusColumnService.addColumn(map);
+		}catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			logger.error("addColumn?" + JSONObject.toJSONString(map));
+			throw new BusinessException(OctopusConstant.CODE_500, e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			logger.error("addColumn?" + JSONObject.toJSONString(map));
+			throw new BusinessException(OctopusConstant.CODE_500, e.getMessage());
+		}
+		return new ResultVO<List<OctopusArticleVO>>(OctopusConstant.CODE_200,OctopusConstant.SUCCESS, resultMap);
+	}
+	
+}

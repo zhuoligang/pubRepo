@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract local variable &apos;showInvitesTail&apos; from expression &apos;this.centerUserMainMapper.showInvitesTail(map)&apos;&#x0D;&#x0A;- Original project: &apos;bibr-user-center&apos;&#x0D;&#x0A;- Variable name: &apos;showInvitesTail&apos;&#x0D;&#x0A;- Destination method: &apos;org.bibr.user.center.service.UserCenterService.addCenterSuperMember()&apos;&#x0D;&#x0A;- Variable expression: &apos;this.centerUserMainMapper.showInvitesTail(map)&apos;&#x0D;&#x0A;- Replace occurrences of expression with variable" description="Extract local variable &apos;showInvitesTail&apos;" final="false" id="org.eclipse.jdt.ui.extract.temp" input="/src\/main\/java&lt;org.bibr.user.center.service{UserCenterService.java" name="showInvitesTail" replace="true" selection="14096 47" stamp="1550817735234" version="1.0"/>
+</session>

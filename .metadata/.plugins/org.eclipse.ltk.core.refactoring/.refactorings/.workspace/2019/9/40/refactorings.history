@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;binance-api-client&apos;" deleteContents="false" description="Delete resource &apos;binance-api-client&apos;" element1="/binance-api-client" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1569725652735"/>&#x0A;<refactoring comment="Delete resource &apos;eureka-server-0.0.1-SNAPSHOT&apos;" deleteContents="false" description="Delete resource &apos;eureka-server-0.0.1-SNAPSHOT&apos;" element1="/eureka-server-0.0.1-SNAPSHOT" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1569741998377"/>
+</session>

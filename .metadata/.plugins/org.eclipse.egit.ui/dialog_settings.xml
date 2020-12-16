@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="0" key="org.eclipse.egit.ui.internal.clone.GitSelectWizardPageWizardSel"/>
+	<item value="670" key="DIALOG_WIDTH"/>
+	<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+	<item value="true" key="CommitDialog.showUntracked"/>
+	<item value="D:\GIT_Workspace\bibr-distributed-pm\.git" key="GitSelectRepositoryPage.lastRepository"/>
+	<item value="556" key="DIALOG_HEIGHT"/>
+	<item value="633" key="DIALOG_X_ORIGIN"/>
+	<item value="158" key="DIALOG_Y_ORIGIN"/>
+	<list key="RepositorySelectionPage.UsedUris">
+		<item value="http://47.108.67.79:801/Bibrweb/bibr-distributed-pm.git"/>
+		<item value="https://github.com/huyufan1995/Quartz.git"/>
+		<item value="http://47.108.67.79:801/Bibrweb/bibr-cloudpower-module.git"/>
+		<item value="http://47.108.67.79:801/bifu/bifu-qr-message.git"/>
+		<item value="http://47.108.67.79:801/bifu/bifu-qr-deal.git"/>
+		<item value="http://47.108.67.79:801/bifu/bifu-qr-manager.git"/>
+		<item value="http://47.108.67.79:801/bifu/bifu-distributed-pm.git"/>
+		<item value="http://47.108.67.79:801/bifu/bifu-qr-base.git"/>
+		<item value="http://47.108.67.79:801/bifu/bifu-qr-platform.git"/>
+		<item value="http://47.108.67.79:801/bifu/bifu-qr-contract.git"/>
+	</list>
+	<list key="CommitDialog.authorValues">
+		<item value="zlg &lt;sweetcandy619@foxmail.com&gt;"/>
+		<item value="Administrator &lt;Administrator@SKY-20180403QOY&gt;"/>
+	</list>
+	<list key="CommitDialog.committerValues">
+		<item value="zlg &lt;sweetcandy619@foxmail.com&gt;"/>
+		<item value="Administrator &lt;Administrator@SKY-20180403QOY&gt;"/>
+	</list>
+	<section name="GitImportWizard">
+		<item value="true" key="GitProjectsImportPage.STORE_NESTED_PROJECTS"/>
+	</section>
+	<section name="org.eclipse.egit.ui.internal.push.PushResultDialog.dialogBounds">
+		<item value="666" key="DIALOG_WIDTH"/>
+		<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+		<item value="463" key="DIALOG_HEIGHT"/>
+		<item value="635" key="DIALOG_X_ORIGIN"/>
+		<item value="220" key="DIALOG_Y_ORIGIN"/>
+		<list key="sashWeights">
+			<item value="600"/>
+			<item value="400"/>
+		</list>
+	</section>
+	<section name="org.eclipse.egit.ui.internal.repository.CreateBranchPage$SourceSelectionDialog.dialogBounds">
+		<item value="538" key="DIALOG_WIDTH"/>
+		<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+		<item value="496" key="DIALOG_HEIGHT"/>
+		<item value="1" key="DIALOG_X_ORIGIN"/>
+		<item value="-134" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="org.eclipse.egit.ui.internal.pull.PullResultDialog.dialogBounds">
+		<item value="604" key="DIALOG_WIDTH"/>
+		<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+		<item value="419" key="DIALOG_HEIGHT"/>
+		<item value="666" key="DIALOG_X_ORIGIN"/>
+		<item value="249" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="org.eclipse.egit.ui.internal.merge.MergeResultDialog.dialogBounds">
+		<item value="404" key="DIALOG_WIDTH"/>
+		<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+		<item value="212" key="DIALOG_HEIGHT"/>
+		<item value="766" key="DIALOG_X_ORIGIN"/>
+		<item value="392" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="org.eclipse.egit.ui.COMMIT_DIALOG_SECTION">
+		<item value="1183" key="DIALOG_WIDTH"/>
+		<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+		<item value="922" key="DIALOG_HEIGHT"/>
+		<item value="526" key="DIALOG_X_ORIGIN"/>
+		<item value="77" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="org.eclipse.egit.ui.internal.dialogs.CheckoutDialog.dialogBounds">
+		<item value="538" key="DIALOG_WIDTH"/>
+		<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+		<item value="496" key="DIALOG_HEIGHT"/>
+		<item value="699" key="DIALOG_X_ORIGIN"/>
+		<item value="203" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="GitCommitMessageComponent">
+	</section>
+	<section name="GitCreatePatchWizard">
+		<item value="clipboard" key="GitCreatePatchWizard.LocationPage.location"/>
+	</section>
+	<section name="org.eclipse.egit.ui.internal.dialogs.MergeTargetSelectionDialog.dialogBounds">
+		<item value="551" key="DIALOG_WIDTH"/>
+		<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+		<item value="702" key="DIALOG_HEIGHT"/>
+		<item value="693" key="DIALOG_X_ORIGIN"/>
+		<item value="65" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="GitCommitSearchPage">
+		<item value="0" key="HISTORY_SIZE"/>
+	</section>
+</section>

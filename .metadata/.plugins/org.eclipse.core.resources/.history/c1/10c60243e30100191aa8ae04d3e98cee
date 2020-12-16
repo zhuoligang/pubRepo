@@ -1,0 +1,279 @@
+package org.bibr.user.center.service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendCallback;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.common.message.Message;
+import org.bibr.user.center.bean.bo.CenterSuperInvites;
+import org.bibr.user.center.bean.bo.CenterSuperMember;
+import org.bibr.user.center.bean.bo.CenterUserLog;
+import org.bibr.user.center.bean.bo.CenterUserMain;
+import org.bibr.user.center.configurer.RedisCache;
+import org.bibr.user.center.constant.UserCenterConstant;
+import org.bibr.user.center.dao.CenterSuperInvitesMapper;
+import org.bibr.user.center.dao.CenterSuperMemberMapper;
+import org.bibr.user.center.dao.CenterUserLogMapper;
+import org.bibr.user.center.dao.CenterUserMainMapper;
+import org.bibr.user.center.exception.BusinessException;
+import org.bibr.user.center.util.UserCenterUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.dyuproject.protostuff.LinkedBuffer;
+import com.dyuproject.protostuff.ProtostuffIOUtil;
+import com.dyuproject.protostuff.runtime.RuntimeSchema;
+
+@Service
+public class UserCenterService {
+	private final static Logger logger = LoggerFactory.getLogger(UserCenterService.class);
+	private RuntimeSchema<CenterUserMain> schema = RuntimeSchema.createFrom(CenterUserMain.class);
+	
+	@Autowired
+	private DefaultMQProducer userCenterProducer ;
+	@Autowired
+	private RedisCache cache;
+	
+	@Autowired
+	private CenterUserMainMapper centerUserMainMapper;
+	@Autowired
+	private CenterUserLogMapper centerUserLogMapper;
+	@Autowired
+	private CenterSuperMemberMapper centerSuperMemberMapper;
+	@Autowired
+	private CenterSuperInvitesMapper centerSuperInvitesMapper;
+	
+	
+	/**
+	 * 
+	* @Title: findCenterUserMains
+	* @Description: TODO(查询符合条件的用户组)
+	* @param @param map
+	* @param @return    设定文件
+	* @return List<CenterUserMain>    返回类型
+	* @throws
+	 */
+	public List<CenterUserMain> findCenterUserMains(Map<String, String> map) {
+		if(map == null || (map.get("startTime") == null && map.get("endTime") == null)) {
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		return this.centerUserMainMapper.findCenterUserMains(map);
+	}
+	
+	/**
+	 * 
+	* @Title: findCenterUserMainById
+	* @Description: TODO(精确查询一个用户的全部信息)
+	* @param @param map
+	* @param @return    设定文件
+	* @return CenterUserMain    返回类型
+	* @throws
+	 */
+	public CenterUserMain findCenterUserMain(Map<String, String> map){
+		CenterUserMain centerUserMain = null;
+		if(map == null || (map.get("uuid") == null && map.get("memberId") == null)){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		if(map.get("uuid") != null){
+			centerUserMain = this.centerUserMainMapper.selectByPrimaryKey(map.get("uuid"));
+			return centerUserMain;
+		}
+		if(map.get("memberId") != null){
+			centerUserMain = this.centerUserMainMapper.selectByMemberId(map.get("memberId"));
+			return centerUserMain;
+		}
+		return centerUserMain;
+	}
+	
+	/**
+	 * 
+	* @Title: recordUserMemberLog
+	* @Description: TODO(用户操作日志记录)
+	* @param @param request
+	* @param @param userId
+	* @param @param memberId
+	* @param @param operation
+	* @param @return    设定文件
+	* @return Boolean    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean recordUserMemberLog(HttpServletRequest request,String userId,String memberId,String operation) {
+		Boolean bool = false ;
+		try {
+			CenterUserLog userMemberLog = new CenterUserLog(
+					UserCenterUtil.createUUId(), userId, memberId, operation, new Date(), UserCenterUtil.getIpAddr(request));
+			this.centerUserLogMapper.insert(userMemberLog);
+			bool = true;
+		} catch (Exception e) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "操作日志记录错误");
+		}
+		return bool;
+	}
+	
+	/**
+	 * 
+	* @Title: putUserCache
+	* @Description: TODO(放入redis缓存)
+	* @param @param map
+	* @param @return    设定文件
+	* @return Boolean    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean putUserCache(Map<String, String> map) {
+		try {
+			String keyStr = UserCenterConstant.USER_CACHENAME + map.get("uuid");
+			CenterUserMain centerUserMain = findCenterUserMain(map);
+			cache.putCacheWithExpireTime(keyStr, centerUserMain,UserCenterConstant.USER_CACHETIME);
+			logger.info("put cache :" + keyStr + "value :" + centerUserMain);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	/**
+	 * 
+	* @Title: getUserCache
+	* @Description: TODO(获取redis缓存)
+	* @param @param map
+	* @param @return    设定文件
+	* @return CenterUserMain    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public CenterUserMain getUserCache(Map<String, String> map) {
+		try {
+			String keyStr = UserCenterConstant.USER_CACHENAME + map.get("uuid");
+			CenterUserMain centerUserMain = cache.getCache(keyStr, CenterUserMain.class);
+			logger.info("get cache :" + keyStr + "value :" + centerUserMain);
+			return centerUserMain;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	/**
+	 * 
+	* @Title: deleteUserCache
+	* @Description: TODO(删除redis缓存)
+	* @param @param map
+	* @param @return    设定文件
+	* @return Boolean    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean deleteUserCache(Map<String, String> map) {
+		try {
+			String keyStr = UserCenterConstant.USER_CACHENAME + map.get("uuid");
+			cache.deleteCache(keyStr);
+			logger.info("delete cache :" + keyStr );
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	
+	/**
+	 * 
+	* @Title: sendMsgByMq
+	* @Description: TODO(用户中心mq消息发送)
+	* @param @param uuid
+	* @param @param tags    设定文件
+	* @return void    返回类型
+	* @throws
+	 */
+	public void sendMsgByMq(String uuid,String tags) {
+		CenterUserMain centerUserMain = this.centerUserMainMapper.selectByPrimaryKey(uuid);
+		if(centerUserMain != null) {
+			byte[] cashCoinBytes = ProtostuffIOUtil.toByteArray(centerUserMain, schema, LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE));
+			Message msg = new Message(UserCenterConstant.ROCKETMQ_PRODUCER_TOPIC,tags,centerUserMain.getId(),cashCoinBytes);
+			try{
+				userCenterProducer.send(msg, new SendCallback() {
+					@Override
+					public void onSuccess(SendResult sendResult) {
+						logger.info("UserCenterService sendMsgByMq onSuccess , key : "+uuid);
+					}
+					@Override
+					public void onException(Throwable e) {
+						logger.error("UserCenterService sendMsgByMq onException , key : "+uuid,e);
+					}
+				});
+			}catch(Exception e) {
+				logger.error("UserCenterService sendMsgByMq Exception , key : "+uuid,e);
+			}
+		}
+	}
+	/**
+	 * 
+	* @Title: findCenterSuperMember
+	* @Description: TODO(查询指定（所有）超级伙伴用户)
+	* @param @param map
+	* @param @return    设定文件
+	* @return List<CenterSuperMember>    返回类型
+	* @throws
+	 */
+	public List<CenterSuperMember> findCenterSuperMember(Map<String, String> map) {
+		return this.centerSuperMemberMapper.findCenterSuperMember(map);
+	}
+	/**
+	 * 
+	* @Title: findCenterSuperInvites
+	* @Description: TODO(查询指定超级伙伴邀请的所有伙伴信息)
+	* @param @param map
+	* @param @return    设定文件
+	* @return List<CenterSuperMember>    返回类型
+	* @throws
+	 */
+	public List<CenterSuperInvites> findCenterSuperInvites(Map<String, String> map) {
+		if(map == null || map.get("superId") == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		return this.centerSuperInvitesMapper.findCenterSuperInvites(map);
+	}
+	/**
+	 * 
+	* @Title: addCenterSuperMember
+	* @Description: TODO(添加一个超级伙伴用户)
+	* @param @param map
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String addCenterSuperMember(Map<String, String> map) {
+		if(map == null || map.get("uuid") == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		CenterUserMain centerUserMain =  findCenterUserMain(map);
+		if(centerUserMain == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, "用户不存在");
+		}
+		String resultStr = "超级伙伴添加失败";
+		try {
+			CenterSuperMember centerSuperMember = new CenterSuperMember(map.get("uuid"),centerUserMain.getMemberId(),new Date());
+			int i = this.centerSuperMemberMapper.insert(centerSuperMember);
+			if(i > 0){
+				resultStr = "超级伙伴添加成功";
+			}
+		} catch (Exception e) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "用户中心系统错误，请联系管理员");
+		}
+		return resultStr;
+	}
+
+}

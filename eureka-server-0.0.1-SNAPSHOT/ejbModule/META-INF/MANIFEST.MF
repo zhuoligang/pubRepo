@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Implementation-Title: eureka-server
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: LL
+Implementation-Vendor-Id: com.qr
+Spring-Boot-Version: 2.1.4.RELEASE
+Main-Class: org.springframework.boot.loader.JarLauncher
+Start-Class: com.qr.eureka.EurekaServerApplication
+Spring-Boot-Classes: BOOT-INF/classes/
+Spring-Boot-Lib: BOOT-INF/lib/
+Created-By: Apache Maven 3.6.1
+Build-Jdk: 1.8.0_131
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/eureka-server
+

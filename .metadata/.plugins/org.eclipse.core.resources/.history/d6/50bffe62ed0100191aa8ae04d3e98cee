@@ -1,0 +1,630 @@
+package org.bibr.user.center.service;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.bibr.user.center.bean.bo.CenterCertificationToken;
+import org.bibr.user.center.bean.bo.CenterChangeTradePassword;
+import org.bibr.user.center.bean.bo.CenterNoteSend;
+import org.bibr.user.center.bean.bo.CenterUserAccept;
+import org.bibr.user.center.bean.bo.CenterUserBibr;
+import org.bibr.user.center.bean.bo.CenterUserMain;
+import org.bibr.user.center.configurer.RedisCache;
+import org.bibr.user.center.constant.UserCenterConstant;
+import org.bibr.user.center.dao.CenterCertificationTokenMapper;
+import org.bibr.user.center.dao.CenterChangeTradePasswordMapper;
+import org.bibr.user.center.dao.CenterNoteSendMapper;
+import org.bibr.user.center.dao.CenterUserAcceptMapper;
+import org.bibr.user.center.dao.CenterUserBibrMapper;
+import org.bibr.user.center.dao.CenterUserMainMapper;
+import org.bibr.user.center.exception.BusinessException;
+import org.bibr.user.center.util.DesHelper;
+import org.bibr.user.center.util.DuanxinHelper;
+import org.bibr.user.center.util.RestTemplateUtil;
+import org.bibr.user.center.util.StringHelper;
+import org.bibr.user.center.util.UserCenterUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+@Service
+public class UserCenterFrontService {
+	
+	private final static Logger logger = LoggerFactory.getLogger(UserCenterFrontService.class);
+	@Autowired
+	private RedisCache cache;
+	
+	@Autowired
+	private CenterUserMainMapper centerUserMainMapper;
+	@Autowired
+	private CenterUserBibrMapper centerUserBibrMapper;
+	@Autowired
+	private CenterUserAcceptMapper centerUserAcceptMapper;
+	@Autowired
+	private CenterNoteSendMapper centerNoteSendMapper;
+	@Autowired
+	private CenterCertificationTokenMapper centerCertificationTokenMapper;
+	@Autowired
+	private CenterChangeTradePasswordMapper centerChangeTradePasswordMapper;
+	
+	@Autowired
+	private UserCenterService userCenterService;
+
+
+	/**
+	 * 
+	* @Title: sendNote
+	* @Description: TODO(发送短信)
+	* @param @param map
+	* @param @param request
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public String sendNote(Map<String, String> map_,HttpServletRequest request){
+		if(map_ == null || map_.get("mobile") == null ){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		String mobile = map_.get("mobile");
+		String resultMsg = "短信发送失败";
+		Date date = new Date();
+        long curtime = date.getTime();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("mobile", mobile);
+        map.put("sendTime", new Date(curtime - UserCenterConstant.DUANXIN_PASS_TIME));
+        int i = this.centerNoteSendMapper.selectSendTime(map);
+        if(i > 0){
+        	throw new BusinessException(UserCenterConstant.CODE_500, "发送间隔短于"+UserCenterConstant.DUANXIN_PASS_TIME/1000+"秒，请稍后再试");
+        }
+		try {
+			String mobileCheckCode = String.valueOf(UserCenterUtil.getRandomNum(100000, 999999));
+			boolean result = DuanxinHelper.sendSms(mobile,mobileCheckCode);
+			if(!result){
+				throw new BusinessException(UserCenterConstant.CODE_500, "短信接口异常，请联系管理员");
+			}
+	    	String keyStr = UserCenterConstant.DUANXIN_CACHENAME + "mobileCheckCode_"+mobile;
+	    	//redis存十分钟
+			cache.putCacheWithExpireTime(keyStr, mobileCheckCode+ "_" + date.getTime(),UserCenterConstant.DUANXIN_REDIS_TIME);
+			logger.info("put cache :" + keyStr + "value :" + mobileCheckCode+ "_" + date.getTime(),UserCenterConstant.DUANXIN_REDIS_TIME);
+			CenterNoteSend centerNoteSend = new CenterNoteSend();
+			centerNoteSend.setId(UserCenterUtil.createUUId());
+			centerNoteSend.setMobile(mobile);
+			centerNoteSend.setSendTime(date);
+			centerNoteSend.setIpAddress(UserCenterUtil.getIpAddr(request));
+			this.centerNoteSendMapper.insert(centerNoteSend);
+//			resultMsg = "短信发送成功";
+			//测试阶段暂时使用
+			resultMsg = String.valueOf(mobileCheckCode);
+		} catch (Exception e) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "短信系统错误，请联系管理员");
+		}
+		return resultMsg;
+		
+	}
+	
+	/**
+	 * 
+	* @Title: checkNote
+	* @Description: TODO(短信验证是否过期、正确)
+	* @param @param mobile
+	* @param @param mobileVcode
+	* @param @return    设定文件
+	* @return boolean    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public void checkNote(String mobile,String mobileVcode){
+		String keyStr = UserCenterConstant.DUANXIN_CACHENAME + "mobileCheckCode_"+mobile;
+		String mobileCheckCode = cache.getCache(keyStr);
+		logger.info("get cache :" + keyStr + "value :" + mobileCheckCode);
+		if(mobileCheckCode == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, "请点击获取验证码");	
+		}
+		//生产验证码的时间
+        Long regMobileExpireTime = Long.parseLong(mobileCheckCode.substring(7));
+        if (new Date().getTime() - regMobileExpireTime > UserCenterConstant.DUANXIN_REDIS_TIME) {
+        	throw new BusinessException(UserCenterConstant.CODE_500, "短信验证码已过期，请重新登录并获取短信验证码");
+        }
+        //验证码
+        mobileCheckCode = mobileCheckCode.substring(0, 6);
+        if (!mobileVcode.equals(mobileCheckCode)) {
+        	throw new BusinessException(UserCenterConstant.CODE_500, "短信验证码错误，请重新输入");
+        }
+        //暂定每次比对成功后就使用掉这个验证码
+        cache.deleteCache(keyStr);
+        logger.info("delete cache :" + keyStr );
+	}
+	
+	/**
+	 * 
+	* @Title: pastNote
+	* @Description: TODO(短信使用后，过期)
+	* @param @param mobile    设定文件
+	* @return void    返回类型
+	* @throws
+	 */
+	public void pastNote(String mobile){
+		String keyStr = UserCenterConstant.DUANXIN_CACHENAME + "mobileCheckCode_"+mobile;
+		cache.deleteCache(keyStr);
+		logger.info("delete cache :" + keyStr );
+	}
+	
+	/**
+	 * 
+	* @Title: checkRegister
+	* @Description: TODO(注册基本信息校验)
+	* @param @param map
+	* @param @param request
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String checkRegister(Map<String, String> map, HttpServletRequest request) {
+		if(map == null || map.get("mobile") == null || map.get("password") == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		String mobile = map.get("mobile");
+		if(!Pattern.compile("^(1)\\d{10}").matcher(mobile).matches()){
+			throw new BusinessException(UserCenterConstant.CODE_500, "手机号不合法");
+		}
+		int i = this.centerUserMainMapper.selectExistMobile(mobile);
+		if(i > 0){
+			throw new BusinessException(UserCenterConstant.CODE_500, "手机号已注册");
+		}
+		String password = map.get("password");
+		if(password.length() < 6 || password.length() > 18){
+			throw new BusinessException(UserCenterConstant.CODE_500, "密码长度不合法");
+		}
+		if(map.get("parentId") != null && !"".equals(map.get("parentId"))){
+			String parentId = map.get("parentId");
+			if(!StringHelper.isInteger(parentId)){
+				throw new BusinessException(UserCenterConstant.CODE_500, "推荐码不合法");
+			}
+		}
+		return "通过";
+	}
+	
+	/**
+	 * 
+	* @Title: register
+	* @Description: TODO(注册)
+	* @param @param map
+	* @param @return    设定文件
+	* @return List<CenterUserMain>    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public String register(Map<String, String> map,HttpServletRequest request) {
+		if(map == null || map.get("mobile") == null || map.get("password") == null || map.get("mobileVcode") == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		String mobile = map.get("mobile");
+		if(!Pattern.compile("^(1)\\d{10}").matcher(mobile).matches()){
+			throw new BusinessException(UserCenterConstant.CODE_500, "手机号不合法");
+		}
+		int i = this.centerUserMainMapper.selectExistMobile(mobile);
+		if(i > 0){
+			throw new BusinessException(UserCenterConstant.CODE_500, "手机号已注册");
+		}
+		checkNote(mobile, map.get("mobileVcode"));
+		String resultStr = "注册失败";
+		//认证中心认证成功后返回的用户同步uuid
+//		String userId = UserCenterUtil.createUUId();
+		String userId = null;
+		try {//调用认证中心 ------------------认证成功生成用户主键uuid
+			String url = UserCenterConstant.AUTH_REGISTER_URL;
+			Map<String,String> sendMap = new HashMap<>();
+			sendMap.put("phone", mobile);
+			sendMap.put("password", map.get("password"));
+			String result = RestTemplateUtil.postForEntity(url, JSONObject.toJSONString(sendMap));
+			Map<String,Object> map_ = (Map<String, Object>) JSON.parse(result);
+			if(map_.get("code") == null || Integer.parseInt(map_.get("code").toString()) != 200 || map_.get("data") == null){
+				throw new BusinessException(UserCenterConstant.CODE_500, "认证中心系统错误，请联系管理员");
+			}
+			userId = map_.get("data").toString();
+		} catch (Exception e) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "调用认证中心错误");
+		}
+		
+		//用户中心处理逻辑
+		CenterUserMain centerUserMain = new CenterUserMain();
+		try {
+			String memberId = UserCenterUtil.createMemberId();
+			//添加主表信息
+			centerUserMain.setId(userId);
+			centerUserMain.setMemberId(memberId);
+			centerUserMain.setMobile(mobile);
+			centerUserMain.setRegTime(new Date());
+			if(map.get("parentId") != null && !"".equals(map.get("parentId"))){
+				/**
+				 * TODO 判断推荐人或者推荐人的上级是否是超级伙伴用户，如果是：添加超级伙伴关系···················
+				 */
+				centerUserMain.setParentId(map.get("parentId"));
+			}
+			this.centerUserMainMapper.insertSelective(centerUserMain);
+			//激活bibr主站
+			CenterUserBibr centerUserBibr = new CenterUserBibr();
+			centerUserBibr.setId(UserCenterUtil.createUUId());
+			centerUserBibr.setUserId(userId);
+			centerUserBibr.setMemberId(memberId);
+			this.centerUserBibrMapper.insertSelective(centerUserBibr);
+			//激活法币交易站
+			CenterUserAccept centerUserAccept = new CenterUserAccept();
+			centerUserAccept.setId(UserCenterUtil.createUUId());
+			centerUserAccept.setUserId(userId);
+			centerUserAccept.setMemberId(memberId);
+			centerUserAccept.setNickName("用户" + memberId);
+			this.centerUserAcceptMapper.insertSelective(centerUserAccept);
+			//记录日志
+			this.userCenterService.recordUserMemberLog(request, userId, memberId, "注册成功");
+			
+			// 发送消息通知---------->初始化账户资产信息
+//			UserCenterUtil.sendMessage(userId,JSONObject.toJSONString(centerUserMain));
+			try {//初始化账户资产信息
+				String url = UserCenterConstant.ASSET_ACCOUNT_CREATE;
+				Map<String,String> sendMap = new HashMap<>();
+				sendMap.put("userId", userId);
+				String result = RestTemplateUtil.postForEntity(url, JSONObject.toJSONString(sendMap));
+				Map<String,Object> map_ = (Map<String, Object>) JSON.parse(result);
+				if(map_.get("message") == null || !"success".equals(map_.get("message"))){
+					throw new BusinessException(UserCenterConstant.CODE_500, "资产中心系统错误，请联系管理员");
+				}
+			} catch (Exception e) {
+				throw new BusinessException(UserCenterConstant.CODE_500, "调用资产中心错误");
+			}
+			
+			//短信已被消费，不能再次使用
+			pastNote(mobile);
+			resultStr = "注册成功";
+		} catch (Exception e) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "用户中心系统错误，请联系管理员");
+		}
+		return resultStr;
+	}
+	
+	/**
+	 * 
+	* @Title: updateUserTrade
+	* @Description: TODO(设置或者修改用户资金安全密码)
+	* @param @param map
+	* @param @param request
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public String updateUserTrade(Map<String, String> map, HttpServletRequest request) {
+		String resultStr = "修改失败";
+		if(map == null || map.get("uuid") == null || map.get("tradePassword") == null || map.get("mobileVcode") == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		String uuid = map.get("uuid");
+		CenterUserMain centerUserMain = this.centerUserMainMapper.selectByPrimaryKey(uuid);
+		if(centerUserMain == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, "用户不存在");
+		}
+		checkNote(centerUserMain.getMobile(), map.get("mobileVcode"));
+		try {
+			//是否是第一次设置资金安全密码
+			boolean flag = false;
+			if(centerUserMain.getTradePassword() == null || "".equals(centerUserMain.getTradePassword())){
+				flag = true;
+			}
+			
+			String tradePassword = map.get("tradePassword");
+			if(tradePassword.length() < 6 || tradePassword.length() > 18){
+				throw new BusinessException(UserCenterConstant.CODE_500, "密码长度不能小于6位并且不能大于18位");
+			}
+			CenterUserMain cum = new CenterUserMain();
+			cum.setId(uuid);
+			cum.setTradePassword(DesHelper.encrypt(tradePassword));
+			this.centerUserMainMapper.updateByPrimaryKeySelective(cum);
+			if(!flag){
+				//记录修改资金安全密码详情
+				CenterChangeTradePassword cctp = new CenterChangeTradePassword(
+						UserCenterUtil.createUUId(), uuid, centerUserMain.getMemberId(), new Date(), UserCenterUtil.getIpAddr(request));
+				this.centerChangeTradePasswordMapper.insert(cctp);
+				//记录操作日志
+				this.userCenterService.recordUserMemberLog(request, uuid, centerUserMain.getMemberId(), "修改资金安全密码");
+				resultStr = "修改成功";
+			}else{
+				//记录操作日志
+				this.userCenterService.recordUserMemberLog(request, uuid, centerUserMain.getMemberId(), "设置资金安全密码");
+				resultStr = "设置成功";
+			}
+
+		} catch (Exception e) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "执行修改系统错误，请联系管理员");
+		}
+
+		return resultStr;
+	}
+	
+	/**
+	 * 
+	* @Title: updateStrategy
+	* @Description: TODO(设置安全策略)
+	* @param @param map
+	* @param @param request
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String updateStrategy(Map<String, String> map, HttpServletRequest request) {
+		String resultStr = "设置失败";
+		if(map == null || map.get("uuid") == null || (map.get("changePasswordType") == null && map.get("tradePasswordType") == null)) {
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		CenterUserMain centerUserMain = this.userCenterService.findCenterUserMain(map);
+		if(centerUserMain == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, "用户不存在");
+		}
+		String uuid = map.get("uuid");
+		try {
+			CenterUserMain cum = new CenterUserMain();
+			cum.setId(uuid);
+			//禁止提币策略
+			if(map.get("changePasswordType") != null){
+				cum.setChangePasswordType(Integer.valueOf(map.get("changePasswordType")));
+			}
+			//资金安全密码输入策略
+			if(map.get("tradePasswordType") != null){
+				cum.setTradePasswordType(Integer.valueOf(map.get("tradePasswordType")));
+			}
+			int i = this.centerUserMainMapper.updateByPrimaryKeySelective(cum);
+			if(i < 1){
+				throw new BusinessException(UserCenterConstant.CODE_500, "没有任何改变");
+			}
+			//记录日志
+			this.userCenterService.recordUserMemberLog(request, uuid, centerUserMain.getMemberId(), "修改安全策略成功");
+			resultStr = "设置成功";
+		} catch (Exception e) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "系统错误，请联系管理员");
+		}
+		return resultStr;
+	}
+	
+	/**
+	 * 
+	* @Title: certification
+	* @Description: TODO(普通实名认证)
+	* @param @param map
+	* @param @param request
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public String certification(Map<String, String> map, HttpServletRequest request) {
+		String resultStr = "认证失败";
+		if(map == null || map.get("uuid") == null || map.get("name") == null 
+				|| map.get("idcard") == null || map.get("mobileVcode") == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		//用户uuid
+		String uuid = map.get("uuid");
+		CenterUserMain centerUserMain = this.centerUserMainMapper.selectByPrimaryKey(uuid);
+		if(centerUserMain == null){
+			throw new BusinessException(UserCenterConstant.CODE_500, "用户不存在");
+		}
+		checkNote(centerUserMain.getMobile(), map.get("mobileVcode"));
+		
+		if(centerUserMain.getName() != null || centerUserMain.getIdcard() != null) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "不能重复认证");
+		}
+		//身份证号
+		String idcard = map.get("idcard");
+		Date birthday = new Date(Integer.parseInt(idcard.substring(6, 10)) - 1900,
+                Integer.parseInt(idcard.substring(10, 12)) - 1, Integer.parseInt(idcard.substring(12, 14)));
+        long cha = new Date().getTime() - birthday.getTime();
+        if (cha / 60 / 60 / 24 / 365 / 1000 < 18) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "不好意思，您还属于未成年，无法通过认证。");
+        }
+        int i = this.centerUserMainMapper.selectExistIdcard(idcard);
+        if(i > 0){
+        	throw new BusinessException(UserCenterConstant.CODE_500, "身份证号已被使用");
+        }
+        //用户姓名
+        String name = map.get("name");
+        Integer code = null;
+        try {
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put("Authorization", "APPCODE " + UserCenterConstant.IDCARD_APPCODE);
+            Map<String, Object> sendMap = new HashMap<String, Object>();
+            sendMap.put("name", name);
+            sendMap.put("cardno", idcard);
+            String result = RestTemplateUtil.getForEntity(UserCenterConstant.IDCARD_ADDRESS,sendMap, headers);
+            
+            Map<String,Object> result_ = (Map<String, Object>) JSON.parse(result);
+    		String resp = result_.get("resp").toString();
+    		Map<String,Object> data_ = (Map<String, Object>) JSON.parse(resp);
+    		code = Integer.parseInt(data_.get("code").toString());
+		} catch (Exception e) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "身份证校验接口异常，请联系管理员");
+		}
+        if (code != 0) {
+        	resultStr = "身份证校验不通过";
+        }
+        try {
+        	CenterUserMain cum = new CenterUserMain();
+        	cum.setId(uuid);
+        	cum.setName(name);
+        	cum.setIdcard(idcard);
+        	this.centerUserMainMapper.updateByPrimaryKeySelective(cum);
+        	
+			//记录日志
+			this.userCenterService.recordUserMemberLog(request, uuid, centerUserMain.getMemberId(), "普通实名认证成功");
+			resultStr = "认证成功";
+		} catch (Exception e) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "普通实名认证系统错误，请联系管理员");
+		}
+		return resultStr;
+	}
+
+	/**
+	 * 
+	* @Title: getFaceIdToken
+	* @Description: TODO(获取高级实名认证token)
+	* @param @param map
+	* @param @param request
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public String getFaceIdToken(Map<String, String> map, HttpServletRequest request) {
+		if(map == null || map.get("uuid") == null) {
+			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+		}
+		String userId = map.get("uuid");
+		CenterUserMain centerUserMain = this.centerUserMainMapper.selectByPrimaryKey(userId);
+        if (centerUserMain.getName() == null || centerUserMain.getIdcard() == null) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "请先完成实名认证才能使用该功能哟！");
+        }
+		CenterCertificationToken centerCertificationToken = 
+				this.centerCertificationTokenMapper.selectByUserId(userId);
+		
+        boolean flag = false;
+
+        //今日0点
+        long timesmorning = UserCenterUtil.getTimesmorning().getTime();
+        //当前时间戳
+        long current = System.currentTimeMillis();
+        if(centerCertificationToken != null){
+            //最后一次生成时间
+            long lastTime = centerCertificationToken.getLastTime();
+            //过期时间
+            long tokenLimit = centerCertificationToken.getTokenLimit();
+            
+            if(tokenLimit * 1000 >= current){//token未过期
+            	return centerCertificationToken.getToken();
+            }else{
+                if(centerUserMain.getIdcardPicCheckId() == 1 || centerUserMain.getIdcardPicCheckId() == 2){
+                	centerUserMain.setIdcardPicCheckId(0); 
+                }
+            }
+            //最后一日生成token次数
+            int tokenTimes = centerCertificationToken.getTokenTimes();
+            if(lastTime > timesmorning){
+                if(tokenTimes >= 3 ){
+        			throw new BusinessException(UserCenterConstant.CODE_500, "今日获取次数已经达上线");
+                }
+            }else{
+            	centerCertificationToken.setTokenTimes(0);
+            }
+        }else{
+        	flag = true;
+        	centerCertificationToken = new CenterCertificationToken();
+        	centerCertificationToken.setId(UserCenterUtil.createUUId());
+        	centerCertificationToken.setUserId(userId);
+        	centerCertificationToken.setMemberId(centerUserMain.getMemberId());
+        	centerCertificationToken.setTokenTimes(0);
+        }
+        String urlAddress = UserCenterConstant.FACEID_TOKEN_ADDRESS;
+        
+        String result = getFaceToken(userId);
+        try {
+            Map<String,Object> result_ = (Map<String, Object>) JSON.parse(result);
+            
+            String token = result_.get("token").toString();
+            urlAddress  += token ;
+            centerCertificationToken.setToken(urlAddress);
+            centerCertificationToken.setTokenTimes(centerCertificationToken.getTokenTimes() + 1);
+            //过期时间
+            long expiredTime = Long.parseLong(result_.get("expired_time").toString());
+            centerCertificationToken.setTokenLimit(expiredTime);
+            centerCertificationToken.setLastTime(current);
+            //业务流水号
+            String bizId = result_.get("biz_id").toString();
+            centerCertificationToken.setBizId(bizId);
+            if(flag) {
+            	this.centerCertificationTokenMapper.insertSelective(centerCertificationToken);
+            }else {
+            	this.centerCertificationTokenMapper.updateByPrimaryKeySelective(centerCertificationToken);
+            }
+		} catch (Exception e) {
+			throw new BusinessException(UserCenterConstant.CODE_500, "系统错误，请联系管理员");
+		}
+        
+	return urlAddress;
+	}
+	
+	/**
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public String getFaceToken(String userId){
+        //调用faceId的getToken接口获取token
+		MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
+        params.add("api_key", UserCenterConstant.FACEID_API_KEY);
+        params.add("api_secret", UserCenterConstant.FACEID_API_SECRET);
+        params.add("comparison_type", UserCenterConstant.FACEID_COMPARISON_TYPE);
+        params.add("idcard_mode", UserCenterConstant.FACEID_IDCARD_MODE);
+        //完成活体认证后网页跳转的目标URL。（回调方法为Post）
+        params.add("return_url", UserCenterConstant.FACEID_RETURN_URL);
+        //完成活体认证之后，由FaceID服务器请求客户服务器的URL。（推荐为HTTPS页面，如果为HTTP则用户需要通过签名自行校验数据可信性，回调方法为Post）
+        params.add("notify_url", UserCenterConstant.FACEID_NOTIFY_URL);
+        //客户业务流水号，该号必须唯一。并会在notify和return时原封不动的返回给您的服务器，以帮助您确认每一笔业务的归属。此字段不超过128字节。
+        params.add("biz_no", userId);
+        
+        //tp调用第三方接口
+        String result = "";
+        try {
+        	result = RestTemplateUtil.postForEntityFormData(UserCenterConstant.FACEID_GET_TOKEN_URL, params);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BusinessException(UserCenterConstant.CODE_500, "第三方服务调用异常，请联系管理员");
+		}
+        
+        return result;
+    }
+	
+	/**
+	 * 
+	* @Title: getFaceIdResult
+	* @Description: TODO(高级实名认证结果查询--业务逻辑处理)
+	* @param @param map
+	* @param @param request
+	* @param @return    设定文件
+	* @return String    返回类型
+	* @throws
+	 */
+	public String getFaceIdResult(Map<String, String> map, HttpServletRequest request) {
+//		if(map == null || map.get("uuid") == null ){
+//			throw new BusinessException(UserCenterConstant.CODE_500, UserCenterConstant.FILL_IN_REQUIRED);
+//		}
+//		CenterUserMain centerUserMain = this.userCenterService.findCenterUserMain(map);
+//		if(centerUserMain == null){
+//			throw new BusinessException(UserCenterConstant.CODE_500, "用户不存在");
+//		}
+//		if(centerUserMain.getName() == null || centerUserMain.getIdcard() == null){
+//			throw new BusinessException(UserCenterConstant.CODE_500, "请先完成实名认证才能使用该功能哟！");
+//		}
+//		if(centerUserMain.getIdcardPicCheckType() == 1 && centerUserMain.getIdcardPicCheckId() > 2){
+//			throw new BusinessException(UserCenterConstant.CODE_500, "不能重复认证！");
+//		}
+//		CenterCertificationToken centerCertificationToken = 
+//				this.centerCertificationTokenMapper.selectByUserId(map.get("uuid"));
+//		if(centerCertificationToken == null){
+//			throw new BusinessException(UserCenterConstant.CODE_500, "没有认证记录");
+//		}
+//		//主动获取认证结果的流水号
+//		String biz_id = centerCertificationToken.getBizId();
+//		Map<String,Object> resultMap = getCheckResult(biz_id);
+		
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

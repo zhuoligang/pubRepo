@@ -1,0 +1,87 @@
+package org.bibr.accountcheck.center.thread;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bibr.accountcheck.center.constant.AccountCheckConstant;
+import org.bibr.accountcheck.center.exception.BusinessException;
+import org.bibr.accountcheck.center.service.AccountCheckService;
+import org.bibr.accountcheck.center.util.AccountCheckUtil;
+import org.bibr.accountcheck.center.util.RestTemplateUtil;
+import org.bibr.accountcheck.center.util.SpringContextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+/**
+ * 
+* @ClassName: ThresholdThread
+* @Description: TODO(阈值控制校验)
+* @author Administrator
+* @date 2018年12月18日下午5:26:21
+*
+ */
+public class ThresholdThread implements Runnable{
+	private final static Logger logger = LoggerFactory.getLogger(ThresholdThread.class);
+	private AccountCheckService accountCheckService = (AccountCheckService) SpringContextUtil.getBean(AccountCheckService.class);
+	//需要校验的用户uuid
+	private String userId;
+	
+	public ThresholdThread(String userId) {
+		super();
+		this.userId = userId;
+	}
+
+	@Override
+	public void run() {
+		//阈值
+		BigDecimal countThreshold = null;
+		//超过阈值短信通知的手机号码---是一个数组字符串
+		String mobilePhone = null;
+		try {//请求后台获取阈值
+			String url = AccountCheckConstant.HOME_GET_THESHOLD;
+			Map<String,String> sendMap = new HashMap<>();
+			String result = RestTemplateUtil.postForEntity(url, JSONObject.toJSONString(sendMap));
+			Map<String,Object> map_ = (Map<String, Object>) JSON.parse(result);
+			if(map_.get("code") == null || Integer.parseInt(map_.get("code").toString()) != 200|| map_.get("data") == null){
+				logger.error("后台系统错误，请联系管理员");
+				throw new BusinessException(AccountCheckConstant.CODE_500, "后台系统错误，请联系管理员");
+			}
+			//后台设置阈值
+			String data_ = map_.get("data").toString();
+			Map<String,Object> dataMap = (Map<String, Object>) JSON.parse(data_);
+			countThreshold = new BigDecimal(dataMap.get("assetThreshold").toString());
+			mobilePhone = dataMap.get("mobilePhone").toString();
+		} catch (Exception e) {
+			logger.error("调用后台系统错误");
+			throw new BusinessException(AccountCheckConstant.CODE_500, "调用后台系统错误");
+		}
+		BigDecimal assetCountCNY = accountCheckService.getAssetCountCNY(userId);
+		if(countThreshold.compareTo(assetCountCNY) <= 0){//如果资产超过阈值，请求用户中心发送短信通知
+			if(mobilePhone == null || "".equals(mobilePhone)){
+				logger.error("没有找到可以短信通知的联系人");
+				throw new BusinessException(AccountCheckConstant.CODE_500, "没有找到可以短信通知的联系人");
+			}
+			//短信通知准备
+			String url = "";//用户中心阈值通知接口地址
+			Map<String,String> sendMap = new HashMap<>();
+			sendMap.put("uuid", userId);
+			sendMap.put("countThreshold", countThreshold.toString());
+
+			String[] mobilePhones = mobilePhone.split(",");
+			for (String mp : mobilePhones) {
+				sendMap.put("mobile", mp);
+				//不关注短信发送结果
+				String result = RestTemplateUtil.postForEntity(url, JSONObject.toJSONString(sendMap));
+//				if(!result){
+//					logger.error("短信接口异常，请联系管理员");
+//					throw new BusinessException(AccountCheckConstant.CODE_500, "短信接口异常，请联系管理员");
+//				}
+			}
+		}
+	}
+
+}

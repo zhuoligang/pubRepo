@@ -1,0 +1,11 @@
+1560766644072	Extract local variable 'bean'
+1560767409797	Delete element
+1560773403709	Extract local variable 'redisTemplate'
+1560824003157	Extract local variable 'cache'
+1560837657317	Move compilation unit
+1560846818563	Extract local variable 'applicationContext'
+1560846853993	Extract local variable 'bean'
+1560847238816	Extract local variable 'bean'
+1560848294488	Extract local variable 'bean'
+1561088932511	Move compilation unit
+1561098066825	Copy compilation unit

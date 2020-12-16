@@ -1,0 +1,75 @@
+package org.bibr.distributed.octopus.bean.po;
+
+import java.util.Date;
+
+public class OctopusColumnType {
+    private String id;
+
+    private Integer columnLevel;
+
+    private String parentId;
+
+    private String name;
+
+    private Integer status;
+
+    private Date createTime;
+
+    private Date changeTime;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id == null ? null : id.trim();
+    }
+
+    public Integer getColumnLevel() {
+        return columnLevel;
+    }
+
+    public void setColumnLevel(Integer columnLevel) {
+        this.columnLevel = columnLevel;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId == null ? null : parentId.trim();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getChangeTime() {
+        return changeTime;
+    }
+
+    public void setChangeTime(Date changeTime) {
+        this.changeTime = changeTime;
+    }
+}

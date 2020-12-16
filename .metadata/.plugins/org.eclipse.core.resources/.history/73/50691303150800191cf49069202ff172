@@ -1,0 +1,183 @@
+package org.bibr.robot.module.thread;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bibr.robot.module.bean.bo.DataCenter;
+import org.bibr.robot.module.bean.bo.RobotConf;
+import org.bibr.robot.module.constant.RobotConstant;
+import org.bibr.robot.module.dao.DataCenterMapper;
+import org.bibr.robot.module.exception.BusinessException;
+import org.bibr.robot.module.util.RestTemplateUtil;
+import org.bibr.robot.module.util.RobotUtil;
+import org.bibr.robot.module.util.SpringContextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+/**
+ * 
+* @ClassName: RobotThread
+* @Description: TODO(机器人线程)
+* @author Administrator
+* @date 2018年12月10日下午7:10:57
+*
+ */
+public class RobotThread implements Runnable{
+	private final static Logger logger = LoggerFactory.getLogger(RobotThread.class);
+	
+	@Autowired
+	private DataCenterMapper dataCenterMapper = (DataCenterMapper) SpringContextUtil.getBean(DataCenterMapper.class);
+	
+    private RobotConf robotConf;
+    
+    public RobotThread(RobotConf robotConf) {
+        super();
+        this.robotConf = robotConf;
+    }
+    
+    @Override
+    public void run() {
+    	loop: while (true) {
+            System.out.println("..........................................................................................................");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            System.out.println("----------------------当前时间："+sdf.format(new Date()));
+            System.out.println("本次执行第："+robotConf.getPlatId()+" 交易区 "+robotConf.getCoinId()+" 虚拟币。。。。 ");
+             
+            //每隔多少秒执行一次任务
+            int timeFrequency = RobotUtil.getRandomNum(robotConf.getTimeMin(),robotConf.getTimeMax());;
+            
+            try {
+                System.out.println("-----------------------------------任务将在： "+timeFrequency +" 秒后开始执行！--------------------------------");
+                Thread.sleep(timeFrequency*1000);
+                
+                //刷单频率-->本次任务进行几笔交易
+                int countmax = RobotUtil.getRandomNum(1,robotConf.getFrequency());
+                //本次执行买还是卖单？
+                boolean isBuy = RobotUtil.getRandomNum(0,1) == 1?true:false;
+                //刷单标记（默认0：不控制，1：只刷买单，2：只刷卖单）
+                int dealFlag= robotConf.getDealFlag();
+                if(dealFlag == 1){
+                	isBuy = true;
+                }else if(dealFlag == 2){
+                	isBuy = false;
+                }
+                System.out.println("。。。。本次进行： "+countmax+" 比 "+ (isBuy?"购买":"出售") + " 交易。。。。");
+                //获取当前卖一价格（最佳卖价）--------数据中心获取
+                BigDecimal sellBest = BigDecimal.ZERO;
+                //获取当前买一价格（最佳买价）--------数据中心获取
+                BigDecimal buyBest = BigDecimal.ZERO;
+        		try {//调用数据中心 ------------------获取当前买一、卖一价
+        			String url = RobotConstant.DATACENTER_GETPRICE_URL;
+        			Map<String,Object> sendMap = new HashMap<>();
+        			sendMap.put("market", robotConf.getPlatId() + "_" + robotConf.getCoinId());
+        			String result = RestTemplateUtil.getForEntity(url, sendMap, null);
+        			Map<String,Object> map_ = (Map<String, Object>) JSON.parse(result);
+        			if(map_.get("code") == null || Integer.parseInt(map_.get("code").toString()) != 200 || map_.get("data") == null){
+        				throw new BusinessException(RobotConstant.CODE_500, "数据中心系统错误，请联系管理员");
+        			}
+        			String data_ = map_.get("data").toString();
+        			Map<String,Object> dataMap = (Map<String, Object>) JSON.parse(data_);
+        			sellBest = new BigDecimal(dataMap.get("sellOnePrice").toString());
+        			buyBest = new BigDecimal(dataMap.get("buyOnePrice").toString());
+        		} catch (Exception e) {
+                	logger.error("调用数据中心错误",e.getMessage());
+                	throw new BusinessException(RobotConstant.CODE_500, "调用数据中心错误");
+        		}
+                //前台价格输入金额小数位--------后台获取币种信息中包含！！！！
+                int priceinputdecimalsize = 9;
+                //前台价格输入数量小数位--------后台获取币种信息中包含！！！！
+                int countinputdecimalsize = 9;
+        		try {//调用后台接口 ------------------获取币种交易数量、价格小数位数管控
+        			String url = RobotConstant.HOME_GETSIZE_URL;
+        			Map<String,Object> sendMap = new HashMap<>();
+        			sendMap.put("eunit",robotConf.getCoinId());
+        			String result = RestTemplateUtil.getForEntity(url, sendMap, null);
+        			Map<String,Object> map_ = (Map<String, Object>) JSON.parse(result);
+        			if(map_.get("code") == null || Integer.parseInt(map_.get("code").toString()) != 200 || map_.get("data") == null){
+        				throw new BusinessException(RobotConstant.CODE_500, "后台系统错误，请联系管理员");
+        			}
+        			String data_ = map_.get("data").toString();
+        			Map<String,Object> dataMap = (Map<String, Object>) JSON.parse(data_);
+        			priceinputdecimalsize = Integer.parseInt(dataMap.get("transactionPricedecimal").toString());
+        			countinputdecimalsize = Integer.parseInt(dataMap.get("transactionNumberdecimal").toString());
+        		} catch (Exception e) {
+                	logger.error("调用后台错误",e.getMessage());
+                	throw new BusinessException(RobotConstant.CODE_500, "调用后台错误");
+        		}
+                BigDecimal num = BigDecimal.valueOf(Math.pow(10,priceinputdecimalsize));
+                //判断有没有刷单的可能性-------取到最终浮动价格伪数据
+                int section = sellBest.multiply(num).subtract(buyBest.multiply(num)).intValue() - 1;
+                if(section <= 0){//没有刷单区间，跳过本次刷单
+                    continue loop;
+                }else if(section < 4){
+                	section = RobotUtil.getRandomNum(1,section);
+                }else{
+                	section = RobotUtil.getRandomNum(1,4);
+                }
+                
+                //本次交易价格##############################################
+                BigDecimal price = BigDecimal.ZERO;
+                if(isBuy){//买价 = 最佳卖价 - 浮动值
+                	price = sellBest.subtract(new BigDecimal(section).divide(num));
+                }else{//卖价 = 最佳买价 + 浮动值
+                	price = buyBest.add(new BigDecimal(section).divide(num));
+                }
+                
+//                //数据中心最新数据信息-----模拟-----
+//            	DataCenterMapper dataCenterMapper = (DataCenterMapper) SpringContextUtil.getBean(DataCenterMapper.class);
+//            	Map<String,String> map = new HashMap<>();
+//            	map.put("platId", robotConf.getPlatId());
+//            	map.put("vcoinId", robotConf.getCoinId());
+//            	DataCenter dataCenter = dataCenterMapper.selectByMap(map);
+//            	
+//                //获取该币种最新成交价
+//            	BigDecimal newPrice = dataCenter.getNewPrice();
+//            	System.out.println("最新成交价为： " + newPrice);
+            	
+                //本次交易金额下限
+                int limitMin = robotConf.getLimitMin();
+                //本次交易金额上限
+                int limitMax = robotConf.getLimitMax();
+                //本次交易预计金额随机数
+                BigDecimal money = BigDecimal.ZERO;
+                // 当前挂单预计交易数量  
+                BigDecimal countCurform = BigDecimal.ZERO;
+                for (int i = 0; i < countmax; i++) {
+                	
+                	money = BigDecimal.valueOf(
+                			RobotUtil.getRandomNum2(new BigDecimal(limitMin).multiply(num).intValue(),
+                			new BigDecimal(limitMax).multiply(num).intValue())
+                			).divide(num);
+                	countCurform = money.divide(price);
+                    // 当前挂单实际交易数量 ##############################################
+                    countCurform = countCurform.setScale(countinputdecimalsize, BigDecimal.ROUND_HALF_DOWN);
+                    //本次交易实际金额##############################################
+                    money = countCurform.multiply(price);
+                    /**
+                     * TODO(全站成交记录，数据中心的影响·····)
+                     */
+                    System.out.println("本次执行一笔："+(isBuy?"购买":"出售")+"订单");
+                    System.out.println("实际成交价为："+price);
+                    System.out.println("实际成交量为："+countCurform);
+                    System.out.println("实际成交金额为："+money);
+                    System.out.println("----------------------当前时间："+sdf.format(new Date()));
+                    System.out.println("..........................................................................................................");
+				}
+                
+            }catch (Exception e) {
+            	logger.error("机器人刷单程序出错",e.getMessage());
+            	throw new BusinessException(RobotConstant.CODE_500, "机器人刷单程序出错，请联系管理员");
+            }
+            
+            
+    	}
+    }
+}

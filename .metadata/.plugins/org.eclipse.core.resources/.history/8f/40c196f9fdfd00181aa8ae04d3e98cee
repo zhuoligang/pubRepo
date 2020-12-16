@@ -1,0 +1,45 @@
+package org.bibr.user.center.configurer;
+
+import org.apache.rocketmq.common.message.MessageExt;
+import org.springframework.context.ApplicationEvent;
+
+
+/**
+ * 
+* @ClassName: UserCenterMQCustomerEvent
+* @Description: TODO(用户中心RocketMQ消费者监听消息事件)
+* @author Administrator
+* @date 2018年12月7日上午11:55:42
+*
+ */
+public class UserCenterMQCustomerEvent extends ApplicationEvent {
+
+	private static final long serialVersionUID = 1L;
+	
+	private String topic;
+	
+	private MessageExt msg;
+	
+	public UserCenterMQCustomerEvent(Object source,String topic,MessageExt msg) {
+		super(source);
+		this.topic = topic;
+		this.msg = msg;
+	}
+
+	public String getTopic() {
+		return topic;
+	}
+
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
+
+	public MessageExt getMsg() {
+		return msg;
+	}
+
+	public void setMsg(MessageExt msg) {
+		this.msg = msg;
+	}
+
+}

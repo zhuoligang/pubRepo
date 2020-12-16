@@ -1,0 +1,17 @@
+package org.bibr.accountcheck.center.dao;
+
+import org.bibr.accountcheck.center.bean.bo.AssetHotAccountRecord;
+
+public interface AssetHotAccountRecordMapper {
+    int deleteByPrimaryKey(String id);
+
+    int insert(AssetHotAccountRecord record);
+
+    int insertSelective(AssetHotAccountRecord record);
+
+    AssetHotAccountRecord selectByPrimaryKey(String id);
+
+    int updateByPrimaryKeySelective(AssetHotAccountRecord record);
+
+    int updateByPrimaryKey(AssetHotAccountRecord record);
+}
